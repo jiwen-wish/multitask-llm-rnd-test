@@ -1,0 +1,53 @@
+add_simcse: false
+additional_tricks:
+  focal: {}
+batch_size: 200
+cache_dir: null
+data_hash: 1a41df65cd16ea3e02d4bdf5a7841b06
+data_source: !!python/object/apply:collections.OrderedDict
+- - - is_encoder_decoder
+    - true
+  - - test
+    - - path: data/wish_products/Wish_Meta_Test.json
+        repo: git@github.com:junwang-wish/query_understanding_data.git
+        rev: null
+        task_prefix_input: 'Classify product: '
+  - - train
+    - - path: data/wish_products/Wish_Meta_Train.json
+        repo: git@github.com:junwang-wish/query_understanding_data.git
+        rev: null
+        task_prefix_input: 'Classify product: '
+  - - val
+    - - path: data/wish_products/Wish_Meta_Val.json
+        repo: git@github.com:junwang-wish/query_understanding_data.git
+        rev: null
+        task_prefix_input: 'Classify product: '
+data_source_yaml_path: datasets/product_title_seqclf/wish-aliexpress.yaml
+distance_func: cosine
+force_download: false
+hidden_states_type: encoder-last
+label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+label_weight_type: ancestor-high
+learning_rate: 1.0e-05
+local_files_only: false
+loss_type: cross-entropy
+lr_scheduler_max_steps: null
+lr_scheduler_num_warmup_steps: null
+lr_scheduler_type: null
+margin: null
+max_length: 50
+max_length_out: 50
+model_name: sentence-transformers/sentence-t5-base
+num_workers: 20
+overwrite_cache: false
+predict_on_test: true
+proxies: null
+raw_cache_dir: /data/junwang/.cache/general
+raw_cache_dir_folder: /data/junwang/.cache/general/1a41df65cd16ea3e02d4bdf5a7841b06
+resume_download: false
+return_model: true
+revision: null
+subfolder: ''
+trust_remote_code: null
+use_auth_token: null
+weight_decay: 0.01

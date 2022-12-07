@@ -1,0 +1,48 @@
+train:
+  - path: data/wish_products/Wish_Meta_Train.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+  - path: data/amazon/All_Amazon_Meta_Train_Clean.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+val:
+  - path: data/wish_products/Wish_Meta_Val.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+  - path: data/amazon/All_Amazon_Meta_Val_Clean.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+test:
+  - path: data/wish_products/Wish_Meta_Test.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+  - path: data/amazon/All_Amazon_Meta_Test_Clean.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "

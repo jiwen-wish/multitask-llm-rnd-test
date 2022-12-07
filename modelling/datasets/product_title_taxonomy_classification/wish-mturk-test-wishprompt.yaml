@@ -1,0 +1,7 @@
+test:
+  - path: data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix: "categorize Wish product: "
+preprocess:
+  transform: top-down

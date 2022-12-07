@@ -1,0 +1,5 @@
+outs:
+- md5: d5ac8ce24b4d60f5d2d8f5d877108b74.dir
+  size: 11802956663
+  nfiles: 10
+  path: epoch=4-step=398293.ckpt

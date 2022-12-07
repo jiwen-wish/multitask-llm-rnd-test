@@ -1,0 +1,6 @@
+test:
+  - path: data/taxonomy/wish_newtax_converted_to_data.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix_input: "Embed taxonomy: "
+    task_prefix_output: "Embed taxonomy: "

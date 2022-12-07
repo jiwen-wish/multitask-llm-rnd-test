@@ -1,0 +1,13 @@
+*.pyc
+.DS_Store
+tmp*
+*.zarr
+*epoch*.json
+models/product_title_embedding/version_1
+models/product_title_embedding/version_2
+models/product_title_embedding/version_3
+models/product_title_taxonomy_sequence_classification/version_3
+models/product_title_taxonomy_sequence_classification/version_4
+*.html
+notebooks/ngrok
+models/product_title_multitask_multimodal/version_0

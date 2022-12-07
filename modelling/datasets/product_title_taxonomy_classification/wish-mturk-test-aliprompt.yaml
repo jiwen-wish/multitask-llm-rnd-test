@@ -1,0 +1,7 @@
+test:
+  - path: data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: v0.5
+    task_prefix: "categorize Aliexpress product: " # since we train using Aliexpress prompt, thus temporarily use this
+preprocess:
+  transform: top-down

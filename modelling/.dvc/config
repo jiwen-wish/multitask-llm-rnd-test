@@ -1,0 +1,5 @@
+[core]
+    autostage = true
+    remote = junwang_query_understand_model
+['remote "junwang_query_understand_model"']
+    url = s3://structured-data-dev/junwang_query_understand_model/dvc

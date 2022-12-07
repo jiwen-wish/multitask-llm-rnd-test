@@ -1,0 +1,15 @@
+train:
+  - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+val:
+  - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+  - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+test:
+  - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null

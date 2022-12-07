@@ -1,0 +1,7 @@
+test:
+  - path: data/wish_products_internallabel/wish_products_offshore_labelled_processed.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix: "categorize product: " # since we train using Aliexpress prompt, thus temporarily use this
+preprocess:
+  transform: top-down

@@ -1,0 +1,17 @@
+train:
+  - path: data/mave_attr_extract/Mave_Title_GENRE_Train.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix: "Attribute extraction for product: "
+val:
+  - path: data/mave_attr_extract/Mave_Title_GENRE_Val.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix: "Attribute extraction for product: "
+test:
+  - path: data/mave_attr_extract/Mave_Title_GENRE_Test.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix: "Attribute extraction for product: "
+preprocess:
+  transform: nothing

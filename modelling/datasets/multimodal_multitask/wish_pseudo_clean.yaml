@@ -1,0 +1,8 @@
+train:
+  - path: datasets/wish_tahoe_dedup_pseudolabel/wish_tahoe_title_dedup_multitask_v0.1_preds_allmatch_Train_Chunk_1.json
+  - path: datasets/wish_tahoe_dedup_pseudolabel/wish_tahoe_title_dedup_multitask_v0.1_preds_allmatch_Train_Chunk_2.json
+  - path: datasets/wish_tahoe_dedup_pseudolabel/wish_tahoe_title_dedup_multitask_v0.1_preds_allmatch_Train_Chunk_3.json
+val:
+  - path: datasets/wish_tahoe_dedup_pseudolabel/wish_tahoe_title_dedup_multitask_v0.1_preds_allmatch_Val.json
+test:
+  - path: datasets/wish_tahoe_dedup_pseudolabel/wish_tahoe_title_dedup_multitask_v0.1_preds_allmatch_Test.json

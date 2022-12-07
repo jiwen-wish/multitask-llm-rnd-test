@@ -1,0 +1,261 @@
+# pytorch_lightning==1.7.7
+seed_everything: 42
+trainer:
+  logger:
+    class_path: pytorch_lightning.loggers.TensorBoardLogger
+    init_args:
+      save_dir: models
+      name: demo
+      version: 5
+      log_graph: false
+      default_hp_metric: true
+      prefix: ''
+      sub_dir: null
+      agg_key_funcs: null
+      agg_default_func: null
+      comment: ''
+      purge_step: null
+      max_queue: 10
+      flush_secs: 120
+      filename_suffix: ''
+  enable_checkpointing: true
+  callbacks:
+  - init_args:
+      dirpath: models/demo/version_5
+      filename: null
+      monitor: val_loss
+      verbose: false
+      save_last: null
+      save_top_k: 1
+      save_weights_only: false
+      mode: min
+      auto_insert_metric_name: true
+      every_n_train_steps: null
+      train_time_interval: null
+      every_n_epochs: null
+      save_on_train_epoch_end: null
+    class_path: pytorch_lightning.callbacks.ModelCheckpoint
+  - init_args:
+      logging_interval: step
+      log_momentum: false
+    class_path: pytorch_lightning.callbacks.LearningRateMonitor
+  - init_args:
+      cpu_stats: true
+    class_path: pytorch_lightning.callbacks.DeviceStatsMonitor
+  default_root_dir: models/demo
+  gradient_clip_val: null
+  gradient_clip_algorithm: null
+  num_nodes: 1
+  num_processes: null
+  devices: null
+  gpus: null
+  auto_select_gpus: false
+  tpu_cores: null
+  ipus: null
+  enable_progress_bar: true
+  overfit_batches: 0.0
+  track_grad_norm: -1
+  check_val_every_n_epoch: 1
+  fast_dev_run: false
+  accumulate_grad_batches: null
+  max_epochs: -1
+  min_epochs: null
+  max_steps: 200
+  min_steps: null
+  max_time: null
+  limit_train_batches: 1000
+  limit_val_batches: 50
+  limit_test_batches: null
+  limit_predict_batches: null
+  val_check_interval: null
+  log_every_n_steps: 50
+  accelerator: cpu
+  strategy: null
+  sync_batchnorm: false
+  precision: 32
+  enable_model_summary: true
+  weights_save_path: null
+  num_sanity_val_steps: 2
+  resume_from_checkpoint: null
+  profiler: null
+  benchmark: null
+  deterministic: true
+  reload_dataloaders_every_n_epochs: 0
+  auto_lr_find: false
+  replace_sampler_ddp: true
+  detect_anomaly: false
+  auto_scale_batch_size: false
+  plugins: null
+  amp_backend: native
+  amp_level: null
+  move_metrics_to_cpu: false
+  multiple_trainloader_mode: max_size_cycle
+model:
+  model_name: t5-base
+  weight_decay: 0.1
+  learning_rate: 0.0001
+  lr_scheduler_max_steps: null
+  lr_scheduler_type: null
+  lr_scheduler_num_warmup_steps: null
+  distance_func: cosine
+  loss_type: cross-entropy
+  manual_loss_type: manual_mse
+  margin: null
+  hidden_states_type: encoder-last
+  add_simcse: true
+  auto_task_weight: false
+  multitask_specs_dict:
+    clm_multimodal_clip2wishtitle:
+      multimodal_embedding:
+        input:
+        - key: img_embedding
+          proj_head: proj_head
+    dlm_multimodal_wishtitlewclip:
+      multimodal_embedding:
+        input:
+        - key: img_embedding
+          proj_head: proj_head
+    seqclf_multimodal_wishtitlewclip2pseudov121tax:
+      multimodal_embedding:
+        input:
+        - key: img_embedding
+          proj_head: proj_head
+      specs:
+        clf_head: clf_head
+        clf_weight_type: ancestor-high
+        label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+        label_type: taxonomy
+    seqclf_singlemodal_alititle2v121tax:
+      specs:
+        clf_head: clf_head
+        clf_weight_type: ancestor-high
+        label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+        label_type: taxonomy
+    emb_singlemodal_wishquery2googletitle: null
+    emb_singlemodal_amaquery2amatitle_manual:
+      specs:
+        is_manual:
+        - relevance
+  head_dict:
+    proj_head:
+      type: linear
+      in_features: 768
+      out_features: 768
+      purpose: projection
+    clf_head:
+      type: linear
+      in_features: 768
+      out_features: 6037
+      purpose: seqclf
+  return_model: true
+  cache_dir: null
+  force_download: false
+  resume_download: false
+  proxies: null
+  use_auth_token: null
+  local_files_only: false
+  revision: null
+  trust_remote_code: null
+  subfolder: ''
+data:
+  model_name: t5-base
+  multitask_dict:
+    clm_multimodal_clip2wishtitle:
+      data_source_yaml_path: datasets/demo_local/demo_local_multimodal_full.yaml
+      batch_size: 16
+      max_length: 50
+      max_length_out: 50
+      llm_type: clm
+      input_dict:
+        template: '[image start] {img_embedding} [image end]'
+        task_prefix: 'Generate title for product with image: '
+        is_multimodal_embedding:
+        - img_embedding
+      output_dict:
+        template: '{title}'
+      data_source_type: local
+    dlm_multimodal_wishtitlewclip:
+      data_source_yaml_path: datasets/demo_local/demo_local_multimodal_full.yaml
+      batch_size: 16
+      max_length: 50
+      max_length_out: 50
+      llm_type: dlm
+      input_dict:
+        template: '[title start] {title} [title end] [image start] {img_embedding}
+          [image end]'
+        task_prefix: 'Denoise product with image: '
+        is_multimodal_embedding:
+        - img_embedding
+      output_dict:
+        template: '{title}'
+      data_source_type: local
+    seqclf_multimodal_wishtitlewclip2pseudov121tax:
+      data_source_yaml_path: datasets/demo_local/demo_local_multimodal_full.yaml
+      batch_size: 16
+      max_length: 50
+      max_length_out: 50
+      label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+      label_type: taxonomy
+      llm_type: seqclf
+      input_dict:
+        template: '[title start] {title} [title end] [image start] {img_embedding}
+          [image end]'
+        task_prefix: 'Classify product with image: '
+        is_multimodal_embedding:
+        - img_embedding
+      output_dict:
+        template: '{pseudo_category}'
+      transform_dict:
+        pseudo_category: taxonomy
+      data_source_type: local
+    seqclf_singlemodal_alititle2v121tax:
+      data_source_yaml_path: datasets/demo_local/demo_local_multimodal_full.yaml
+      batch_size: 16
+      max_length: 50
+      max_length_out: 50
+      label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+      label_type: taxonomy
+      llm_type: seqclf
+      input_dict:
+        template: '{title}'
+        task_prefix: 'Classify product: '
+      output_dict:
+        template: '{category}'
+      transform_dict:
+        category: taxonomy
+      data_source_type: local
+    emb_singlemodal_wishquery2googletitle:
+      data_source_yaml_path: datasets/demo_local/demo_local_multimodal_full.yaml
+      batch_size: 16
+      max_length: 50
+      max_length_out: 50
+      llm_type: emb
+      input_dict:
+        template: '{title}'
+        task_prefix: 'Embed product: '
+      output_dict:
+        template: '{query}'
+        task_prefix: 'Embed query: '
+      data_source_type: local
+    emb_singlemodal_amaquery2amatitle_manual:
+      data_source_yaml_path: datasets/demo_local/demo_local_multimodal_full.yaml
+      batch_size: 16
+      max_length: 50
+      max_length_out: 50
+      llm_type: emb
+      input_dict:
+        template: '{title}'
+        task_prefix: 'Embed product: '
+      output_dict:
+        template: '{query}{relevance}'
+        task_prefix: 'Embed query: '
+        is_manual:
+        - relevance
+      data_source_type: local
+  raw_cache_dir: /data/junwang/.cache/general
+  overwrite_cache: false
+  force_download_hfdata: false
+  predict_on_test: true
+  num_workers: 2
+  multiple_trainloader_mode: max_size_cycle
+ckpt_path: null

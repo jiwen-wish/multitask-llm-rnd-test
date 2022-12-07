@@ -1,0 +1,12 @@
+train:
+  - path: data/wish_products/Wish_Meta_Train.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+val:
+  - path: data/wish_products/Wish_Meta_Val.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+test:
+  - path: data/wish_products/Wish_Meta_Test.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null

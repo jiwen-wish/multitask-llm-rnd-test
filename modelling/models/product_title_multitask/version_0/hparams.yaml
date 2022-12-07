@@ -1,0 +1,58 @@
+model_name: t5-base
+weight_decay: 0.1
+learning_rate: 1.0e-05
+lr_scheduler_max_steps: null
+lr_scheduler_type: null
+lr_scheduler_num_warmup_steps: null
+distance_func: cosine
+loss_type: cross-entropy
+margin: null
+hidden_states_type: encoder-last
+add_simcse: true
+label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+label_weight_type: ancestor-high
+additional_tricks: null
+multitask_names:
+- clm_ali_title2tax
+- dlm_wish_title
+- emb_all_title2tax
+- seqclf_ali_title2tax
+auto_task_weight: false
+return_model: true
+cache_dir: null
+force_download: false
+resume_download: false
+proxies: null
+use_auth_token: null
+local_files_only: false
+revision: null
+trust_remote_code: null
+subfolder: ''
+multitask_dict:
+  clm_ali_title2tax:
+    data_source_yaml_path: datasets/product_title_taxonomy_classification/wish-aliexpress-simpleprompt-topdown.yaml
+    batch_size: 16
+    max_length: 50
+    max_length_out: 50
+  dlm_wish_title:
+    data_source_yaml_path: datasets/product_title_denoise/wish-tahoe.yaml
+    batch_size: 16
+    max_length: 50
+    max_length_out: 50
+    mask_prob: 0.3
+    use_ul2: true
+  emb_all_title2tax:
+    data_source_yaml_path: datasets/product_title_embedding/tahoe-aliexpress-amazon.yaml
+    batch_size: 16
+    max_length: 50
+    max_length_out: 50
+  seqclf_ali_title2tax:
+    data_source_yaml_path: datasets/product_title_seqclf/wish-aliexpress.yaml
+    batch_size: 16
+    max_length: 50
+    label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+raw_cache_dir: /data/junwang/.cache/general
+overwrite_cache: false
+predict_on_test: true
+num_workers: 8
+multiple_trainloader_mode: max_size_cycle

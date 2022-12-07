@@ -1,0 +1,17 @@
+train:
+  - path: data/wish_products/Wish_Meta_Val.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix: "categorize Aliexpress product: "
+val:
+  - path: data/wish_products/Wish_Meta_Val.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix: "categorize Aliexpress product: "
+test:
+  - path: data/wish_products/wish-mturk-labelled-09202022-clean.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix: "categorize Aliexpress product: "
+preprocess:
+  transform: bidirectional

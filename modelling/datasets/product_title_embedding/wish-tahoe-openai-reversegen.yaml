@@ -1,0 +1,18 @@
+train:
+  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_OpenaiReverseCreated.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+val:
+  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_OpenaiReverseCreated.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "
+test:
+  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_OpenaiReverseCreated.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+    task_prefix_input: "Embed product: "
+    task_prefix_output: "Embed taxonomy: "

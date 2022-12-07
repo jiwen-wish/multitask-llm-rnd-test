@@ -1,0 +1,12 @@
+train:
+  - path: data/amazon/All_Amazon_Meta_Train_Clean.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+val:
+  - path: data/amazon/All_Amazon_Meta_Val_Clean.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+test:
+  - path: data/amazon/All_Amazon_Meta_Test_Clean.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null

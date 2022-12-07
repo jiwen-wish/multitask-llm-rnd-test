@@ -1,0 +1,12 @@
+train:
+  - path: data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Train.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+val:
+  - path: data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Val.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
+test:
+  - path: data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Test.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
