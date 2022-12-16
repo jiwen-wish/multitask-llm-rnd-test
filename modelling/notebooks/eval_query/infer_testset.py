@@ -1,26 +1,27 @@
 import subprocess
 import os 
+os.environ['CUDA_VISIBLE_DEVICES'] = '6'
 
 main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 # configurable
-model_relpath = "models/product_title_multitask_multimodal/version_1/epoch=0-step=75000.ckpt"
-model_config_relpath = "models/product_title_multitask_multimodal/version_1/config.yaml"
-model_task = "clm_singlemodal_wishtitle2pseudov121tax"
+model_relpath = "models/product_title_multitask_multimodal/version_2/epoch=1-step=42540.ckpt"
+model_config_relpath = "models/product_title_multitask_multimodal/version_2/config.yaml"
+model_task = "clm_singlemodal_wishquery2pseudov121tax"
 tax_constraint_relpath = "datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt"
 num_beams = 3
 num_return_sequences = 3
 max_new_tokens = 50
-output_dir_relpath = "models/product_title_multitask_multimodal/version_1"
+output_dir_relpath = "models/product_title_multitask_multimodal/version_2"
 data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test.yaml"
 data_source_type = "dvc"
 model_name = "t5-base"
-batch_size = 1
+batch_size = 10
 max_length = 50
 max_length_out = 50
 num_workers = 0
-device = "gpu"
-strategy = "ddp"
+device = "cpu"
+strategy = None
 
 if __name__ == "__main__":
     strategy_args = [] if strategy is None else [ 
