@@ -1,0 +1,4 @@
+test:
+  - path: data/query_label/processed/Offshore_Labelled_Query_Classification_Test.json
+    repo: git@github.com:junwang-wish/query_understanding_data.git
+    rev: null
