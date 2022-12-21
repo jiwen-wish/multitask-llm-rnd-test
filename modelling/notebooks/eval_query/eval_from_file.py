@@ -126,6 +126,7 @@ df_sub_perf, df_sub_perf_agg = calculate_metrics(df_join_baseline, min_prob, val
         y_true_name="y_true", y_pred_name="y_pred", y_prob_name="y_prob")
 df_sub_perf_baseline, df_sub_perf_agg_baseline = calculate_metrics(df_join_baseline, min_baseline_weight, 
         valid_paths, y_true_name="y_true", y_pred_name="y_baseline", y_prob_name="y_baseline_prob")
+df_join_baseline.to_excel('tmp_testset.xlsx')
 # %%
 langs = """de
 en
