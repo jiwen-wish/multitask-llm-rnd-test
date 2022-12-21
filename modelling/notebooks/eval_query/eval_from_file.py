@@ -14,7 +14,7 @@ main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test.yaml"
 data_split = "test"
 data_source_type = "dvc"
-inference_output_relpath = "models/product_title_multitask_multimodal/version_1/clm-epoch=0-step=75000--wish_labelled_query_offshore_test--test.json"
+inference_output_relpath = "models/product_title_multitask_multimodal/version_2/clm-epoch=2-step=80080--wish_labelled_query_offshore_test--test.json"
 num_return_sequences = 3
 tax_data_config = {
     "path": "data/taxonomy/wish_newtax.json",
@@ -28,7 +28,7 @@ baseline_data_config = {
 }
 min_prob = -1
 min_baseline_weight = -1
-eval_top_k = 3
+eval_top_k = 1000
 
 # if __name__ == "__main__":
 #     pass
@@ -1737,6 +1737,7 @@ en
 en
 en""".split('\n')
 df_join_baseline['lang'] = langs
+#%%
 df_join_baseline_en = df_join_baseline[df_join_baseline.lang == 'en']
 df_sub_perf_en, df_sub_perf_agg_en = calculate_metrics(df_join_baseline_en, min_prob, valid_paths, 
         y_true_name="y_true", y_pred_name="y_pred", y_prob_name="y_prob")
@@ -1754,3 +1755,5 @@ df_join_baseline_en = pd.DataFrame(recs)
 # %%
 df_join_baseline_en.to_excel('tmp_test_eval.xlsx')
 # %%
+df_sub_perf_agg_en, df_sub_perf_agg_baseline_en
+#%%

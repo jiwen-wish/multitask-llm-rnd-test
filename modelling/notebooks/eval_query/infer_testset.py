@@ -1,14 +1,14 @@
 import subprocess
 import os 
-os.environ['CUDA_VISIBLE_DEVICES'] = '6'
+# os.environ['CUDA_VISIBLE_DEVICES'] = '6'
 
 main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 # configurable
-model_relpath = "models/product_title_multitask_multimodal/version_2/epoch=1-step=42540.ckpt"
+model_relpath = "models/product_title_multitask_multimodal/version_2/epoch=2-step=80080.ckpt"
 model_config_relpath = "models/product_title_multitask_multimodal/version_2/config.yaml"
 model_task = "clm_singlemodal_wishquery2pseudov121tax"
-tax_constraint_relpath = "datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt"
+tax_constraint_relpath = "datasets/taxonomy/wish_v1.2.1_newtax_leafpaths.txt"
 num_beams = 3
 num_return_sequences = 3
 max_new_tokens = 50
@@ -20,8 +20,9 @@ batch_size = 10
 max_length = 50
 max_length_out = 50
 num_workers = 0
-device = "cpu"
-strategy = None
+length_penalty = 0
+device = "gpu"
+strategy = "ddp"
 
 if __name__ == "__main__":
     strategy_args = [] if strategy is None else [ 
@@ -40,6 +41,7 @@ if __name__ == "__main__":
             '--model.allowed_gen_sequences', tax_constraint_relpath,
             '--model.num_beams', str(num_beams), 
             '--model.num_return_sequences', str(num_return_sequences), 
+            '--model.length_penalty', str(length_penalty),
             '--model.do_sample', "false",
             '--model.length_penalty', str(0), # for proper sequence probs
             '--model.max_new_tokens', str(max_new_tokens),
