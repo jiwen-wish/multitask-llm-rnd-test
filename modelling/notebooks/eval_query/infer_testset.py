@@ -48,6 +48,8 @@ if __name__ == "__main__":
             '--model.output_dir', output_dir_relpath,
             '--model.write_interval', 'batch',
             '--data', 'JSONListData',
+            '--data.overwrite_cache', 'true',
+            '--data.force_download_hfdata', 'true',
             '--data.llm_type', 'clm',
             '--data.data_source_yaml_path', data_config_relpath, 
             '--data.input_dict', "{'template': '{query}', 'task_prefix': 'Generate taxonomy for query: '}",
