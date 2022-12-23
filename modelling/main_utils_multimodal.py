@@ -14,6 +14,7 @@ import time
 import multiprocessing
 import torch
 import pytorch_lightning as pl
+from pytorch_lightning.utilities import rank_zero_only
 from torch import utils
 import pandas as pd
 from tqdm import tqdm
@@ -852,6 +853,22 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
         for task in self.datamodules:
             self.datamodules[task].setup(stage)
     
+    @rank_zero_only
+    def log_sample_batch(self, split, task):
+        logging.info(f"\n\n==> Example {split} sample for {task}: ")
+        sample_batch = self.datamodules[task].ds[split][:1]
+        try:
+            for i in sample_batch:
+                if "input_ids" in i or "labels" in i:
+                    tmp = deepcopy(sample_batch[i])
+                    tmp[tmp<0] = 0
+                    logging.info("> " + i + ": " + self.datamodules[task].tokenizer.batch_decode(tmp)[0])
+                else:
+                    logging.info("> " + i + ": " + str(sample_batch[i]))
+        except Exception as e:
+            logging.error(e)
+            logging.info(sample_batch)
+
     def train_dataloader(self):
         outs = {}
         for task in self.datamodules:
@@ -861,19 +878,7 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                     batch_size=self.hparams.multitask_dict[task]['batch_size'], 
                     shuffle=True, num_workers=self.hparams.num_workers, pin_memory=True
                 )
-                logging.info(f"\n\n==> Example train sample for {task}: ")
-                sample_batch = self.datamodules[task].ds['train'][:1]
-                try:
-                    for i in sample_batch:
-                        if "input_ids" in i or "labels" in i:
-                            tmp = deepcopy(sample_batch[i])
-                            tmp[tmp<0] = 0
-                            logging.info("> " + i + ": " + self.datamodules[task].tokenizer.batch_decode(tmp)[0])
-                        else:
-                            logging.info("> " + i + ": " + str(sample_batch[i]))
-                except Exception as e:
-                    logging.error(e)
-                    logging.info(sample_batch)
+                self.log_sample_batch('train', task)
         return CombinedLoader(outs, mode=self.hparams.multiple_trainloader_mode)
 
     def val_dataloader(self):
@@ -886,19 +891,7 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                     batch_size=self.hparams.multitask_dict[task]['batch_size'], 
                     shuffle=shuffle, num_workers=self.hparams.num_workers, pin_memory=True
                 )
-                logging.info(f"\n\n==> Example val sample for {task}: ")
-                sample_batch = self.datamodules[task].ds['val'][:1]
-                try:
-                    for i in sample_batch:
-                        if "input_ids" in i or "labels" in i:
-                            tmp = deepcopy(sample_batch[i])
-                            tmp[tmp<0] = 0
-                            logging.info("> " + i + ": " + self.datamodules[task].tokenizer.batch_decode(tmp)[0])
-                        else:
-                            logging.info("> " + i + ": " + str(sample_batch[i]))
-                except Exception as e:
-                    logging.error(e)
-                    logging.info(sample_batch)
+                self.log_sample_batch('val', task)
         return CombinedLoader(outs, mode=self.hparams.multiple_trainloader_mode)
 
     def test_dataloader(self):
@@ -911,19 +904,7 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                     batch_size=self.hparams.multitask_dict[task]['batch_size'], 
                     shuffle=shuffle, num_workers=self.hparams.num_workers, pin_memory=True
                 )
-                logging.info(f"\n\n==> Example test sample for {task}: ")
-                sample_batch = self.datamodules[task].ds['test'][:1]
-                try:
-                    for i in sample_batch:
-                        if "input_ids" in i or "labels" in i:
-                            tmp = deepcopy(sample_batch[i])
-                            tmp[tmp<0] = 0
-                            logging.info("> " + i + ": " + self.datamodules[task].tokenizer.batch_decode(tmp)[0])
-                        else:
-                            logging.info("> " + i + ": " + str(sample_batch[i]))
-                except Exception as e:
-                    logging.error(e)
-                    logging.info(sample_batch)
+                self.log_sample_batch('test', task)
         return CombinedLoader(outs, mode=self.hparams.multiple_trainloader_mode)
     
     def predict_dataloader(self):
@@ -940,17 +921,5 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                     batch_size=self.hparams.multitask_dict[task]['batch_size'], 
                     shuffle=False, num_workers=self.hparams.num_workers, pin_memory=True
                 )
-                logging.info(f"\n\n==> Example test sample for predict: ")
-                sample_batch = self.datamodules[task].ds[key][:1]
-                try:
-                    for i in sample_batch:
-                        if "input_ids" in i or "labels" in i:
-                            tmp = deepcopy(sample_batch[i])
-                            tmp[tmp<0] = 0
-                            logging.info("> " + i + ": " + self.datamodules[task].tokenizer.batch_decode(tmp)[0])
-                        else:
-                            logging.info("> " + i + ": " + str(sample_batch[i]))
-                except Exception as e:
-                    logging.error(e)
-                    logging.info(sample_batch)
+                self.log_sample_batch(key, task)
         return CombinedLoader(outs, mode=self.hparams.multiple_trainloader_mode)
