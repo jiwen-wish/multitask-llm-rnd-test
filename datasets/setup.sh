@@ -7,4 +7,4 @@ git clone git@github.com:ContextLogic/pyhive_utilities.git $HOME/pyhive_utilitie
 # install python deps for pyhive
 pip install -r $HOME/pyhive_utilities/requirements.txt
 # install chromium and its driver for web scraping
-sudo apt-get install -y chromium chromium-driver
+sudo apt-get update && sudo apt-get install -y chromium chromium-driver
