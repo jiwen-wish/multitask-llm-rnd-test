@@ -1,0 +1,4 @@
+outs:
+- md5: ec9d1754cfa6604f3f590c5c6885af6a
+  size: 25270692239
+  path: All_Amazon_Review_5.json.gz

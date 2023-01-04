@@ -1,0 +1,4 @@
+outs:
+- md5: 82ff1e93e07852a44eef86ef40148ddd
+  size: 1682802
+  path: shopping_queries_dataset_sources.csv

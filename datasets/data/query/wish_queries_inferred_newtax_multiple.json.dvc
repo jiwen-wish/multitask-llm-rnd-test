@@ -1,0 +1,4 @@
+outs:
+- md5: 17b2d5b65255c9dc7d251a87bd633567
+  size: 1740551798
+  path: wish_queries_inferred_newtax_multiple.json

@@ -1,0 +1,4 @@
+outs:
+- md5: 49ed197e8fadca83ae56c3e73a8b150b
+  size: 131688832
+  path: duplicates.txt

@@ -1,0 +1,4 @@
+outs:
+- md5: 05214c42457661ba53da20c13d391fa4
+  size: 3618626
+  path: wish-mturk-labelled-09202022-clean-joinedlance-openai_reverse_fewshot_inferred.json

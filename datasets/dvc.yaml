@@ -1,0 +1,342 @@
+stages:
+  download_top_used_wish_queries:
+    cmd: python data/query/top_used_wish_queries.py
+    deps:
+    - data/query/top_used_wish_queries.py
+    params:
+    - download_wish_queries.end
+    - download_wish_queries.start
+    outs:
+    - data/query/top_used_wish_queries.json
+  download_wish_queries_with_timestamp:
+    cmd: python data/query/queries_with_timestamp.py
+    deps:
+    - data/query/queries_with_timestamp.py
+    params:
+    - download_wish_queries_with_timestamp.start
+    - download_wish_queries_with_timestamp.end
+    outs:
+    - data/query/wish_queries_with_timestamp.json
+  sample_top_used_wish_queries_offshore:
+    cmd: python data/query/sample_top_used_wish_queries_offshore.py
+    deps:
+    - data/query/sample_top_used_wish_queries_offshore.py
+    - data/query/top_used_wish_queries.json
+    params:
+    - sample_wish_queries_offshore.amount
+    - sample_wish_queries_offshore.head_ratio
+    outs:
+    - data/query/top_used_wish_queries_offshore_sample_100000.json
+    - data/query/top_used_wish_queries_offshore_sample_100000.xlsx
+  download_wish_queries_with_inferred_newtax:
+    cmd: python data/query/infer_query_new_taxonomy.py
+    params:
+    - infer_wish_queries_new_taxonomy.date
+    outs:
+    - data/query/wish_queries_inferred_newtax.json
+  download_wish_newtax:
+    cmd: python data/taxonomy/fetch_wish_new_tax.py
+    params:
+    - infer_wish_queries_new_taxonomy.tax_version
+    outs:
+    - data/taxonomy/wish_newtax.json
+  download_wish_categories:
+    cmd: python data/wish_products/download_wish_products_data.py
+    deps:
+    - data/wish_products/download_wish_products_data.py
+    outs:
+    - data/wish_products/wishproducts.pkl
+  download_wish_truetag_info_mapping:
+    cmd: python data/wish_products_truetag_tahoe/download_wish_truetag_info.py
+    deps:
+    - data/wish_products_truetag_tahoe/download_wish_truetag_info.py
+    outs:
+    - data/wish_products_truetag_tahoe/true_tag_info.json
+  download_wish_truetag_tahoe_categories:
+    cmd: python data/wish_products_truetag_tahoe/download_wish_truetag_tahoe_data.py
+    deps:
+    - data/wish_products_truetag_tahoe/true_tag_info.json
+    - data/wish_products_truetag_tahoe/download_wish_truetag_tahoe_data.py
+    params:
+    - download_wish_truetag_tahoe_categories.date
+    outs:
+    - data/wish_products_truetag_tahoe/wishproducts_truetag_tahoe.json.gz
+  download_wish_clipmore_tahoe:
+    cmd: python data/wish_clipmore/download_peterhull_clip_20221109.py
+    deps:
+    - data/wish_products_truetag_tahoe/true_tag_info.json
+    - data/wish_clipmore/download_peterhull_clip_20221109.py
+    params:
+    - download_wish_truetag_tahoe_categories.date
+    outs:
+    - data/wish_clipmore/wishproducts_clipmore_tahoe.json.gz
+  process_wish_clipmore_tahoe:
+    cmd: python notebooks/preprocess/process_wish_tahoe_clipmore.py
+    deps:
+    - notebooks/preprocess/process_wish_tahoe_clipmore.py
+    - data/wish_clipmore/wishproducts_clipmore_tahoe.json.gz
+    - data/taxonomy/wish_newtax.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_Dedup.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_Dedup.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_Dedup.json
+    outs:
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup.json
+  further_process_wish_clipmore_tahoe:
+    cmd: python notebooks/preprocess/further_process_wish_tahoe_clipmore.py
+    deps:
+    - notebooks/preprocess/further_process_wish_tahoe_clipmore.py
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup.json
+    outs:
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup_Clean.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup_Clean.json
+  join_wish_clipmore_tahoe_clean_with_multitaskv01_pseudo:
+    cmd: python notebooks/preprocess/join_clipmore_with_multitaskv0.1_pseudolabel.py
+    deps:
+    - notebooks/preprocess/join_clipmore_with_multitaskv0.1_pseudolabel.py
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup_Clean.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup_Clean.json
+    outs:
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup_Clean_JoinPseudo.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup_Clean_JoinPseudo.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup_Unclean_JoinPseudo_Val.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup_Unclean_JoinPseudo_Test.json
+  resplit_clipmore_tahoe_clean_joined_pseudo_train:
+    cmd: python notebooks/preprocess/resplit_clipmore_clean_joined_pseudolabel_train.py
+    deps:
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo.json
+    - notebooks/preprocess/resplit_clipmore_clean_joined_pseudolabel_train.py
+    outs:
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo_Resplit_Train.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo_Resplit_Val.json
+    - data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo_Resplit_Test.json
+  download_stratified_sample_wish_truetag_tahoe_categories:
+    cmd: python data/wish_products_truetag_tahoe/stratify_sample_wish_truetag_tahoe_data_download.py
+    deps:
+    - data/wish_products_truetag_tahoe/true_tag_info.json
+    - data/wish_products_truetag_tahoe/stratify_sample_wish_truetag_tahoe_data_download.py
+    params:
+    - download_wish_truetag_tahoe_categories.date
+    outs:
+    - data/wish_products_truetag_tahoe/wishproducts_truetag_tahoe_stratsample.json
+  download_wish_tahoe_offshore_labelled:
+    cmd: python data/wish_products_internallabel/download_wish_offshore_labelled.py
+    deps:
+    - data/wish_products_internallabel/download_wish_offshore_labelled.py
+    params:
+    - wish_products_offshore_join_product_tahoe.date
+    outs:
+    - data/wish_products_internallabel/wish_products_offshore_labelled.json
+  process_wish_tahoe_offshore_labelled:
+    cmd: python notebooks/preprocess/process_wish_offshore_labelled_10062022.py
+    deps: 
+    - notebooks/preprocess/process_wish_offshore_labelled_10062022.py
+    - data/wish_products_internallabel/wish_products_offshore_labelled.json
+    - data/taxonomy/wish_newtax.json
+    params:
+    - wish_products_offshore_join_product_tahoe.date
+    outs:
+    - data/wish_products_internallabel/wish_products_offshore_labelled_processed.json
+  process_wish_tahoe_offshore_labelled_validated:
+    cmd: python notebooks/preprocess/process_wish_offshore_labelled_validated_10202022.py
+    deps:
+    - notebooks/preprocess/process_wish_offshore_labelled_validated_10202022.py
+    - data/wish_products_internallabel/Internal-Label-Validation-10202022.xlsx
+    - data/taxonomy/wish_newtax.json
+    outs:
+    - data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed.json
+  add_clip_to_wish_tahoe_offshore_labelled_validated:
+    cmd: python notebooks/clip/add_clip_embedding.py
+    deps:
+    - notebooks/clip/add_clip_embedding.py
+    - data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed.json
+    outs:
+    - data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed_wclip.json
+  process_wish_categories:
+    cmd: python notebooks/preprocess/process_wish_product_categories.py
+    deps:
+    - notebooks/preprocess/process_wish_product_categories.py
+    - data/wish_products/wishproducts.pkl
+    outs:
+    - data/wish_products/Wish_Meta_Test.json
+    - data/wish_products/Wish_Meta_Train.json
+    - data/wish_products/Wish_Meta_Val.json
+  process_wish_inferred_query_tax_categories:
+    cmd: python notebooks/preprocess/process_inferred_wish_query_tax.py
+    deps:
+    - notebooks/preprocess/process_inferred_wish_query_tax.py
+    - data/query/wish_queries_inferred_newtax.json
+    - data/taxonomy/wish_newtax.json
+    outs:
+    - data/query/Inferred_Wish_Query_Meta_Test.json
+    - data/query/Inferred_Wish_Query_Meta_Train.json
+    - data/query/Inferred_Wish_Query_Meta_Val.json
+  process_multiple_wish_inferred_query_tax_categories:
+    cmd: python notebooks/preprocess/process_multiple_inferred_wish_query_tax.py
+    deps:
+    - notebooks/preprocess/process_multiple_inferred_wish_query_tax.py
+    - data/query/wish_queries_inferred_newtax.json
+    - data/query/wish_queries_inferred_newtax_multiple.json
+    - data/taxonomy/wish_newtax.json
+    outs:
+    - data/query/Inferred_Multiple_Wish_Query_Meta_Test.json
+    - data/query/Inferred_Multiple_Wish_Query_Meta_Train.json
+    - data/query/Inferred_Multiple_Wish_Query_Meta_Val.json
+  process_amazon_categories:
+    cmd: python notebooks/preprocess/process_amazon_product_categories.py
+    deps:
+    - notebooks/preprocess/process_amazon_product_categories.py
+    - data/amazon/All_Amazon_Meta.json.gz
+    outs:
+    - data/amazon/All_Amazon_Meta_Test.json
+    - data/amazon/All_Amazon_Meta_Train.json
+    - data/amazon/All_Amazon_Meta_Val.json
+    params:
+    - process_amazon_categories.max_depth
+    - process_amazon_categories.max_unique_cats
+  clean_amazon_categories:
+    cmd: python notebooks/preprocess/clean_amazon_product_categories.py
+    deps:
+    - notebooks/preprocess/clean_amazon_product_categories.py
+    - data/amazon/All_Amazon_Meta_Test.json
+    - data/amazon/All_Amazon_Meta_Train.json
+    - data/amazon/All_Amazon_Meta_Val.json
+    outs:
+    - data/amazon/All_Amazon_Meta_Test_Clean.json
+    - data/amazon/All_Amazon_Meta_Train_Clean.json
+    - data/amazon/All_Amazon_Meta_Val_Clean.json
+  process_amazon_esci_queries:
+    cmd: python notebooks/preprocess/process_amazon_esci_queries.py
+    deps:
+    - notebooks/preprocess/process_amazon_esci_queries.py
+    - data/amazon/All_Amazon_Meta_Test_Clean.json
+    - data/amazon/All_Amazon_Meta_Train_Clean.json
+    - data/amazon/All_Amazon_Meta_Val_Clean.json
+    - data/amazon_query/shopping_queries_dataset_examples.parquet
+    - data/amazon_query/shopping_queries_dataset_products.parquet
+    outs:
+    - data/amazon_query/Amazon_ESCI_Query_Test.json
+    - data/amazon_query/Amazon_ESCI_Query_Train.json
+    - data/amazon_query/Amazon_ESCI_Query_Val.json
+  subselect_amazon_esci_queries_uslocale:
+    cmd: python notebooks/preprocess/subselect_amazon_esci_queries_uslocale.py
+    deps:
+    - notebooks/preprocess/subselect_amazon_esci_queries_uslocale.py
+    - data/amazon_query/Amazon_ESCI_Query_Test.json
+    - data/amazon_query/Amazon_ESCI_Query_Train.json
+    - data/amazon_query/Amazon_ESCI_Query_Val.json
+    outs:
+    - data/amazon_query/Amazon_ESCI_Query_Test_USLOCALE.json
+    - data/amazon_query/Amazon_ESCI_Query_Train_USLOCALE.json
+    - data/amazon_query/Amazon_ESCI_Query_Val_USLOCALE.json
+  process_aliexpress_categories:
+    cmd: python notebooks/preprocess/process_aliexpress_product_categories.py
+    deps:
+    - notebooks/preprocess/process_aliexpress_product_categories.py
+    - data/aliexpress/aliexpress_train_val_test_cat.pkl
+    outs:
+    - data/aliexpress/Aliexpress_Meta_Test.json
+    - data/aliexpress/Aliexpress_Meta_Train.json
+    - data/aliexpress/Aliexpress_Meta_Val.json
+  process_wish_products_mturk_test:
+    cmd: python notebooks/preprocess/process_wish_mturk_labelled_09202022.py
+    deps:
+    - notebooks/preprocess/process_wish_mturk_labelled_09202022.py
+    - data/wish_products/wish-mturk-labelled-09202022.xlsx
+    outs:
+    - data/wish_products/wish-mturk-labelled-09202022-clean.json
+  process_wish_truetag_tahoe_categories:
+    cmd: python notebooks/preprocess/process_wish_truetag_tahoe_categories.py
+    deps:
+    - notebooks/preprocess/process_wish_truetag_tahoe_categories.py
+    - data/wish_products_truetag_tahoe/wishproducts_truetag_tahoe.json.gz
+    outs:
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test.json
+  dedup_wish_truetag_tahoe_categories:
+    cmd: bash notebooks/preprocess/dedup_wish_truetag_tahoe_bytitle.sh
+    deps:
+    - notebooks/preprocess/dedup_wish_truetag_tahoe_bytitle.sh
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test.json
+    outs:
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_Dedup.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_Dedup.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_Dedup.json
+  process_wish_truetag_tahoe_openai_inferred_new_tax:
+    cmd: python notebooks/preprocess/process_openai_inferred_wish_truetag_tahoe_categories.py
+    deps:
+    - data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json
+    - data/taxonomy/wish_newtax.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_OpenaiInferred.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_OpenaiInferred.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_OpenaiInferred.json
+    outs: 
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_OpenaiInferred_Processed.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_OpenaiInferred_Processed.json
+    - data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_OpenaiInferred_Processed.json
+  join_wish_products_mturk_test_with_lance_model:
+    cmd: python notebooks/preprocess/join_lance_model_pred_wish_mturk_labelled_09202022.py
+    deps: 
+    - data/wish_products/wish-mturk-labelled-09202022-clean.json
+    outs:
+    - data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json
+  convert_newtax_to_data:
+    cmd: python notebooks/preprocess/convert_newtax_to_dataset.py
+    deps:
+    - notebooks/preprocess/convert_newtax_to_dataset.py
+    - data/taxonomy/wish_newtax.json
+    outs:
+    - data/taxonomy/wish_newtax_converted_to_data.json
+  transform_mave_to_titleonly_genre_format:
+    cmd: python data/mave_attr_extract/clean_transform_mave_to_titleonly_genre_format.py
+    deps:
+    - data/mave_attr_extract/clean_transform_mave_to_titleonly_genre_format.py
+    - data/mave_attr_extract/mave_positives.jsonl
+    - data/mave_attr_extract/mave_negatives.jsonl
+    outs:
+    - data/mave_attr_extract/mave_positives_titleonly_genreformat.json
+    - data/mave_attr_extract/mave_negatives_titleonly_genreformat.json
+  process_mave_titleonly_genre_format_to_trainvaltest:
+    cmd: python notebooks/preprocess/process_mave_titleonly_genreformat_to_traindevtest.py
+    deps:
+    - notebooks/preprocess/process_mave_titleonly_genreformat_to_traindevtest.py
+    - data/amazon/All_Amazon_Meta_Test_Clean.json
+    - data/amazon/All_Amazon_Meta_Train_Clean.json
+    - data/amazon/All_Amazon_Meta_Val_Clean.json
+    - data/mave_attr_extract/mave_positives_titleonly_genreformat.json
+    - data/mave_attr_extract/mave_negatives_titleonly_genreformat.json
+    outs:
+    - data/mave_attr_extract/Mave_Title_GENRE_Train.json
+    - data/mave_attr_extract/Mave_Title_GENRE_Val.json
+    - data/mave_attr_extract/Mave_Title_GENRE_Test.json
+  process_wish_query_100k_googlescrape:
+    cmd: python notebooks/preprocess/process_wish_query_100K_googlescrape.py
+    deps:
+    - notebooks/preprocess/process_wish_query_100K_googlescrape.py
+    - data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch.json
+    outs:
+    - data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Train.json
+    - data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Val.json
+    - data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Test.json
+  
+  process_wish_query_all_googlescrape:
+    cmd: python notebooks/preprocess/process_wish_query_all_googlescrape.py
+    deps:
+    - notebooks/preprocess/process_wish_query_all_googlescrape.py
+    - data/query/top_used_wish_queries_offshore_scraped_googlesearch.json
+    outs:
+    - data/query/top_used_wish_queries_offshore_scraped_googlesearch_Train.json
+    - data/query/top_used_wish_queries_offshore_scraped_googlesearch_Val.json
+    - data/query/top_used_wish_queries_offshore_scraped_googlesearch_Test.json

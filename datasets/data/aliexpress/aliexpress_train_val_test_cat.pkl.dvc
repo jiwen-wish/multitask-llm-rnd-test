@@ -1,0 +1,4 @@
+outs:
+- md5: 751e7c6255e4e16071495e4bd82ca47d
+  size: 12847322329
+  path: aliexpress_train_val_test_cat.pkl

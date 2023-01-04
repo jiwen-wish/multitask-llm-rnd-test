@@ -1,0 +1,9 @@
+/shopping_queries_dataset_examples.parquet
+/shopping_queries_dataset_products.parquet
+/shopping_queries_dataset_sources.csv
+/Amazon_ESCI_Query_Test.json
+/Amazon_ESCI_Query_Train.json
+/Amazon_ESCI_Query_Val.json
+/Amazon_ESCI_Query_Test_USLOCALE.json
+/Amazon_ESCI_Query_Train_USLOCALE.json
+/Amazon_ESCI_Query_Val_USLOCALE.json

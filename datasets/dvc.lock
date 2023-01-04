@@ -1,0 +1,697 @@
+schema: '2.0'
+stages:
+  process_amazon_categories:
+    cmd: python notebooks/preprocess/process_amazon_product_categories.py
+    deps:
+    - path: data/amazon/All_Amazon_Meta.json.gz
+      md5: d6e888adb8ee74873385415ef6e7d616
+      size: 12327618560
+    - path: notebooks/preprocess/process_amazon_product_categories.py
+      md5: f19db214b01b040366fb178efdb618db
+      size: 2491
+    params:
+      params.yaml:
+        process_amazon_categories.max_depth: 5
+        process_amazon_categories.max_unique_cats: 6037
+    outs:
+    - path: data/amazon/All_Amazon_Meta_Test.json
+      md5: c1a5719be4f011e02304cc5021a7a623
+      size: 19933064
+    - path: data/amazon/All_Amazon_Meta_Train.json
+      md5: 80caf17659e3c374175dad2e00580672
+      size: 3949166383
+    - path: data/amazon/All_Amazon_Meta_Val.json
+      md5: 8841d68abe70cdd5ba623d0ce63f9733
+      size: 19923097
+  download_top_used_wish_queries:
+    cmd: python data/query/top_used_wish_queries.py
+    deps:
+    - path: data/query/top_used_wish_queries.py
+      md5: a39928b77669487a094cbc38a5167858
+      size: 3339
+    params:
+      params.yaml:
+        download_wish_queries.end: '2022-05-02'
+        download_wish_queries.start: '2021-04-01'
+    outs:
+    - path: data/query/top_used_wish_queries.json
+      md5: 7194ad041c1f73c5e4a16734b8cad7e3
+      size: 47589429
+  process_aliexpress_categories:
+    cmd: python notebooks/preprocess/process_aliexpress_product_categories.py
+    deps:
+    - path: data/aliexpress/aliexpress_train_val_test_cat.pkl
+      md5: 751e7c6255e4e16071495e4bd82ca47d
+      size: 12847322329
+    - path: notebooks/preprocess/process_aliexpress_product_categories.py
+      md5: e367ad0368c9ae2c1e3644f083225a3e
+      size: 1958
+    outs:
+    - path: data/aliexpress/Aliexpress_Meta_Test.json
+      md5: dd0fdc5e13c60ec39682e27135d7d6ca
+      size: 116923234
+    - path: data/aliexpress/Aliexpress_Meta_Train.json
+      md5: 7d2ee2f1b789f9b8e3a1a16381e57fea
+      size: 4785275581
+    - path: data/aliexpress/Aliexpress_Meta_Val.json
+      md5: 20dab29958d905c20deb2da88d2ea545
+      size: 114221880
+  download_wish_categories:
+    cmd: python data/wish_products/download_wish_products_data.py
+    deps:
+    - path: data/wish_products/download_wish_products_data.py
+      md5: 420506847e35e1fdde59cf46bbc61cd1
+      size: 4247
+    outs:
+    - path: data/wish_products/wishproducts.pkl
+      md5: 985a0aa30b1bf14ee6a7689324be48b1
+      size: 13668806896
+  process_wish_categories:
+    cmd: python notebooks/preprocess/process_wish_product_categories.py
+    deps:
+    - path: data/wish_products/wishproducts.pkl
+      md5: 985a0aa30b1bf14ee6a7689324be48b1
+      size: 13668806896
+    - path: notebooks/preprocess/process_wish_product_categories.py
+      md5: 225357a9ea025aede173f7434596045f
+      size: 1953
+    outs:
+    - path: data/wish_products/Wish_Meta_Test.json
+      md5: b7cbf188d1bf3fa56888a92222e56918
+      size: 68848156
+    - path: data/wish_products/Wish_Meta_Train.json
+      md5: 25f97434b11811806e449091329e73cd
+      size: 7591290167
+    - path: data/wish_products/Wish_Meta_Val.json
+      md5: febadff5b134327a0f25248f1b45d7b2
+      size: 42066045
+  process_wish_products_mturk_test:
+    cmd: python notebooks/preprocess/process_wish_mturk_labelled_09202022.py
+    deps:
+    - path: data/wish_products/wish-mturk-labelled-09202022.xlsx
+      md5: caf0fa4d1c252e68182bf3f17d0a5606
+      size: 15631488
+    - path: notebooks/preprocess/process_wish_mturk_labelled_09202022.py
+      md5: 820b25fcee490ccada0456cf2ca8b9b2
+      size: 974
+    outs:
+    - path: data/wish_products/wish-mturk-labelled-09202022-clean.json
+      md5: 89d78a958b3a01e12d0a1a1b96b86e22
+      size: 2634254
+  download_wish_truetag_info_mapping:
+    cmd: python data/wish_products_truetag_tahoe/download_wish_truetag_info.py
+    deps:
+    - path: data/wish_products_truetag_tahoe/download_wish_truetag_info.py
+      md5: e0dd2d67306d4a1ac82d6c9ce32f3e17
+      size: 2980
+    outs:
+    - path: data/wish_products_truetag_tahoe/true_tag_info.json
+      md5: 5f6745e474ed7841eb23cbf3308ff211
+      size: 136182
+  download_wish_truetag_tahoe_categories:
+    cmd: python data/wish_products_truetag_tahoe/download_wish_truetag_tahoe_data.py
+    deps:
+    - path: data/wish_products_truetag_tahoe/download_wish_truetag_tahoe_data.py
+      md5: 57178d562b0488f2f18e4a529ecaeb38
+      size: 3568
+    - path: data/wish_products_truetag_tahoe/true_tag_info.json
+      md5: 5f6745e474ed7841eb23cbf3308ff211
+      size: 136182
+    params:
+      params.yaml:
+        download_wish_truetag_tahoe_categories.date: '20220920'
+    outs:
+    - path: data/wish_products_truetag_tahoe/wishproducts_truetag_tahoe.json.gz
+      md5: def616cdfd8de1e64a345e7dfa42a879
+      size: 41431977148
+  process_wish_truetag_tahoe_categories:
+    cmd: python notebooks/preprocess/process_wish_truetag_tahoe_categories.py
+    deps:
+    - path: data/wish_products_truetag_tahoe/wishproducts_truetag_tahoe.json.gz
+      md5: def616cdfd8de1e64a345e7dfa42a879
+      size: 41431977148
+    - path: notebooks/preprocess/process_wish_truetag_tahoe_categories.py
+      md5: b8cf909329e274c355d8133f74cca074
+      size: 2682
+    outs:
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test.json
+      md5: 77ccada8496c9e8fa53f14395f8adf16
+      size: 2810833
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train.json
+      md5: 4b5ca057594a7f5f27bd8b44a33cdf3b
+      size: 56932893132
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val.json
+      md5: 4f4360dd4991d8c9ebf574d1adf2eb0d
+      size: 2841703
+  download_wish_newtax:
+    cmd: python data/taxonomy/fetch_wish_new_tax.py
+    params:
+      params.yaml:
+        infer_wish_queries_new_taxonomy.tax_version: v1.2.1
+    outs:
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+  download_wish_queries_with_inferred_newtax:
+    cmd: python data/query/infer_query_new_taxonomy.py
+    params:
+      params.yaml:
+        infer_wish_queries_new_taxonomy.date: '20220920'
+    outs:
+    - path: data/query/wish_queries_inferred_newtax.json
+      md5: 5eed88893fb2c03400b7bc0434e9e374
+      size: 336769756
+  process_wish_inferred_query_tax_categories:
+    cmd: python notebooks/preprocess/process_inferred_wish_query_tax.py
+    deps:
+    - path: data/query/wish_queries_inferred_newtax.json
+      md5: 5eed88893fb2c03400b7bc0434e9e374
+      size: 336769756
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+    - path: notebooks/preprocess/process_inferred_wish_query_tax.py
+      md5: 0cbfa8e84b98ccc16762ab921775dc84
+      size: 1692
+    outs:
+    - path: data/query/Inferred_Wish_Query_Meta_Test.json
+      md5: 6391cb4e11a4a6691786d88f7aa98394
+      size: 16874800
+    - path: data/query/Inferred_Wish_Query_Meta_Train.json
+      md5: 63d04af0a75ea2306a0a392569ac5477
+      size: 303760658
+    - path: data/query/Inferred_Wish_Query_Meta_Val.json
+      md5: 1529427e56bfe46a3644a44e6d27c70d
+      size: 16883757
+  join_wish_products_mturk_test_with_lance_model:
+    cmd: python notebooks/preprocess/join_lance_model_pred_wish_mturk_labelled_09202022.py
+    deps:
+    - path: data/wish_products/wish-mturk-labelled-09202022-clean.json
+      md5: 89d78a958b3a01e12d0a1a1b96b86e22
+      size: 2634254
+    outs:
+    - path: data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json
+      md5: d8360970535ec4e134dcb8973b8b55a1
+      size: 3627376
+  process_wish_truetag_tahoe_openai_inferred_new_tax:
+    cmd: python notebooks/preprocess/process_openai_inferred_wish_truetag_tahoe_categories.py
+    deps:
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+    - path: data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json
+      md5: d8360970535ec4e134dcb8973b8b55a1
+      size: 3627376
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_OpenaiInferred.json
+      md5: f6e17b5ba115954530419b267bc5afa1
+      size: 342824
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_OpenaiInferred.json
+      md5: 705a76edc5fe5c0090a51f9e149312e6
+      size: 190845105
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_OpenaiInferred.json
+      md5: 0eed419db64af99d21b8886bde6f96b3
+      size: 373063
+    outs:
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_OpenaiInferred_Processed.json
+      md5: 1833320895e1f13eb7bd5191695d49e2
+      size: 122510
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_OpenaiInferred_Processed.json
+      md5: 20541c6cd199f56b3c42fc960c9539be
+      size: 65143277
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_OpenaiInferred_Processed.json
+      md5: 9e403ddfa1bf4fb23f2fd2f58fe94637
+      size: 133420
+  download_wish_tahoe_offshore_labelled:
+    cmd: python data/wish_products_internallabel/download_wish_offshore_labelled.py
+    deps:
+    - path: data/wish_products_internallabel/download_wish_offshore_labelled.py
+      md5: bd7464e9a2daed23d00e38ec73fee2fd
+      size: 4654
+    params:
+      params.yaml:
+        wish_products_offshore_join_product_tahoe.date: '20220920'
+    outs:
+    - path: data/wish_products_internallabel/wish_products_offshore_labelled.json
+      md5: 8503a8d4e741b9a08f839ae6ef657ff9
+      size: 70583070
+  process_wish_tahoe_offshore_labelled:
+    cmd: python notebooks/preprocess/process_wish_offshore_labelled_10062022.py
+    deps:
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+    - path: data/wish_products_internallabel/wish_products_offshore_labelled.json
+      md5: 8503a8d4e741b9a08f839ae6ef657ff9
+      size: 70583070
+    - path: notebooks/preprocess/process_wish_offshore_labelled_10062022.py
+      md5: 0ef54d45e0bfbc76eb97cb79e073e9c8
+      size: 1490
+    params:
+      params.yaml:
+        wish_products_offshore_join_product_tahoe.date: '20220920'
+    outs:
+    - path: data/wish_products_internallabel/wish_products_offshore_labelled_processed.json
+      md5: 3202b88bcc1a9a5538d37e6864720850
+      size: 90365185
+  download_stratified_sample_wish_truetag_tahoe_categories:
+    cmd: python data/wish_products_truetag_tahoe/stratify_sample_wish_truetag_tahoe_data_download.py
+    deps:
+    - path: data/wish_products_truetag_tahoe/stratify_sample_wish_truetag_tahoe_data_download.py
+      md5: 211645beac6270889270a6b47c0ade8e
+      size: 3604
+    - path: data/wish_products_truetag_tahoe/true_tag_info.json
+      md5: 5f6745e474ed7841eb23cbf3308ff211
+      size: 136182
+    params:
+      params.yaml:
+        download_wish_truetag_tahoe_categories.date: '20220920'
+    outs:
+    - path: data/wish_products_truetag_tahoe/wishproducts_truetag_tahoe_stratsample.json
+      md5: 28543f6bbbd797005d0ea66751b15509
+      size: 10026295
+  convert_newtax_to_data:
+    cmd: python notebooks/preprocess/convert_newtax_to_dataset.py
+    deps:
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+    - path: notebooks/preprocess/convert_newtax_to_dataset.py
+      md5: 927a3fe33b55efd00e0ccc4f57ebe7b2
+      size: 794
+    outs:
+    - path: data/taxonomy/wish_newtax_converted_to_data.json
+      md5: 06f61dcb0c473116bd1163221a841832
+      size: 1914705
+  process_wish_tahoe_offshore_labelled_validated:
+    cmd: python notebooks/preprocess/process_wish_offshore_labelled_validated_10202022.py
+    deps:
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+    - path: data/wish_products_internallabel/Internal-Label-Validation-10202022.xlsx
+      md5: ba77b021857fedccb81fe815d83fc58c
+      size: 997595
+    - path: notebooks/preprocess/process_wish_offshore_labelled_validated_10202022.py
+      md5: 7e13d424e49284726fb7926026e8aeb6
+      size: 1506
+    outs:
+    - path: data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed.json
+      md5: d26ce91b652739544b0d2c5cfa0295fa
+      size: 516809
+  sample_top_used_wish_queries_offshore:
+    cmd: python data/query/sample_top_used_wish_queries_offshore.py
+    deps:
+    - path: data/query/sample_top_used_wish_queries_offshore.py
+      md5: 93ac1beb943e9491a5b403a625583e83
+      size: 1105
+    - path: data/query/top_used_wish_queries.json
+      md5: 7194ad041c1f73c5e4a16734b8cad7e3
+      size: 47589429
+    params:
+      params.yaml:
+        sample_wish_queries_offshore.amount: 100000
+        sample_wish_queries_offshore.head_ratio: 0.8
+    outs:
+    - path: data/query/top_used_wish_queries_offshore_sample_100000.json
+      md5: 85bb2ed158d49d2a6d9b15c2f42c58f9
+      size: 9819201
+    - path: data/query/top_used_wish_queries_offshore_sample_100000.xlsx
+      md5: 870395a27cac8de2562bf6d1ec215be8
+      size: 4627171
+  transform_mave_to_titleonly_genre_format:
+    cmd: python data/mave_attr_extract/clean_transform_mave_to_titleonly_genre_format.py
+    deps:
+    - path: data/mave_attr_extract/clean_transform_mave_to_titleonly_genre_format.py
+      md5: feba0093268555d81ce7cf75fe246058
+      size: 9632
+    - path: data/mave_attr_extract/mave_negatives.jsonl
+      md5: 0ff0bb809173000efdd71dd879fb3698
+      size: 1719637590
+    - path: data/mave_attr_extract/mave_positives.jsonl
+      md5: 6acfa20c135fed965f301a284753ae97
+      size: 3785984315
+    outs:
+    - path: data/mave_attr_extract/mave_negatives_titleonly_genreformat.json
+      md5: 260915cc5b300c689b9f03152f5d6e37
+      size: 405986027
+    - path: data/mave_attr_extract/mave_positives_titleonly_genreformat.json
+      md5: b8b618a171c6508782369a5916512ea1
+      size: 638041450
+  process_mave_titleonly_genre_format_to_trainvaltest:
+    cmd: python notebooks/preprocess/process_mave_titleonly_genreformat_to_traindevtest.py
+    deps:
+    - path: data/amazon/All_Amazon_Meta_Test_Clean.json
+      md5: 98b8f3046d4873341c7f7dbdd72d6c49
+      size: 19920353
+    - path: data/amazon/All_Amazon_Meta_Train_Clean.json
+      md5: b4f89b07fc515364f2d5a16a06296df2
+      size: 3946901969
+    - path: data/amazon/All_Amazon_Meta_Val_Clean.json
+      md5: 2c257eaefb31d3c802c463bd72cbc619
+      size: 19911609
+    - path: data/mave_attr_extract/mave_negatives_titleonly_genreformat.json
+      md5: 260915cc5b300c689b9f03152f5d6e37
+      size: 405986027
+    - path: data/mave_attr_extract/mave_positives_titleonly_genreformat.json
+      md5: b8b618a171c6508782369a5916512ea1
+      size: 638041450
+    - path: notebooks/preprocess/process_mave_titleonly_genreformat_to_traindevtest.py
+      md5: 0bdb101194fbbe3a334e96f2e0722872
+      size: 2398
+    outs:
+    - path: data/mave_attr_extract/Mave_Title_GENRE_Test.json
+      md5: 201db7d4449d7216404d6e9f81eb28c6
+      size: 4891427
+    - path: data/mave_attr_extract/Mave_Title_GENRE_Train.json
+      md5: c7724385021aa3de5acbf2abe6e641fd
+      size: 1119443680
+    - path: data/mave_attr_extract/Mave_Title_GENRE_Val.json
+      md5: 9692d99983f5239a4f63662654ad8bbc
+      size: 4823186
+  clean_amazon_categories:
+    cmd: python notebooks/preprocess/clean_amazon_product_categories.py
+    deps:
+    - path: data/amazon/All_Amazon_Meta_Test.json
+      md5: c1a5719be4f011e02304cc5021a7a623
+      size: 19933064
+    - path: data/amazon/All_Amazon_Meta_Train.json
+      md5: 80caf17659e3c374175dad2e00580672
+      size: 3949166383
+    - path: data/amazon/All_Amazon_Meta_Val.json
+      md5: 8841d68abe70cdd5ba623d0ce63f9733
+      size: 19923097
+    - path: notebooks/preprocess/clean_amazon_product_categories.py
+      md5: 44f2baa0d4aa4d611afbb7d2837ba57d
+      size: 2673
+    outs:
+    - path: data/amazon/All_Amazon_Meta_Test_Clean.json
+      md5: 98b8f3046d4873341c7f7dbdd72d6c49
+      size: 19920353
+    - path: data/amazon/All_Amazon_Meta_Train_Clean.json
+      md5: b4f89b07fc515364f2d5a16a06296df2
+      size: 3946901969
+    - path: data/amazon/All_Amazon_Meta_Val_Clean.json
+      md5: 2c257eaefb31d3c802c463bd72cbc619
+      size: 19911609
+  process_amazon_esci_queries:
+    cmd: python notebooks/preprocess/process_amazon_esci_queries.py
+    deps:
+    - path: data/amazon/All_Amazon_Meta_Test_Clean.json
+      md5: 98b8f3046d4873341c7f7dbdd72d6c49
+      size: 19920353
+    - path: data/amazon/All_Amazon_Meta_Train_Clean.json
+      md5: b4f89b07fc515364f2d5a16a06296df2
+      size: 3946901969
+    - path: data/amazon/All_Amazon_Meta_Val_Clean.json
+      md5: 2c257eaefb31d3c802c463bd72cbc619
+      size: 19911609
+    - path: data/amazon_query/shopping_queries_dataset_examples.parquet
+      md5: c6ef7f084a36a1db71b2307eca514fd3
+      size: 51286808
+    - path: data/amazon_query/shopping_queries_dataset_products.parquet
+      md5: 643409c5de5c86de3181053a50c8dad5
+      size: 1108857465
+    - path: notebooks/preprocess/process_amazon_esci_queries.py
+      md5: c50dd4b769962d02b22cd81b71642e75
+      size: 3855
+    outs:
+    - path: data/amazon_query/Amazon_ESCI_Query_Test.json
+      md5: bc4d380dc8cdcc7cb0f30ef26a124e26
+      size: 357117946
+    - path: data/amazon_query/Amazon_ESCI_Query_Train.json
+      md5: 44a3062c4044b0f575281de2ed7fc828
+      size: 874062455
+    - path: data/amazon_query/Amazon_ESCI_Query_Val.json
+      md5: ff1e573dcc4fa23a92752841e4b1fb86
+      size: 218317097
+  subselect_amazon_esci_queries_uslocale:
+    cmd: python notebooks/preprocess/subselect_amazon_esci_queries_uslocale.py
+    deps:
+    - path: data/amazon_query/Amazon_ESCI_Query_Test.json
+      md5: bc4d380dc8cdcc7cb0f30ef26a124e26
+      size: 357117946
+    - path: data/amazon_query/Amazon_ESCI_Query_Train.json
+      md5: 44a3062c4044b0f575281de2ed7fc828
+      size: 874062455
+    - path: data/amazon_query/Amazon_ESCI_Query_Val.json
+      md5: ff1e573dcc4fa23a92752841e4b1fb86
+      size: 218317097
+    - path: notebooks/preprocess/subselect_amazon_esci_queries_uslocale.py
+      md5: 8045aff05a60acce6fd9600bcfabf197
+      size: 1204
+    outs:
+    - path: data/amazon_query/Amazon_ESCI_Query_Test_USLOCALE.json
+      md5: 519311989bcd2dab14bbf90451b02105
+      size: 208139979
+    - path: data/amazon_query/Amazon_ESCI_Query_Train_USLOCALE.json
+      md5: 69b514ab5976d00baf15cb9e34a9b1d8
+      size: 546233104
+    - path: data/amazon_query/Amazon_ESCI_Query_Val_USLOCALE.json
+      md5: 95c602b2e74ab50c137fdc46446e3348
+      size: 136443580
+  dedup_wish_truetag_tahoe_categories:
+    cmd: bash notebooks/preprocess/dedup_wish_truetag_tahoe_bytitle.sh
+    deps:
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test.json
+      md5: 77ccada8496c9e8fa53f14395f8adf16
+      size: 2810833
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train.json
+      md5: 4b5ca057594a7f5f27bd8b44a33cdf3b
+      size: 56932893132
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val.json
+      md5: 4f4360dd4991d8c9ebf574d1adf2eb0d
+      size: 2841703
+    - path: notebooks/preprocess/dedup_wish_truetag_tahoe_bytitle.sh
+      md5: dd80207690603da88bbe81f7fae4c599
+      size: 1026
+    outs:
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_Dedup.json
+      md5: b773d2187824fb5a068c9bb6d6e4e792
+      size: 2741921
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_Dedup.json
+      md5: dcf64eca8b5ca664128ff8e109ba2477
+      size: 30148545309
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_Dedup.json
+      md5: 5452b4f5c468c4c7b309cbe858853dd5
+      size: 2772838
+  download_wish_clipmore_tahoe:
+    cmd: python data/wish_clipmore/download_peterhull_clip_20221109.py
+    deps:
+    - path: data/wish_clipmore/download_peterhull_clip_20221109.py
+      md5: 0d24d61751ce9e38cf48cf4ab5f92911
+      size: 4207
+    - path: data/wish_products_truetag_tahoe/true_tag_info.json
+      md5: 5f6745e474ed7841eb23cbf3308ff211
+      size: 136182
+    params:
+      params.yaml:
+        download_wish_truetag_tahoe_categories.date: '20220920'
+    outs:
+    - path: data/wish_clipmore/wishproducts_clipmore_tahoe.json.gz
+      md5: 73cde6a9b6ce6d22de1b3004e33d96cc
+      size: 36579643046
+  process_wish_clipmore_tahoe:
+    cmd: python notebooks/preprocess/process_wish_tahoe_clipmore.py
+    deps:
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+    - path: data/wish_clipmore/wishproducts_clipmore_tahoe.json.gz
+      md5: 73cde6a9b6ce6d22de1b3004e33d96cc
+      size: 36579643046
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_Dedup.json
+      md5: b773d2187824fb5a068c9bb6d6e4e792
+      size: 2741921
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_Dedup.json
+      md5: dcf64eca8b5ca664128ff8e109ba2477
+      size: 30148545309
+    - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_Dedup.json
+      md5: 5452b4f5c468c4c7b309cbe858853dd5
+      size: 2772838
+    - path: notebooks/preprocess/process_wish_tahoe_clipmore.py
+      md5: 38c2047548cfd523fee3efb80f096425
+      size: 3681
+    outs:
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup.json
+      md5: cf4181c4173a71cb3b5db446ca8874b4
+      size: 90599451
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup.json
+      md5: 7c0a1dac5dc0c5055d24a6cf8f2b95cb
+      size: 1826024
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup.json
+      md5: 21d62c73437116447f55820c53f4833f
+      size: 71720208777
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup.json
+      md5: bed103515447fd0a1ebe3b682e18c837
+      size: 1915867
+  further_process_wish_clipmore_tahoe:
+    cmd: python notebooks/preprocess/further_process_wish_tahoe_clipmore.py
+    deps:
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup.json
+      md5: cf4181c4173a71cb3b5db446ca8874b4
+      size: 90599451
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup.json
+      md5: 7c0a1dac5dc0c5055d24a6cf8f2b95cb
+      size: 1826024
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup.json
+      md5: 21d62c73437116447f55820c53f4833f
+      size: 71720208777
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup.json
+      md5: bed103515447fd0a1ebe3b682e18c837
+      size: 1915867
+    - path: notebooks/preprocess/further_process_wish_tahoe_clipmore.py
+      md5: 28e3d1e2982b14037d57b1cfe9dac161
+      size: 3634
+    outs:
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup_Clean.json
+      md5: 4add38d80fb3ba84a912add352577382
+      size: 1825730
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean.json
+      md5: 813fec711cbaa94ee9590d9a1d4153f8
+      size: 71665190214
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup_Clean.json
+      md5: 71362ee12b22e5ab09c11e6978c18045
+      size: 4303388
+  process_wish_query_100k_googlescrape:
+    cmd: python notebooks/preprocess/process_wish_query_100K_googlescrape.py
+    deps:
+    - path: data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch.json
+      md5: 32537bd830fec5306f21b146dc2e8f04
+      size: 2041115398
+    - path: notebooks/preprocess/process_wish_query_100K_googlescrape.py
+      md5: 88b04e11a064fc485ec4dfbcc9b7ab33
+      size: 1520
+    outs:
+    - path: data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Test.json
+      md5: 11a18324a6caa5cc8be3d9a1ea93c16c
+      size: 126186859
+    - path: data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Train.json
+      md5: 19cefea56de7d2696490a38c119d28ae
+      size: 1010470630
+    - path: data/query/top_used_wish_queries_offshore_sample_100000_scraped_googlesearch_Val.json
+      md5: 0360e60007023f1d693f6e85eaea6f7b
+      size: 125826242
+  join_wish_clipmore_tahoe_clean_with_multitaskv01_pseudo:
+    cmd: python notebooks/preprocess/join_clipmore_with_multitaskv0.1_pseudolabel.py
+    deps:
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup.json
+      md5: cf4181c4173a71cb3b5db446ca8874b4
+      size: 90599451
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup_Clean.json
+      md5: 4add38d80fb3ba84a912add352577382
+      size: 1825730
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean.json
+      md5: 813fec711cbaa94ee9590d9a1d4153f8
+      size: 71665190214
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup_Clean.json
+      md5: 71362ee12b22e5ab09c11e6978c18045
+      size: 4303388
+    - path: notebooks/preprocess/join_clipmore_with_multitaskv0.1_pseudolabel.py
+      md5: 4b522b531ab7a496601e9866577365e4
+      size: 3971
+    outs:
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup_Unclean_JoinPseudo_Test.json
+      md5: 38dfaff10772d0f3f897b4ba5dae75b3
+      size: 12055
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Rest_Dedup_Unclean_JoinPseudo_Val.json
+      md5: f195323284d1f29e9dd912073c40cc2e
+      size: 23925
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Test_Dedup_Clean_JoinPseudo.json
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo.json
+      md5: e40ec335ec15b9598c4ebc5ae42aa144
+      size: 21146142153
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Val_Dedup_Clean_JoinPseudo.json
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
+  resplit_clipmore_tahoe_clean_joined_pseudo_train:
+    cmd: python notebooks/preprocess/resplit_clipmore_clean_joined_pseudolabel_train.py
+    deps:
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo.json
+      md5: e40ec335ec15b9598c4ebc5ae42aa144
+      size: 21146142153
+    - path: notebooks/preprocess/resplit_clipmore_clean_joined_pseudolabel_train.py
+      md5: 71ad0247bb116aa9caa959f309c3d6e0
+      size: 1225
+    outs:
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo_Resplit_Test.json
+      md5: b4ed8e95563ee060b8c7d18c894b85b4
+      size: 21533552
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo_Resplit_Train.json
+      md5: 8ec64af89c5c0d78aada8455873fc919
+      size: 21039553501
+    - path: data/wish_clipmore/Wish_Clipmore_Tahoe_Train_Dedup_Clean_JoinPseudo_Resplit_Val.json
+      md5: a4409c65ce7b1be6dca00944f26e15d3
+      size: 85055100
+  add_clip_to_wish_tahoe_offshore_labelled_validated:
+    cmd: python notebooks/clip/add_clip_embedding.py
+    deps:
+    - path: data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed.json
+      md5: d26ce91b652739544b0d2c5cfa0295fa
+      size: 516809
+    - path: notebooks/clip/add_clip_embedding.py
+      md5: 63f4938879da653eef0e143919595e72
+      size: 1635
+    outs:
+    - path: data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed_wclip.json
+      md5: 1a7a94b431997d41348264b6e6fefaf0
+      size: 17018342
+  download_wish_queries_with_timestamp:
+    cmd: python data/query/queries_with_timestamp.py
+    deps:
+    - path: data/query/queries_with_timestamp.py
+      md5: 3ce716a9066631341d326d55b8fc8af2
+      size: 3706
+    params:
+      params.yaml:
+        download_wish_queries_with_timestamp.end: '2022-11-30'
+        download_wish_queries_with_timestamp.start: '2020-01-01'
+    outs:
+    - path: data/query/wish_queries_with_timestamp.json
+      md5: 34d41b72f9400efdc59f051a5d13f431
+      size: 88615145947
+  process_multiple_wish_inferred_query_tax_categories:
+    cmd: python notebooks/preprocess/process_multiple_inferred_wish_query_tax.py
+    deps:
+    - path: data/query/wish_queries_inferred_newtax.json
+      md5: 5eed88893fb2c03400b7bc0434e9e374
+      size: 336769756
+    - path: data/query/wish_queries_inferred_newtax_multiple.json
+      md5: 17b2d5b65255c9dc7d251a87bd633567
+      size: 1740551798
+    - path: data/taxonomy/wish_newtax.json
+      md5: 24d62749f009419d3688e210bce2b9c4
+      size: 868363
+    - path: notebooks/preprocess/process_multiple_inferred_wish_query_tax.py
+      md5: 8e395295880362801f98e162decceb91
+      size: 2346
+    outs:
+    - path: data/query/Inferred_Multiple_Wish_Query_Meta_Test.json
+      md5: 5991c4a3fb381925a3021de6ec316576
+      size: 39650950
+    - path: data/query/Inferred_Multiple_Wish_Query_Meta_Train.json
+      md5: 7c1e808b430baf96b3bd4282303ee046
+      size: 713669351
+    - path: data/query/Inferred_Multiple_Wish_Query_Meta_Val.json
+      md5: 580463be0ca447d60302123a441abb94
+      size: 39659059
+  process_wish_query_all_googlescrape:
+    cmd: python notebooks/preprocess/process_wish_query_all_googlescrape.py
+    deps:
+    - path: data/query/top_used_wish_queries_offshore_scraped_googlesearch.json
+      md5: 83b50ebb8e276d2d368b6c09872987a3
+      size: 7021330207
+    - path: notebooks/preprocess/process_wish_query_all_googlescrape.py
+      md5: 446b8ac63aadafefe72efab62e72ef99
+      size: 1708
+    outs:
+    - path: data/query/top_used_wish_queries_offshore_scraped_googlesearch_Test.json
+      md5: 96c49390cfcc2cc27d8c7acf740cdfc0
+      size: 37463037
+    - path: data/query/top_used_wish_queries_offshore_scraped_googlesearch_Train.json
+      md5: b74d5ca14b59dd1e9fa03de647e23ef0
+      size: 1427213904
+    - path: data/query/top_used_wish_queries_offshore_scraped_googlesearch_Val.json
+      md5: b3a3e77de985d2c504ec7f6bdca7ac8b
+      size: 37513557

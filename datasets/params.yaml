@@ -1,0 +1,32 @@
+download_wish_queries:
+  start: '2021-04-01'
+  end: '2022-05-02'
+
+sample_wish_queries_offshore:
+  amount: 100000
+  head_ratio: 0.8
+
+infer_wish_queries_new_taxonomy:
+  date: '20220920'
+  tax_version: 'v1.2.1'
+
+process_amazon_categories:
+  max_depth: 5
+  max_unique_cats: 6037
+
+download_wish_truetag_tahoe_categories:
+  date: '20220920'
+
+wish_products_offshore_join_product_tahoe:
+  date: '20220920'
+
+download_wish_queries_with_timestamp:
+  start: '2020-01-01'
+  end: '2022-11-30'
+
+download_latest_wish_queries_join_v2_english:
+  country_search_ratios:
+    US: 0.1
+    CA: 0.1
+    GB: 0.1
+    AU: 0.1

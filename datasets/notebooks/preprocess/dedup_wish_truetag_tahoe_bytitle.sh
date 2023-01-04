@@ -1,0 +1,6 @@
+#!/bin/bash -v
+set -x;
+set -e;
+LC_ALL=C cat data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test.json | tqdm | jq -cs 'unique_by(.title) | .[]' | tqdm | awk 'BEGIN{srand();} {printf "%06d %s\n", rand()*1000000, $0;}' | tqdm | sort -S1G -n --parallel 200 | tqdm | cut -c8- | tqdm > data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_Dedup.json
+LC_ALL=C cat data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val.json | tqdm | jq -cs 'unique_by(.title) | .[]' | tqdm | awk 'BEGIN{srand();} {printf "%06d %s\n", rand()*1000000, $0;}' | tqdm | sort -S1G -n --parallel 200 | tqdm | cut -c8- | tqdm > data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_Dedup.json
+LC_ALL=C cat data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train.json | tqdm | jq -cs 'unique_by(.title) | .[]' | tqdm | awk 'BEGIN{srand();} {printf "%06d %s\n", rand()*1000000, $0;}' | tqdm | sort -S1G -n --parallel 200 | tqdm | cut -c8- | tqdm > data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_Dedup.json

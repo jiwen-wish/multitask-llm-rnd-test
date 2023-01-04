@@ -1,0 +1,4 @@
+outs:
+- md5: c6ef7f084a36a1db71b2307eca514fd3
+  size: 51286808
+  path: shopping_queries_dataset_examples.parquet
