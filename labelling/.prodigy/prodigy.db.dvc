@@ -1,0 +1,4 @@
+outs:
+- md5: 9be708a06e6cf89e83d44b56c8f9f5c6
+  size: 28672
+  path: prodigy.db

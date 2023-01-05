@@ -1,0 +1,5 @@
+[core]
+    autostage = true
+    remote = junwang_prodigy_labelling
+['remote "junwang_prodigy_labelling"']
+    url = s3://structured-data-dev/junwang_prodigy_labelling/dvc
