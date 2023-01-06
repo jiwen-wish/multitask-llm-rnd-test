@@ -1,4 +1,6 @@
 dvc[s3]==2.34.0
+langchain==0.0.57
+openai==0.25.0
 matplotlib
 openpyxl
 scikit-learn
