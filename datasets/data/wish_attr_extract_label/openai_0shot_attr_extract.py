@@ -4,13 +4,16 @@ import pandas as pd
 from tqdm import tqdm
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
-llm = OpenAI(model_name='text-davinci-003', temperature=0, max_tokens=2560)
+import time
+llm = OpenAI(model_name='text-davinci-003', temperature=0, max_tokens=468)
 
 # Note: just run this file from its local dir
 
 # path can be changed
 attribute_ontology = pd.read_csv('[ontology] wish_top25L2_attributes - 20221219.csv')
-example_products = pd.read_csv('SDT-871 top25 L2 product text_ 10K product listings - 2023-01-06.csv')
+# shuffle to get diverse data in real time
+example_products = pd.read_csv('SDT-871 top25 L2 product text_ 10K product listings - 2023-01-06.csv').sample(
+    frac=1., random_state=42)
 
 # setup global vars
 l2set = set(attribute_ontology['wish_L2'])
@@ -113,11 +116,13 @@ def zero_shot_attribute_extraction_product_helper(product_title, product_descrip
             if v.lower() in [i.lower() for i in existing_normalized_vals]:
                 product_attr_extract_dict_clean_normalized_clean[k] = v
             else:
-                # update ontology with newly discovered normalized values
-                attribute_ontology.loc[
-                    (attribute_ontology['wish_L2'] == l2) & (attribute_ontology['attribute_name'] == k), 
-                    'example_attribute_value'
-                ] = str(existing_normalized_vals + [v])
+                product_attr_extract_dict_clean_normalized_clean[k] = v
+                # Note: turns out doing this does more harm since normalized value gets large pretty fast
+                # # update ontology with newly discovered normalized values
+                # attribute_ontology.loc[
+                #     (attribute_ontology['wish_L2'] == l2) & (attribute_ontology['attribute_name'] == k), 
+                #     'example_attribute_value'
+                # ] = str(existing_normalized_vals + [v])
         elif isinstance(product_attr_extract_dict_clean_normalized[k], list) and \
                 len(product_attr_extract_dict_clean_normalized[k]) > 0:
             tmp = []
@@ -130,11 +135,13 @@ def zero_shot_attribute_extraction_product_helper(product_title, product_descrip
                     if vi.lower() in [i.lower() for i in existing_normalized_vals]:
                         tmp.append(vi)
                     else:
-                        # update ontology with newly discovered normalized values
-                        attribute_ontology.loc[
-                            (attribute_ontology['wish_L2'] == l2) & (attribute_ontology['attribute_name'] == k), 
-                            'example_attribute_value'
-                        ] = str(existing_normalized_vals + [vi])
+                        tmp.append(vi)
+                        # Note: turns out doing this does more harm since normalized value gets large pretty fast
+                        # # update ontology with newly discovered normalized values
+                        # attribute_ontology.loc[
+                        #     (attribute_ontology['wish_L2'] == l2) & (attribute_ontology['attribute_name'] == k), 
+                        #     'example_attribute_value'
+                        # ] = str(existing_normalized_vals + [vi])
 
     return product_attr_extract_dict_clean, product_attr_extract_dict_clean_normalized
 
@@ -147,17 +154,26 @@ def zero_shot_attribute_extraction_product(product_dict):
     )
 
 # %%
-cnt = 0
-with open('size_10k_25l2_openai_0shot_pseudolabel.json', 'a', buffering=1) as f:
+# cnt = 0
+with open('size_10k_25l2_openai_0shot_pseudolabel.json', 'w', buffering=1) as f:
     for product_dict in tqdm(example_products.to_dict('records')):
-        try:
-            attr, normalized_attr = zero_shot_attribute_extraction_product(product_dict)
-            product_dict['openai0shot_attr'] = attr 
-            product_dict['openai0shot_attr_normalized'] = normalized_attr
-            f.write(json.dumps(product_dict) + '\n')
-        except Exception as e:
-            print(product_dict, e)
-        cnt += 1
-        if cnt % 10 == 1:
-            attribute_ontology.to_csv('[ontology] wish_top25L2_attributes_added_new_normalized_vals.csv', index=False)
-    attribute_ontology.to_csv('[ontology] wish_top25L2_attributes_added_new_normalized_vals.csv', index=False)
+        for _ in range(3):
+            try:
+                attr, normalized_attr = zero_shot_attribute_extraction_product(product_dict)
+                product_dict['openai0shot_attr'] = attr 
+                product_dict['openai0shot_attr_normalized'] = normalized_attr
+                f.write(json.dumps(product_dict) + '\n')
+                break
+            except Exception as e:
+                print(e)
+                if _ != 2:
+                    print('Try again after wait 1s')
+                else:
+                    print('Skip')
+                time.sleep(1)
+
+    #     # skip this since updating ontology in real time does more harm
+    #     cnt += 1
+    #     if cnt % 10 == 1:
+    #         attribute_ontology.to_csv('[ontology] wish_top25L2_attributes_added_new_normalized_vals.csv', index=False)
+    # attribute_ontology.to_csv('[ontology] wish_top25L2_attributes_added_new_normalized_vals.csv', index=False)
