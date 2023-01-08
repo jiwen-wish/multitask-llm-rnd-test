@@ -154,8 +154,10 @@ def zero_shot_attribute_extraction_product(product_dict):
     )
 
 # %%
-# cnt = 0
-with open('size_10k_25l2_openai_0shot_pseudolabel.json', 'w', buffering=1) as f:
+existing_pids = set(pd.read_json('size_10k_25l2_openai_0shot_pseudolabel.json', lines=True)['product_id'].tolist())
+example_products_left = example_products[example_products.product_id.apply(lambda x: x not in existing_pids)]
+print(f"{len(example_products_left)} out of {len(example_products)} products left TODO")
+with open('size_10k_25l2_openai_0shot_pseudolabel.json', 'a', buffering=1) as f:
     for product_dict in tqdm(example_products.to_dict('records')):
         for _ in range(3):
             try:

@@ -1,0 +1,4 @@
+outs:
+- md5: 131d340a736d64708f7899ca1d5d7b9b
+  size: 10759187
+  path: size_10k_25l2_openai_0shot_pseudolabel.json
