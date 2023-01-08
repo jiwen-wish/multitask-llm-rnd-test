@@ -5,7 +5,7 @@ from tqdm import tqdm
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 import time
-llm = OpenAI(model_name='text-davinci-002', temperature=0, max_tokens=468)
+llm = OpenAI(model_name='text-davinci-003', temperature=0, max_tokens=468)
 
 # Note: just run this file from its local dir
 
@@ -159,7 +159,7 @@ example_products_left = example_products[example_products.product_id.apply(lambd
 print(f"{len(example_products_left)} out of {len(example_products)} products left TODO")
 with open('size_10k_25l2_openai_0shot_pseudolabel.json', 'a', buffering=1) as f:
     for product_dict in tqdm(example_products_left.to_dict('records')):
-        for _ in range(3):
+        for _ in range(1):
             try:
                 attr, normalized_attr = zero_shot_attribute_extraction_product(product_dict)
                 product_dict['openai0shot_attr'] = attr 
@@ -168,7 +168,7 @@ with open('size_10k_25l2_openai_0shot_pseudolabel.json', 'a', buffering=1) as f:
                 break
             except Exception as e:
                 print(e)
-                if _ != 2:
+                if _ != 0:
                     print('Try again after wait 1s')
                 else:
                     print('Skip')
