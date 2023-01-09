@@ -1,0 +1,1 @@
+prodigy db-out ner_news_headlines > ./ner_news_headlines_annotations.jsonl
