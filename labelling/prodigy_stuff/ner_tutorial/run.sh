@@ -1,1 +1,1 @@
-PRODIGY_ALLOWED_SESSIONS=hao,hao2,hao3 PRODIGY_LOGGING=basic prodigy ner.manual ner_news_headlines blank:en ./annotated_news_headlines-ORG-PERSON-LOCATION-ner.jsonl --label PERSON,ORG,PRODUCT,LOCATION
+PRODIGY_PORT=8080 PRODIGY_ALLOWED_SESSIONS=hao,hao2,hao3 PRODIGY_LOGGING=basic prodigy ner.manual ner_news_headlines blank:en ./annotated_news_headlines-ORG-PERSON-LOCATION-ner.jsonl --label PERSON,ORG,PRODUCT,LOCATION

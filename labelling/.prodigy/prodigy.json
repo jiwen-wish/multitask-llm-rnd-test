@@ -1,5 +1,12 @@
 {
     "feed_overlap": false,
     "batch_size": 10,
-    "instant_submit": true
+    "instant_submit": true,
+    "custom_theme": {
+        "labels": {
+            "dish": "#ffa9b8",
+            "ingredient": "#d1caff",
+            "equipment": "#00ffff"
+        }
+    }
 }
