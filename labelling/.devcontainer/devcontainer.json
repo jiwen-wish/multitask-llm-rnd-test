@@ -8,9 +8,8 @@
 	},
 	"runArgs": ["--network", "host"],
 	"postCreateCommand": "bash setup.sh",
-	"containerEnv": {
-		"PRODIGY_KEY": "${localEnv:PRODIGY_KEY}"
-	},
-	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
-	"workspaceFolder": "/workspace"
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.bashrc,target=/root/.bashrc,type=bind,consistency=cached"
+	]
 }
