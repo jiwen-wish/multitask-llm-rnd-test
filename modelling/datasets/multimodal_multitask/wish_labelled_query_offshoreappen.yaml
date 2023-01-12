@@ -1,12 +1,12 @@
 train:
-  - path: data/query_label/processed2/Human_Labelled_Query_Classification_Train.json
+  - path: datasets/data/query_label/processed2/Human_Labelled_Query_Classification_Train.json
     repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
 val:
-  - path: data/query_label/processed2/Human_Labelled_Query_Classification_Val.json
+  - path: datasets/data/query_label/processed2/Human_Labelled_Query_Classification_Val.json
     repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
 test:
-  - path: data/query_label/processed2/Human_Labelled_Query_Classification_Test.json
+  - path: datasets/data/query_label/processed2/Human_Labelled_Query_Classification_Test.json
     repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
