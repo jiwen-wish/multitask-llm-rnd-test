@@ -58,7 +58,7 @@ class LLM_MultitaskMultimodal(LLM_Embed):
                     "specs": {
                         "clf_head": "clf_head",
                         "clf_weight_type": "ancestor-high",
-                        "label_map_file": "/workspaces/query_understanding_model/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
+                        "label_map_file": "/workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
                         "label_type": "taxonomy", 
                     }
                 },
@@ -66,7 +66,7 @@ class LLM_MultitaskMultimodal(LLM_Embed):
                     "specs": {
                         "clf_head": "clf_head",
                         "clf_weight_type": "ancestor-high",
-                        "label_map_file": "/workspaces/query_understanding_model/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
+                        "label_map_file": "/workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
                         "label_type": "taxonomy", 
                     }
                 },
