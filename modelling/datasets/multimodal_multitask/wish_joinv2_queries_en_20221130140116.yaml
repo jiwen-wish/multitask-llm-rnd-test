@@ -1,4 +1,4 @@
 test:
-  - path: data/query_join_v2/joinv2_queries_en_20221130140116.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/query_join_v2/joinv2_queries_en_20221130140116.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null

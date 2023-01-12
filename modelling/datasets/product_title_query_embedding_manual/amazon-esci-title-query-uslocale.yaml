@@ -1,18 +1,18 @@
 train:
-  - path: data/amazon_query/Amazon_ESCI_Query_Train_USLOCALE.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/amazon_query/Amazon_ESCI_Query_Train_USLOCALE.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
     task_prefix_input: "Embed product: "
     task_prefix_output: "Embed query: "
 val:
-  - path: data/amazon_query/Amazon_ESCI_Query_Val_USLOCALE.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/amazon_query/Amazon_ESCI_Query_Val_USLOCALE.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
     task_prefix_input: "Embed product: "
     task_prefix_output: "Embed query: "
 test:
-  - path: data/amazon_query/Amazon_ESCI_Query_Test_USLOCALE.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/amazon_query/Amazon_ESCI_Query_Test_USLOCALE.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
     task_prefix_input: "Embed product: "
     task_prefix_output: "Embed query: "

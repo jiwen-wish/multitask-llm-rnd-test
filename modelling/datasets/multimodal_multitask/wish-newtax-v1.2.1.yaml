@@ -1,4 +1,4 @@
 test:
-  - path: data/taxonomy/wish_newtax_converted_to_data.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/taxonomy/wish_newtax_converted_to_data.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null

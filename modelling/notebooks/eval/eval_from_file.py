@@ -60,7 +60,7 @@ def get_df_outfile(dataset):
         df_data = pd.read_json(
             dvc.api.get_url(
                 'data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json',
-                repo='git@github.com:junwang-wish/query_understanding_data.git'
+                repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
             ), lines=True
         )
         output_file = os.path.join(os.path.dirname(__file__), 'eval_mturk.xlsx')
@@ -68,7 +68,7 @@ def get_df_outfile(dataset):
         df_data = pd.read_json(
             dvc.api.get_url(
                 'data/wish_products_internallabel/wish_products_offshore_labelled_processed.json',
-                repo='git@github.com:junwang-wish/query_understanding_data.git'
+                repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
             ), lines=True
         )
         output_file = os.path.join(os.path.dirname(__file__), 'eval_offshore.xlsx')
@@ -76,7 +76,7 @@ def get_df_outfile(dataset):
         df_data = pd.read_json(
             dvc.api.get_url(
                 'data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed.json',
-                repo='git@github.com:junwang-wish/query_understanding_data.git'
+                repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
             ), lines=True
         )
         output_file = os.path.join(os.path.dirname(__file__), 'eval_offshore_validated.xlsx')

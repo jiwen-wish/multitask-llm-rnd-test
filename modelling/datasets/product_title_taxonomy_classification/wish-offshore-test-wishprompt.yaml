@@ -1,6 +1,6 @@
 test:
-  - path: data/wish_products_internallabel/wish_products_offshore_labelled_processed.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/wish_products_internallabel/wish_products_offshore_labelled_processed.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
     task_prefix: "categorize Wish product: "
 preprocess:

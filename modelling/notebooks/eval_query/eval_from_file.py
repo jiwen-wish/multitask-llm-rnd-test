@@ -19,12 +19,12 @@ inference_output_relpath = "models/product_title_multitask_multimodal/version_2/
 num_return_sequences = 3
 tax_data_config = {
     "path": "data/taxonomy/wish_newtax.json",
-    "repo": "git@github.com:junwang-wish/query_understanding_data.git",
+    "repo": "git@github.com:ContextLogic/multitask-llm-rnd.git",
     "rev": None
 }
 baseline_data_config = {
     "path": "data/query/wish_queries_inferred_newtax.json",
-    "repo": "git@github.com:junwang-wish/query_understanding_data.git",
+    "repo": "git@github.com:ContextLogic/multitask-llm-rnd.git",
     "rev": None
 }
 # don't remove categories if prob/weight too small
