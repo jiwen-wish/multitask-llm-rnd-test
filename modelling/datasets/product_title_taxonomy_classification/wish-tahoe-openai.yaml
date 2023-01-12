@@ -1,16 +1,16 @@
 train:
-  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_OpenaiInferred_Processed.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Train_OpenaiInferred_Processed.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: v0.5
     task_prefix: "categorize Wish product: "
 val:
-  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_OpenaiInferred_Processed.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Val_OpenaiInferred_Processed.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: v0.5
     task_prefix: "categorize Wish product: "
 test:
-  - path: data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_OpenaiInferred_Processed.json
-    repo: git@github.com:junwang-wish/query_understanding_data.git
+  - path: datasets/data/wish_products_truetag_tahoe/Wish_Truetag_Tahoe_Meta_Test_OpenaiInferred_Processed.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: v0.5
     task_prefix: "categorize Wish product: "
 preprocess:

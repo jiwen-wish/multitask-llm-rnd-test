@@ -48,7 +48,7 @@ def perf_eval_util_emb(df_pred, df_pred_tax, df_data, version, distance_func):
     df_taxname = pd.read_json(
         dvc.api.get_url(
             'data/taxonomy/wish_newtax_converted_to_data.json',
-            repo='git@github.com:junwang-wish/query_understanding_data.git'
+            repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
         ), lines=True
     )
 

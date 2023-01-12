@@ -1,8 +1,8 @@
 train:
-  - path: /workspaces/query_understanding_model/datasets/demo_local/tmp_multimodal_data.json
+  - path: /workspaces/multitask-llm-rnd/modelling/datasets/demo_local/tmp_multimodal_data.json
 val:
-  - path: /workspaces/query_understanding_model/datasets/demo_local/tmp_multimodal_data.json
+  - path: /workspaces/multitask-llm-rnd/modelling/datasets/demo_local/tmp_multimodal_data.json
 test:
-  - path: /workspaces/query_understanding_model/datasets/demo_local/tmp_multimodal_data.json
+  - path: /workspaces/multitask-llm-rnd/modelling/datasets/demo_local/tmp_multimodal_data.json
 predict:
-  - path: /workspaces/query_understanding_model/datasets/demo_local/tmp_multimodal_data.json
+  - path: /workspaces/multitask-llm-rnd/modelling/datasets/demo_local/tmp_multimodal_data.json

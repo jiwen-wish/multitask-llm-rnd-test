@@ -30,7 +30,7 @@ def perf_eval_utils_seqclf(df_pred, df_data, label_map_file, version, decode_met
     df_tax = pd.read_json(
         dvc.api.get_url(
             'data/taxonomy/wish_newtax.json',
-            repo='git@github.com:junwang-wish/query_understanding_data.git'
+            repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
         ), lines=True
     )
     df_tax['category_path'] = df_tax['category_path'].str.lower().str.strip()

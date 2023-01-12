@@ -699,7 +699,7 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
         model_name: str = 't5-base', 
         multitask_dict: dict = {
             "clm_multimodal_clip2wishtitle": {
-                "data_source_yaml_path": "/workspaces/query_understanding_model/datasets/demo_local/demo_local_multimodal_full.yaml",
+                "data_source_yaml_path": "/workspaces/multitask-llm-rnd/modelling/datasets/demo_local/demo_local_multimodal_full.yaml",
                 "batch_size": 16,
                 "max_length": 50,
                 "max_length_out": 50,
@@ -715,7 +715,7 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                 "data_source_type": "local"
             },
             "dlm_multimodal_wishtitlewclip": {
-                "data_source_yaml_path": "/workspaces/query_understanding_model/datasets/demo_local/demo_local_multimodal_full.yaml",
+                "data_source_yaml_path": "/workspaces/multitask-llm-rnd/modelling/datasets/demo_local/demo_local_multimodal_full.yaml",
                 "batch_size": 16,
                 "max_length": 50,
                 "max_length_out": 50,
@@ -731,11 +731,11 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                 "data_source_type": "local"
             },
             "seqclf_multimodal_wishtitlewclip2pseudov121tax": {
-                "data_source_yaml_path": "/workspaces/query_understanding_model/datasets/demo_local/demo_local_multimodal_full.yaml",
+                "data_source_yaml_path": "/workspaces/multitask-llm-rnd/modelling/datasets/demo_local/demo_local_multimodal_full.yaml",
                 "batch_size": 16,
                 "max_length": 50,
                 "max_length_out": 50,
-                "label_map_file": "/workspaces/query_understanding_model/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
+                "label_map_file": "/workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
                 "label_type": "taxonomy", 
                 "llm_type": "seqclf",
                 "input_dict": {
@@ -752,11 +752,11 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                 "data_source_type": "local"
             },
             "seqclf_singlemodal_alititle2v121tax": {
-                "data_source_yaml_path": "/workspaces/query_understanding_model/datasets/demo_local/demo_local_multimodal_full.yaml",
+                "data_source_yaml_path": "/workspaces/multitask-llm-rnd/modelling/datasets/demo_local/demo_local_multimodal_full.yaml",
                 "batch_size": 16,
                 "max_length": 50,
                 "max_length_out": 50,
-                "label_map_file": "/workspaces/query_understanding_model/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
+                "label_map_file": "/workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt",
                 "label_type": "taxonomy", 
                 "llm_type": "seqclf",
                 "input_dict": {
@@ -772,7 +772,7 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                 "data_source_type": "local"
             },
             "emb_singlemodal_wishquery2googletitle": {
-                "data_source_yaml_path": "/workspaces/query_understanding_model/datasets/demo_local/demo_local_multimodal_full.yaml",
+                "data_source_yaml_path": "/workspaces/multitask-llm-rnd/modelling/datasets/demo_local/demo_local_multimodal_full.yaml",
                 "batch_size": 16,
                 "max_length": 50,
                 "max_length_out": 50,
@@ -788,7 +788,7 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                 "data_source_type": "local"
             },
             "emb_singlemodal_amaquery2amatitle_manual": {
-                "data_source_yaml_path": "/workspaces/query_understanding_model/datasets/demo_local/demo_local_multimodal_full.yaml",
+                "data_source_yaml_path": "/workspaces/multitask-llm-rnd/modelling/datasets/demo_local/demo_local_multimodal_full.yaml",
                 "batch_size": 16,
                 "max_length": 50,
                 "max_length_out": 50,
