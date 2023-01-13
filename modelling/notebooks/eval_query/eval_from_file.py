@@ -18,12 +18,12 @@ data_source_type = "dvc"
 inference_output_relpath = "models/product_title_multitask_multimodal/version_2/clm-epoch=2-step=80080--wish_labelled_query_offshore_test--test.json"
 num_return_sequences = 3
 tax_data_config = {
-    "path": "data/taxonomy/wish_newtax.json",
+    "path": "datasets/data/taxonomy/wish_newtax.json",
     "repo": "git@github.com:ContextLogic/multitask-llm-rnd.git",
     "rev": None
 }
 baseline_data_config = {
-    "path": "data/query/wish_queries_inferred_newtax.json",
+    "path": "datasets/data/query/wish_queries_inferred_newtax.json",
     "repo": "git@github.com:ContextLogic/multitask-llm-rnd.git",
     "rev": None
 }
