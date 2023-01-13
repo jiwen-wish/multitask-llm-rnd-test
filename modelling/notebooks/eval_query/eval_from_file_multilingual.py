@@ -9,13 +9,13 @@ from pprint import pprint
 
 
 main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-outfile_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'eval_offshore.xlsx'))
+outfile_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'eval_offshore_multilingual.xlsx'))
 
 # configurable
 data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test.yaml"
 data_split = "test"
 data_source_type = "dvc"
-inference_output_relpath = "models/product_title_multitask_multimodal/version_2/clm-epoch=2-step=80080--wish_labelled_query_offshore_test--test.json"
+inference_output_relpath = "models/multitask_multimodal_multilingual/version_1/clm-epoch=9-step=13000--wish_labelled_query_offshore_test--test.json"
 num_return_sequences = 3
 tax_data_config = {
     "path": "datasets/data/taxonomy/wish_newtax.json",
@@ -34,7 +34,6 @@ min_baseline_weight = -1
 eval_top_k = 10000 
 
 if __name__ == "__main__":
-    pass
 
     #%%
     data_config = yaml.safe_load(open(os.path.join(main_path, data_config_relpath), 'r'))
@@ -131,7 +130,7 @@ if __name__ == "__main__":
             valid_paths, y_true_name="y_true", y_pred_name="y_baseline", y_prob_name="y_baseline_prob")
 
     #%%
-    df_join_baseline_en = df_join_baseline[df_join_baseline.lang == 'en']
+    df_join_baseline_en = df_join_baseline # remove filter when eval multilingual [df_join_baseline.lang == 'en']
     df_sub_perf_en, df_sub_perf_agg_en = calculate_metrics(df_join_baseline_en, min_prob, valid_paths, 
             y_true_name="y_true", y_pred_name="y_pred", y_prob_name="y_prob")
     df_sub_perf_baseline_en, df_sub_perf_agg_baseline_en = calculate_metrics(df_join_baseline_en, min_baseline_weight, 
