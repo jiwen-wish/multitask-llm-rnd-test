@@ -1,0 +1,143 @@
+# pytorch_lightning==1.7.7
+seed_everything: 42
+trainer:
+  logger:
+    class_path: pytorch_lightning.loggers.TensorBoardLogger
+    init_args:
+      save_dir: models
+      name: multitask_multimodal_multilingual
+      version: 3
+      log_graph: false
+      default_hp_metric: true
+      prefix: ''
+      sub_dir: null
+      agg_key_funcs: null
+      agg_default_func: null
+      comment: ''
+      purge_step: null
+      max_queue: 10
+      flush_secs: 120
+      filename_suffix: ''
+  enable_checkpointing: true
+  callbacks:
+  - init_args:
+      dirpath: models/multitask_multimodal_multilingual/version_3
+      filename: null
+      monitor: val_loss
+      verbose: false
+      save_last: null
+      save_top_k: 1
+      save_weights_only: false
+      mode: min
+      auto_insert_metric_name: true
+      every_n_train_steps: null
+      train_time_interval: null
+      every_n_epochs: null
+      save_on_train_epoch_end: null
+    class_path: pytorch_lightning.callbacks.ModelCheckpoint
+  - init_args:
+      logging_interval: step
+      log_momentum: false
+    class_path: pytorch_lightning.callbacks.LearningRateMonitor
+  - init_args:
+      cpu_stats: true
+    class_path: pytorch_lightning.callbacks.DeviceStatsMonitor
+  default_root_dir: models/multitask_multimodal_multilingual
+  gradient_clip_val: null
+  gradient_clip_algorithm: null
+  num_nodes: 1
+  num_processes: null
+  devices: 7
+  gpus: null
+  auto_select_gpus: false
+  tpu_cores: null
+  ipus: null
+  enable_progress_bar: true
+  overfit_batches: 0.0
+  track_grad_norm: -1
+  check_val_every_n_epoch: 1
+  fast_dev_run: false
+  accumulate_grad_batches: null
+  max_epochs: 10
+  min_epochs: null
+  max_steps: -1
+  min_steps: null
+  max_time: null
+  limit_train_batches: null
+  limit_val_batches: null
+  limit_test_batches: null
+  limit_predict_batches: null
+  val_check_interval: null
+  log_every_n_steps: 50
+  accelerator: gpu
+  strategy: deepspeed_stage_2_offload
+  sync_batchnorm: false
+  precision: 32
+  enable_model_summary: true
+  weights_save_path: null
+  num_sanity_val_steps: 0
+  resume_from_checkpoint: models/multitask_multimodal_multilingual/version_0/epoch=9-step=501665.ckpt
+  profiler: null
+  benchmark: null
+  deterministic: true
+  reload_dataloaders_every_n_epochs: 1
+  auto_lr_find: false
+  replace_sampler_ddp: true
+  detect_anomaly: false
+  auto_scale_batch_size: false
+  plugins: null
+  amp_backend: native
+  amp_level: null
+  move_metrics_to_cpu: false
+  multiple_trainloader_mode: min_size
+model:
+  model_name: google/mt5-base
+  weight_decay: 0.1
+  learning_rate: 3.0e-05
+  lr_scheduler_max_steps: null
+  lr_scheduler_type: null
+  lr_scheduler_num_warmup_steps: null
+  load_weights_only: true
+  distance_func: cosine
+  loss_type: cross-entropy
+  manual_loss_type: manual_mse
+  margin: null
+  hidden_states_type: encoder-last
+  add_simcse: false
+  auto_task_weight: false
+  multitask_specs_dict:
+    clm_singlemodal_wishquery2tax: null
+  head_dict: {}
+  return_model: true
+  cache_dir: null
+  force_download: false
+  resume_download: false
+  proxies: null
+  use_auth_token: null
+  local_files_only: false
+  revision: null
+  trust_remote_code: null
+  subfolder: ''
+data:
+  model_name: google/mt5-base
+  multitask_dict:
+    clm_singlemodal_wishquery2tax:
+      data_source_yaml_path: datasets/multimodal_multitask/wish_labelled_query_offshoreappen_and_pseudolabel.yaml
+      batch_size: 10
+      max_length: 50
+      max_length_out: 50
+      llm_type: clm
+      input_dict:
+        template: '{query}'
+        task_prefix: 'Generate taxonomy for query: '
+      output_dict:
+        template: '{category}'
+      data_source_type: dvc
+  raw_cache_dir: /data/junwang/.cache/general
+  overwrite_cache: false
+  force_download_hfdata: false
+  predict_on_test: true
+  predict_on_trainval: null
+  num_workers: 8
+  multiple_trainloader_mode: min_size
+ckpt_path: null
