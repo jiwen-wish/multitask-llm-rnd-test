@@ -1,0 +1,4 @@
+outs:
+- md5: 7abde060127259b77b0e49f3f0d232f4
+  size: 29553615
+  path: events.out.tfevents.1673919517.5edda923ab64.5893.0
