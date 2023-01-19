@@ -138,6 +138,6 @@ data:
   force_download_hfdata: false
   predict_on_test: true
   predict_on_trainval: null
-  num_workers: 8
+  num_workers: 0
   multiple_trainloader_mode: min_size
 ckpt_path: null
