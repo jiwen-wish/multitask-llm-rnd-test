@@ -1,0 +1,12 @@
+train:
+  - path: datasets/data/query_label/processed3/OnlyHuman_Labelled_Query_Classification_Train_DedupOverlap.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+val:
+  - path: datasets/data/query_label/processed3/Human_Labelled_Query_Classification_Val_DedupOverlap.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+test:
+  - path: datasets/data/query_label/processed3/Human_Labelled_Query_Classification_Test_DedupOverlap.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
