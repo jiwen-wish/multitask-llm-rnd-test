@@ -1,0 +1,4 @@
+predict:
+  - path: datasets/data/query/top_used_wish_queries.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
