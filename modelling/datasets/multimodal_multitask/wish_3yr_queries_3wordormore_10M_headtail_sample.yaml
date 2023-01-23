@@ -1,0 +1,4 @@
+predict:
+  - path: datasets/data/query/wish_queries_with_timestamp_3yr_3wordsormore_sample_10M_headtail.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
