@@ -1,0 +1,5 @@
+[core]
+    autostage = true
+    remote = junwang_coeus_inference
+['remote "junwang_coeus_inference"']
+    url = s3://structured-data-dev/junwang_coeus_inference/dvc
