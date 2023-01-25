@@ -1,0 +1,4 @@
+outs:
+- md5: 19afdd474377de7aeabb618b41aec0f7
+  size: 1989942922
+  path: decoder_model.onnx

@@ -1,0 +1,4 @@
+outs:
+- md5: efd840a5b79fcd8dde0100cca3f5470a
+  size: 4309802
+  path: spiece.model
