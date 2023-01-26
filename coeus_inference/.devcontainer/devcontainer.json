@@ -6,7 +6,7 @@
 		"dockerfile": "../Dockerfile",
 		"context": ".."
 	},
-	"runArgs": ["--gpus","\"device=7\""],
+	"runArgs": ["--gpus","all"],
 	"postCreateCommand": "bash setup.sh",
 	"mounts": [
 		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
