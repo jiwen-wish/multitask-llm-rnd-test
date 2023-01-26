@@ -1,6 +1,6 @@
-torch==1.12.1
-torchtext==0.13.1
-torchvision==0.13.1
+torch==1.13.1
+torchtext==0.14.1
+torchvision==0.14.1
 transformers==4.22.2
 datasets==2.5.2
 pytorch-lightning[extra]==1.7.7
