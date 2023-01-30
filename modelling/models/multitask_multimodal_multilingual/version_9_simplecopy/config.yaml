@@ -21,7 +21,7 @@ trainer:
   enable_checkpointing: true
   callbacks:
   - init_args:
-      dirpath: models/multitask_multimodal_multilingual/version_9
+      dirpath: models/multitask_multimodal_multilingual/version_9_simplecopy
       filename: null
       monitor: val_loss
       verbose: false
