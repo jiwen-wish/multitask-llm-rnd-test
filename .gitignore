@@ -1,1 +1,2 @@
 coeus_inference/hf_models/query_classify_v2_optimized
+datasets/data/security_group/security.jsonnet
