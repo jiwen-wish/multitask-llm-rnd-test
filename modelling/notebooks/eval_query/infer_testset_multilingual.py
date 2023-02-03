@@ -5,15 +5,15 @@ import os
 main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 # configurable
-model_relpath = "models/multitask_multimodal_multilingual/version_1/epoch=9-step=13000.ckpt"
-model_config_relpath = "models/multitask_multimodal_multilingual/version_1/config.yaml"
+model_relpath = "models/multitask_multimodal_multilingual/version_9/epoch=1-step=2600.ckpt"
+model_config_relpath = "models/multitask_multimodal_multilingual/version_9/config.yaml"
 model_task = "clm_singlemodal_wishquery2tax"
 tax_constraint_relpath = "datasets/taxonomy/wish_v1.2.1_newtax_leafpaths.txt"
 num_beams = 3
 num_return_sequences = 3
 max_new_tokens = 50
-output_dir_relpath = "models/multitask_multimodal_multilingual/version_1"
-data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test.yaml"
+output_dir_relpath = "models/multitask_multimodal_multilingual/version_9"
+data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test_V2.yaml"
 data_source_type = "dvc"
 model_name = "google/mt5-base"
 batch_size = 10
