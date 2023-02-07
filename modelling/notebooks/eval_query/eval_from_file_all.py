@@ -12,10 +12,11 @@ main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 outfile_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'eval_offshore.xlsx'))
 
 # configurable
-data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test.yaml"
+data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test_V2.yaml"
 data_split = "test"
 data_source_type = "dvc"
-inference_output_relpath = "models/multitask_multimodal_multilingual/version_7/clm-epoch=1-step=88158--wish_labelled_query_offshore_test--test.json"
+# inference_output_relpath = "models/product_title_multitask_multimodal/version_2/clm-epoch=2-step=80080--wish_labelled_query_offshore_test_V2--test.json"
+inference_output_relpath = "models/multitask_multimodal_multilingual/version_9/clm-epoch=1-step=2600--wish_labelled_query_offshore_test_V2--test.json"
 num_return_sequences = 3
 tax_data_config = {
     "path": "datasets/data/taxonomy/wish_newtax.json",
@@ -27,14 +28,7 @@ baseline_data_config = {
     "repo": "git@github.com:ContextLogic/multitask-llm-rnd.git",
     "rev": None
 }
-# don't remove categories if prob/weight too small
-min_prob = 0.05
-min_baseline_weight = .5
-# don't truncate categories if predict more than 3
-eval_top_k = 10000 
 
-# if __name__ == "__main__":
-#     pass
 for use_lang in ['en', 'all']:
     for min_prob, min_baseline_weight in zip([-1, .05], [-1, 1.]):
         for eval_top_k in [1, 10000]:
