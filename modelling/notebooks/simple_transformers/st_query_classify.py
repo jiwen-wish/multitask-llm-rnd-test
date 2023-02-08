@@ -5,59 +5,43 @@ from simpletransformers.classification import (
 import pandas as pd
 import logging
 import numpy as np
-
-
-logging.basicConfig(level=logging.INFO)
+import dvc.api
+import yaml
 transformers_logger = logging.getLogger("transformers")
 transformers_logger.setLevel(logging.WARNING)
 
-# %%
-import dvc.api
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--model_type', help='Transformer model type', type=str, default='xlmroberta')
+parser.add_argument('--data_config', help='Yaml path for train/val data', type=str, required=True)
+parser.add_argument('--load_ckpt', help='Folder path for ckpt', type=str, required=False)
+parser.add_argument('--output_dir', help='Folder path for saving ckpt', type=str, required=False)
+parser.add_argument('--truncate_depth', help='Truncate taxonomy depth at', type=int, required=False)
+args = parser.parse_args()
+print(args)
 
 # %%
-# df_train = pd.concat([
-#     pd.read_json(dvc.api.get_url(
-#         'datasets/data/query_label/processed2/Human_Labelled_Query_Classification_Train.json',
-#         repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
-#     ), lines=True), 
-# ])
-df_train = pd.concat([
-    pd.read_json(dvc.api.get_url(
-        'datasets/data/query_label/processed3/Mixed_Human_Inferred_Query_Classification_Train_DedupOverlap.json',
-        repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
-    ), lines=True), 
-    pd.read_json(dvc.api.get_url(
-        'datasets/data/query_label/processed3/OnlyHuman_Labelled_Query_Classification_Train_DedupOverlap.json',
-        repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
-    ), lines=True), 
-    pd.read_json(dvc.api.get_url(
-        'datasets/data/query_label/processed3/OnlyInferred_Query_Classification_Train_DedupOverlap.json',
-        repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
-    ), lines=True), 
-])
-# df_val = pd.read_json(dvc.api.get_url(
-#     'datasets/data/query_label/processed2/Human_Labelled_Query_Classification_Val.json',
-#     repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
-# ), lines=True)
-df_val = pd.read_json(dvc.api.get_url(
-    'datasets/data/query_label/processed3/Human_Labelled_Query_Classification_Val_DedupOverlap.json',
-    repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
-), lines=True)
-df_test = pd.read_json(dvc.api.get_url(
-    'datasets/data/query_label/processed/Offshore_Labelled_Query_Classification_Test_V2.json',
-    repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
-), lines=True)
+data_config = yaml.safe_load(open(args.data_config, 'r'))
+df_train = pd.concat([pd.read_json(dvc.api.get_url(
+    i['path'],
+    repo=i['repo']
+), lines=True) for i in data_config['train']])
+df_val = pd.concat([pd.read_json(dvc.api.get_url(
+    i['path'],
+    repo=i['repo']
+), lines=True) for i in data_config['val']])
 
 #%%
-df_train['category'] = df_train['category'].apply(lambda x: x.split(' > ')[0])
-df_val['category'] = df_val['category'].apply(lambda x: x.split(' > ')[0])
+df_train['category'] = df_train['category'].apply(lambda x: ' > '.join(x.split(' > ')[:args.truncate_depth]))
+df_val['category'] = df_val['category'].apply(lambda x: ' > '.join(x.split(' > ')[:args.truncate_depth]))
 
 # %%
 df_tax = pd.read_json(dvc.api.get_url(
     'datasets/data/taxonomy/wish_newtax.json',
     repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
 ), lines=True)
-df_tax = df_tax[(df_tax.category_path.apply(len) > 0) & (df_tax.category_path.apply(lambda x: len(x.split(' > ')) == 1))]
+df_tax = df_tax[(df_tax.category_path.apply(len) > 0) & \
+    (df_tax.category_path.apply(lambda x: len(x.split(' > ')) <= args.truncate_depth))]
 
 # %%
 LABEL_SET = sorted(df_tax.category_path.str.lower().str.strip().tolist()) + ['unknown']
@@ -89,14 +73,20 @@ df_val_group['text'] = df_val_group['query']
 # %%
 # Optional model configuration
 model_args = MultiLabelClassificationArgs(
+    no_cache=True,
     num_train_epochs=4, 
     use_multiprocessing=False,
     use_multiprocessing_for_evaluation=False,
+    save_steps=-1,
+    save_model_every_epoch=False,
+    save_eval_checkpoints=False,
     n_gpu=1,
     train_batch_size=100, 
     evaluate_during_training=True,
     evaluate_during_training_verbose=True,
-    use_cached_eval_features=False
+    use_cached_eval_features=False,
+    output_dir=args.output_dir,
+    best_model_dir=f'{args.output_dir}/best_model',
 )
 
 def generate_pos_weight(labels):
@@ -117,22 +107,16 @@ def generate_pos_weight(labels):
 pos_weight = generate_pos_weight(np.array(df_train_group['labels'].tolist()))
 print(pos_weight.tolist())
 model = MultiLabelClassificationModel(
-    "xlmroberta",
-    "xlm-roberta-base",
+    args.model_type,
+    args.load_ckpt,
     num_labels=len(LABEL_NAME_TO_ID),
     pos_weight=pos_weight.tolist(),
     args=model_args,
 )
 
-
-# %%
-# !rm -rf cache_dir  outputs  runs 
-
 # %%
 # Train the model
 model.train_model(train_df=df_train_group, eval_df=df_val_group)
-
-# %%
 
 # Evaluate the model
 result, model_outputs, wrong_predictions = model.eval_model(
