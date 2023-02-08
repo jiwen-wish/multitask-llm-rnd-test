@@ -6,6 +6,7 @@ import pandas as pd
 import logging
 import numpy as np
 import dvc.api
+from tqdm import tqdm
 import yaml
 transformers_logger = logging.getLogger("transformers")
 transformers_logger.setLevel(logging.WARNING)
@@ -65,8 +66,17 @@ def categories2labels(cats):
 # %%
 df_train_group = df_train_group[df_train_group.category.apply(lambda x: '' not in x)]
 df_val_group = df_val_group[df_val_group.category.apply(lambda x: '' not in x)]
-df_train_group['labels'] = df_train_group['category'].apply(categories2labels)
-df_val_group['labels'] = df_val_group['category'].apply(categories2labels)
+
+labs = []
+for i in tqdm(df_train_group['category'].tolist()):
+    labs.append(categories2labels(i))
+df_train_group['labels'] = labs 
+
+labs = []
+for i in tqdm(df_val_group['category'].tolist()):
+    labs.append(categories2labels(i))
+df_val_group['labels'] = labs 
+
 df_train_group['text'] = df_train_group['query']
 df_val_group['text'] = df_val_group['query']
 
@@ -92,7 +102,7 @@ model_args = MultiLabelClassificationArgs(
 def generate_pos_weight(labels):
     n_classes = labels.shape[1]
     pos_weights = np.zeros(n_classes)
-    for i in range(n_classes):
+    for i in tqdm(range(n_classes)):
         class_labels = labels[:, i]
         unique, counts = np.unique(class_labels, return_counts=True)
         class_counts = dict(zip(unique, counts))
