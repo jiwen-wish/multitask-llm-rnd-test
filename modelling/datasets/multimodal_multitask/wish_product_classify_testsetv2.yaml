@@ -1,0 +1,4 @@
+test:
+  - path: data/appen_delivery/diamond_testing_validated.json
+    repo: git@github.com:ContextLogic/listing_classification_data.git
+    rev: null
