@@ -13,11 +13,11 @@ transformers_logger.setLevel(logging.WARNING)
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_type', help='Transformer model type', type=str, default='xlmroberta')
+parser.add_argument('--model_type', help='Transformer model type', type=str, default='xlmroberta', required=False)
 parser.add_argument('--data_config', help='Yaml path for train/val data', type=str, required=True)
-parser.add_argument('--load_ckpt', help='Folder path for ckpt', type=str, required=False)
-parser.add_argument('--output_dir', help='Folder path for saving ckpt', type=str, required=False)
-parser.add_argument('--truncate_depth', help='Truncate taxonomy depth at', type=int, required=False)
+parser.add_argument('--load_ckpt', help='Folder path for ckpt', type=str, required=True)
+parser.add_argument('--output_dir', help='Folder path for saving ckpt', type=str, required=True)
+parser.add_argument('--truncate_depth', help='Truncate taxonomy depth at', type=int, required=True)
 args = parser.parse_args()
 print(args)
 
@@ -49,7 +49,7 @@ LABEL_SET = sorted(df_tax.category_path.str.lower().str.strip().tolist()) + ['un
 
 # %%
 LABEL_NAME_TO_ID = {i: ind for ind, i in enumerate(LABEL_SET)}
-print(LABEL_NAME_TO_ID)
+# print(LABEL_NAME_TO_ID)
 # %%
 df_train_group = df_train.groupby('query').agg({'category': lambda x: [i for i in x]}).reset_index()
 df_val_group = df_val.groupby('query').agg({'category': lambda x: [i for i in x]}).reset_index()
@@ -111,18 +111,23 @@ def generate_pos_weight(labels):
         if 1 not in class_counts:
             class_counts[1] = 1
         pos_weights[i] = class_counts[0] / class_counts[1]
-    return np.log(1 + pos_weights)
+    pos_weights = np.log(1 + pos_weights)
+    return pos_weights
 
 # Create a MultiLabelClassificationModel
-pos_weight = generate_pos_weight(np.array(df_train_group['labels'].tolist()))
-print(pos_weight.tolist())
-model = MultiLabelClassificationModel(
-    args.model_type,
-    args.load_ckpt,
-    num_labels=len(LABEL_NAME_TO_ID),
-    pos_weight=pos_weight.tolist(),
-    args=model_args,
-)
+pos_weight = generate_pos_weight(np.stack([np.array(l) for l in tqdm(df_train_group['labels'])]))
+print('pos_weight stats: ', pos_weight.mean(), pos_weight.min(), pos_weight.max(), np.median(pos_weight))
+try:
+    model = MultiLabelClassificationModel(
+        args.model_type,
+        args.load_ckpt,
+        num_labels=len(LABEL_NAME_TO_ID),
+        pos_weight=pos_weight.tolist(),
+        args=model_args,
+        ignore_mismatched_sizes=True
+    )
+except:
+    import pdb; pdb.set_trace()
 
 # %%
 # Train the model
