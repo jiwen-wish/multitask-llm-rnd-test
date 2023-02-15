@@ -323,7 +323,7 @@ class JSONListData(pl.LightningDataModule):
         if self.hparams.llm_type.startswith('seqclf'):
             assert self.hparams.label_map_file is not None, "seqclf task needs to specify label_map_file"
             # TODO: add more label_type
-            assert self.hparams.label_type is not None and self.hparams.label_type in ["taxonomy"], \
+            assert self.hparams.label_type is not None and self.hparams.label_type in ["taxonomy", "multilabel_taxonomy"], \
                 "seqclf task needs to specify valid label_type"
             self.label_map = {}
             with open(self.hparams.label_map_file, 'r') as f:
@@ -387,6 +387,11 @@ class JSONListData(pl.LightningDataModule):
                 l_s = l_s + " > " + l
                 label[self.label_map[l_s]] = 1
             return label
+        elif label_type == "multilabel_taxonomy":
+            label = [0] * len(self.label_map)
+            for l_s in text.split('\n'):
+                label[self.label_map[l_s]] = 1
+            return label
         else:
             raise NotImplemented()
 
@@ -411,6 +416,11 @@ class JSONListData(pl.LightningDataModule):
                         for lk in self.label_key:
                             if self.hparams.label_type == "taxonomy":
                                 labels = self.get_label_matched_text(" > ".join([i.strip().lower() for i in dat[lk]]))
+                                assert f"labels_{lk}" not in dat
+                                assert isinstance(labels, str)
+                                dat[f"labels_{lk}"] = labels
+                            elif self.hparams.label_type == "multilabel_taxonomy":
+                                labels = '\n'.join([self.get_label_matched_text(i) for i in dat[lk].split('\n')])
                                 assert f"labels_{lk}" not in dat
                                 assert isinstance(labels, str)
                                 dat[f"labels_{lk}"] = labels
