@@ -6,3 +6,7 @@ val:
   - path: modelling/notebooks/query_classify_pseudolabel/wish_queries_with_timestamp_3yr_all_sample_12M_headtail_qcv2_pseudolabel_val.json
     repo: git@github.com:ContextLogic/multitask-llm-rnd.git
     rev: null
+test:
+  - path: modelling/notebooks/query_classify_pseudolabel/wish_queries_with_timestamp_3yr_all_sample_12M_headtail_qcv2_pseudolabel_val.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
