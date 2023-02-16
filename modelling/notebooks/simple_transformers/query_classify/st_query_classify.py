@@ -18,6 +18,8 @@ parser.add_argument('--data_config', help='Yaml path for train/val data', type=s
 parser.add_argument('--load_ckpt', help='Folder path for ckpt', type=str, required=True)
 parser.add_argument('--output_dir', help='Folder path for saving ckpt', type=str, required=True)
 parser.add_argument('--truncate_depth', help='Truncate taxonomy depth at', type=int, required=True)
+parser.add_argument('--n_gpu', help='Number of GPUs', type=int, default=1, required=False)
+parser.add_argument('--num_train_epochs', help='Number of epochs', type=int, default=4, required=False)
 args = parser.parse_args()
 print(args)
 
@@ -84,13 +86,13 @@ df_val_group['text'] = df_val_group['query']
 # Optional model configuration
 model_args = MultiLabelClassificationArgs(
     no_cache=True,
-    num_train_epochs=4, 
+    num_train_epochs=args.num_train_epochs, 
     use_multiprocessing=False,
     use_multiprocessing_for_evaluation=False,
     save_steps=-1,
     save_model_every_epoch=False,
     save_eval_checkpoints=False,
-    n_gpu=1,
+    n_gpu=args.n_gpu,
     train_batch_size=100, 
     evaluate_during_training=True,
     evaluate_during_training_verbose=True,
