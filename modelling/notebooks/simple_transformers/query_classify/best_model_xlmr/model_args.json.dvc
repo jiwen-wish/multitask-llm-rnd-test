@@ -1,0 +1,4 @@
+outs:
+- md5: 62d977911e1b816f19f328b93af8600b
+  size: 2471
+  path: model_args.json

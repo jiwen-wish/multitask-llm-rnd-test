@@ -177,7 +177,7 @@ class LLM_MultitaskMultimodal(LLM_Embed):
             # repeating some code in main_seqclassify.py unfortunately since LLM_SeqClassify was originally designed for single clf_head training
             for task, seqclf_specs in [(i, self.hparams.multitask_specs_dict[i]["specs"]) for i in self.hparams.multitask_specs_dict if i.startswith('seqclf')]:
                 # create label_weight_vector_* for seqclf tasks if clf_weight_type is not None
-                assert seqclf_specs["label_type"] == "taxonomy", "only taxonomy label type is currently implemented"
+                assert seqclf_specs["label_type"] in ["taxonomy", "multilabel_taxonomy"], "only taxonomy label type is currently implemented"
                 label_map = {}
                 with open(seqclf_specs["label_map_file"], 'r') as f:
                     for l in f:
