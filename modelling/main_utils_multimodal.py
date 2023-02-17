@@ -393,7 +393,7 @@ class JSONListData(pl.LightningDataModule):
                 if l_s in self.label_map:
                     label[self.label_map[l_s]] = 1
                 else:
-                    logging.warning(f"{l_s} not in label_map during multilabel_taxonomy text2label conversion")
+                    logging.info(f"{l_s} not in label_map during multilabel_taxonomy text2label conversion, ignore")
             return label
         else:
             raise NotImplemented()
@@ -423,7 +423,8 @@ class JSONListData(pl.LightningDataModule):
                                 assert isinstance(labels, str)
                                 dat[f"labels_{lk}"] = labels
                             elif self.hparams.label_type == "multilabel_taxonomy":
-                                labels = '\n'.join([self.get_label_matched_text(i) for i in dat[lk].split('\n')])
+                                ## skip this step since multilabel can have no label situation
+                                # labels = '\n'.join([self.get_label_matched_text(i) for i in dat[lk].split('\n')])
                                 assert f"labels_{lk}" not in dat
                                 assert isinstance(labels, str)
                                 dat[f"labels_{lk}"] = labels
