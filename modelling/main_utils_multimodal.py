@@ -390,7 +390,10 @@ class JSONListData(pl.LightningDataModule):
         elif label_type == "multilabel_taxonomy":
             label = [0] * len(self.label_map)
             for l_s in text.split('\n'):
-                label[self.label_map[l_s]] = 1
+                if l_s in self.label_map:
+                    label[self.label_map[l_s]] = 1
+                else:
+                    logging.warning(f"{l_s} not in label_map during multilabel_taxonomy text2label conversion")
             return label
         else:
             raise NotImplemented()
