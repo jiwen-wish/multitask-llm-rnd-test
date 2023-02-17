@@ -425,6 +425,7 @@ class JSONListData(pl.LightningDataModule):
                             elif self.hparams.label_type == "multilabel_taxonomy":
                                 ## skip this step since multilabel can have no label situation
                                 # labels = '\n'.join([self.get_label_matched_text(i) for i in dat[lk].split('\n')])
+                                labels = '\n'.join([i.strip().lower() for i in dat[lk].split('\n')])
                                 assert f"labels_{lk}" not in dat
                                 assert isinstance(labels, str)
                                 dat[f"labels_{lk}"] = labels
