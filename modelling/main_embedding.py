@@ -47,23 +47,36 @@ class LLM_Embed(LLM):
         if self.hparams.loss_type in ['pairwise-ranking', 'max-margin']:
             assert self.hparams.margin is not None 
     
-    def encoder_pooling(self, z_, input_ids, attention_mask, bsize):
+    def encoder_pooling(self, z_, input_ids=None, attention_mask=None):
         if self.hparams.hidden_states_type == 'encoder-last':
-            _, eos_indices = torch.where(input_ids == self.tokenizer.eos_token_id)
-            # :bsize in case eos appear twice
-            if eos_indices.size(0) != bsize:
-                logging.warn(f"During forward pass, input_ids contains multiple"
-                f" eos_token per sample: {bsize} samples, but {eos_indices.size(0)} eos_tokens")
-            return z_[torch.arange(bsize).to(z_.device), eos_indices[:bsize]] 
+            assert attention_mask is not None
+            bsize = attention_mask.size(0)
+            if input_ids is None:
+                attention_indices = attention_mask.sum(1)
+                return z_[torch.arange(bsize).to(z_.device), attention_indices] 
+            
+            batch_indices, eos_indices = torch.where(input_ids == self.tokenizer.eos_token_id)
+            if torch.unique(batch_indices).size(0) == bsize and eos_indices.size(0) == bsize:
+                return z_[torch.arange(bsize).to(z_.device), eos_indices]
+            else:
+                logging.warn(f"During forward pass, input_ids contains multiple or zero"
+                    f" eos_token per sample: {bsize} samples, {eos_indices.size(0)} eos_tokens, this is batch_indices {batch_indices}"
+                    " take the last attended embedding per sample"
+                    f" input_ids: {input_ids.detach().cpu().tolist()}"
+                )
+                attention_indices = attention_mask.sum(1)
+                return z_[torch.arange(bsize).to(z_.device), attention_indices] 
         elif self.hparams.hidden_states_type == 'encoder-first':
             return z_[:,0]
         elif self.hparams.hidden_states_type == 'encoder-sum':
             # fill <mask> token as 0.
+            assert attention_mask is not None
             z_no_pad_ = z_.masked_fill((1-attention_mask.unsqueeze(-1)).bool(),0.) 
             return z_no_pad_.sum(1)
         elif self.hparams.hidden_states_type == 'encoder-mean':
-            z_no_pad_ = z_.masked_fill((1-attention_mask.unsqueeze(-1)).bool(),0.) 
             # avg by number of attended tokens
+            assert attention_mask is not None
+            z_no_pad_ = z_.masked_fill((1-attention_mask.unsqueeze(-1)).bool(),0.) 
             return z_no_pad_.sum(1) / attention_mask.sum(1).unsqueeze(1)
         else:
             raise NotImplemented()
@@ -84,9 +97,8 @@ class LLM_Embed(LLM):
             if self.hparams.hidden_states_type == 'decoder-first':
                 return z.decoder_hidden_states[1].squeeze(1)
             elif 'encoder' in self.hparams.hidden_states_type:
-                bsize = input_ids.size(0)
                 z_ = z.encoder_last_hidden_state
-                return self.encoder_pooling(z_, input_ids, attention_mask, bsize)
+                return self.encoder_pooling(z_, input_ids, attention_mask)
         else:
             assert 'encoder' in self.hparams.hidden_states_type
             z = self.transformer(
@@ -94,9 +106,8 @@ class LLM_Embed(LLM):
                 attention_mask = attention_mask,
                 output_hidden_states=True
             )
-            bsize = input_ids.size(0)
             z_ = z.last_hidden_state
-            return self.encoder_pooling(z_, input_ids, attention_mask, bsize)
+            return self.encoder_pooling(z_, input_ids, attention_mask)
 
     def get_errors(self, input_embs, output_embs, pairwise):
         # n x d, n x d -> n x n

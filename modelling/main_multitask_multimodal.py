@@ -268,9 +268,8 @@ class LLM_MultitaskMultimodal(LLM_Embed):
             if self.hparams.hidden_states_type == 'decoder-first':
                 return z.decoder_hidden_states[1].squeeze(1)
             elif 'encoder' in self.hparams.hidden_states_type:
-                bsize = input_ids.size(0)
                 z_ = z.encoder_last_hidden_state
-                return self.encoder_pooling(z_, input_ids, attention_mask, bsize)
+                return self.encoder_pooling(z_, input_ids, attention_mask)
         else:
             assert 'encoder' in self.hparams.hidden_states_type
             if inputs_embeds is not None:
@@ -285,9 +284,8 @@ class LLM_MultitaskMultimodal(LLM_Embed):
                     attention_mask = attention_mask,
                     output_hidden_states=True
                 )
-            bsize = input_ids.size(0)
             z_ = z.last_hidden_state
-            return self.encoder_pooling(z_, input_ids, attention_mask, bsize)
+            return self.encoder_pooling(z_, input_ids, attention_mask)
 
 
     # similar code to LLM_SeqClassify (unfortunately cannot directly inherit since seqclf is now head / task specific)
