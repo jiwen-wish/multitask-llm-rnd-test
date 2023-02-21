@@ -1,0 +1,60 @@
+model_name: google/mt5-base
+weight_decay: 0.1
+learning_rate: 3.0e-05
+lr_scheduler_max_steps: null
+lr_scheduler_type: null
+lr_scheduler_num_warmup_steps: null
+distance_func: cosine
+loss_type: cross-entropy
+margin: null
+hidden_states_type: encoder-last
+add_simcse: false
+manual_loss_type: manual_mse
+auto_task_weight: false
+multitask_specs_dict:
+  seqclf_singlemodal_wishquery2tax:
+    specs:
+      clf_head: clf_head
+      clf_weight_type: null
+      label_map_file: /workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+      label_type: multilabel_taxonomy
+head_dict:
+  clf_head:
+    purpose: seqclf
+    type: linear
+    in_features: 768
+    out_features: 6037
+return_model: true
+cache_dir: null
+force_download: false
+resume_download: false
+proxies: null
+use_auth_token: null
+local_files_only: false
+revision: null
+trust_remote_code: null
+subfolder: ''
+load_weights_only: true
+multitask_dict:
+  seqclf_singlemodal_wishquery2tax:
+    data_source_yaml_path: datasets/multimodal_multitask/wish_labelled_query_offshoreappen_for_multilabel_seqclf.yaml
+    batch_size: 50
+    max_length: 50
+    max_length_out: 50
+    label_map_file: datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+    label_type: multilabel_taxonomy
+    llm_type: seqclf
+    input_dict:
+      template: '{query}'
+      task_prefix: 'Classify query: '
+    output_dict:
+      template: '{category}'
+    transform_dict: null
+    data_source_type: dvc
+raw_cache_dir: /data/junwang/.cache/general
+overwrite_cache: true
+force_download_hfdata: true
+predict_on_test: true
+predict_on_trainval: null
+num_workers: 0
+multiple_trainloader_mode: min_size
