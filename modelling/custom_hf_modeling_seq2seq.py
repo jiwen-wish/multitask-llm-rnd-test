@@ -6,7 +6,9 @@
 
 
 #%%
-from transformers import T5Config, T5PreTrainedModel, AutoTokenizer
+from transformers import (T5Config, T5PreTrainedModel, AutoTokenizer, MT5Config,
+    pipeline
+)
 from transformers.models.t5.modeling_t5 import T5Stack
 from transformers.utils.model_parallel_utils import get_device_map, assert_device_map
 from transformers.modeling_outputs import SequenceClassifierOutput
@@ -27,11 +29,8 @@ class T5EncoderModelClassificationHead(nn.Module):
     def __init__(self, config):
         super().__init__()
         
-        classifier_dropout = (
-            config.classifier_dropout if config.classifier_dropout is not None else config.dropout_rate
-        )
         self.classifier = nn.Sequential(
-            nn.Dropout(classifier_dropout),
+            nn.Dropout(config.dropout_rate),
             nn.Linear(config.hidden_size, config.num_labels)
         )
 
@@ -46,7 +45,12 @@ class T5EncoderModelForSequenceClassification(T5PreTrainedModel):
     ]
 
     def __init__(self, config: T5Config):
+        # set default hidden_states_type for pooling
+        if 'hidden_states_type' not in config.to_dict():
+            config.hidden_states_type = 'encoder-last'
+
         super().__init__(config)
+        
         self.shared = nn.Embedding(config.vocab_size, config.d_model)
 
         encoder_config = copy.deepcopy(config)
@@ -169,7 +173,7 @@ class T5EncoderModelForSequenceClassification(T5PreTrainedModel):
             output_hidden_states=output_hidden_states,
             return_dict=return_dict,
         )
-        
+
         hidden_states = self.encoder_pooling(
             outputs.last_hidden_state, 
             input_ids, 
@@ -211,6 +215,17 @@ class T5EncoderModelForSequenceClassification(T5PreTrainedModel):
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
+
+class MT5EncoderModelForSequenceClassification(T5EncoderModelForSequenceClassification):
+    
+    model_type = "mt5"
+    config_class = MT5Config
+    _keys_to_ignore_on_load_missing = [
+        r"encoder.embed_tokens.weight",
+    ]
+    _keys_to_ignore_on_save = [
+        r"encoder.embed_tokens.weight",
+    ]
 #%%
 config = T5Config(
     id2label={0: 'a', 1: 'b', 2: 'c'},
@@ -227,4 +242,9 @@ tokenizer = AutoTokenizer.from_pretrained('t5-base')
 inputs = tokenizer(['hello', 'bye'], return_tensors='pt', padding="max_length", truncation=True, max_length=10)
 
 outputs = model(**inputs)
+
+classify = pipeline("text-classification", model=model, 
+    tokenizer=tokenizer, function_to_apply='sigmoid')
+# %%
+classify('text', top_k=3)
 # %%
