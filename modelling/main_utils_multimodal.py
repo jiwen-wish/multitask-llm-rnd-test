@@ -521,147 +521,144 @@ class JSONListData(pl.LightningDataModule):
     
     def setup(self, stage: str):
         ds = self.get_hf_dataset()
-        if self.transformer_config.is_encoder_decoder:
 
-            def process_single_example(example):
-                assert isinstance(example, dict)
-                example = deepcopy(example)
-                if self.hparams.transform_dict is not None:
-                    for k in self.hparams.transform_dict:
-                        example[k] = self.transform_example_content(example[k], self.hparams.transform_dict[k])
-                processed_example = {}
-                input_template = deepcopy(self.hparams.input_dict["template"])
-                # input for non-dlm
-                if self.hparams.llm_type.startswith('seqclf') or \
-                    self.hparams.llm_type.startswith('clm') or \
-                    self.hparams.llm_type.startswith('emb'):
-                    
-                    if "is_multimodal_embedding" in self.hparams.input_dict:
-                        for ind, k in enumerate(self.hparams.input_dict["is_multimodal_embedding"]):
-                            input_template = input_template.replace(
-                                f"{{{k}}}",
-                                self.local_additional_special_tokens_list[-(1+ind)] # use special tokens from tail first
-                            )
-                            processed_example[f"input_multimodal_embedding_{ind}"] = example[k] if isinstance(example[k], list) else eval(example[k])
-                            
-                    processed_example["input_text"] = (self.hparams.input_dict["task_prefix"] + input_template.format(**example)).strip()
-
-                elif self.hparams.llm_type.startswith('dlm'):
-                    # input and output for dlm
-                    denoise_inputs = {}
-                    denoise_outputs = {}
-                    start_at_special_ind = 0
-                    for k in self.output_denoise_key:
-                        input_text = example[k]
-                        # leave space for multimodal placeholder
-                        if "is_multimodal_embedding" in self.hparams.input_dict:
-                            in_out_c_ = LLM_DenoiseData.mask_input(input_text, self.hparams.mask_prob, self.hparams.use_ul2, 
-                                self.local_additional_special_tokens_list[start_at_special_ind:-len(self.hparams.input_dict["is_multimodal_embedding"])], 
-                                use_task_prefix=False, return_num_special_tokens_inserted=True)
-                        else:
-                            in_out_c_ = LLM_DenoiseData.mask_input(input_text, self.hparams.mask_prob, self.hparams.use_ul2, 
-                                self.local_additional_special_tokens_list[start_at_special_ind:], use_task_prefix=False,
-                                return_num_special_tokens_inserted=True)
-                        if in_out_c_ is None:
-                            denoise_inputs[k] = input_text
-                            # return <pad> if unknown (HACK but the propoer way to handle is too complex)
-                            # this basically discards the example due to logic in "def process_multiple_examples"
-                            denoise_outputs[k] = "<pad>" 
-                        else:
-                            denoise_inputs[k] = in_out_c_[0]
-                            denoise_outputs[k] = in_out_c_[1]
-                            start_at_special_ind += in_out_c_[2]
-                    if "is_multimodal_embedding" in self.hparams.input_dict:
-                         for ind, k in enumerate(self.hparams.input_dict["is_multimodal_embedding"]):
-                            input_template = input_template.replace(
-                                f"{{{k}}}",
-                                self.local_additional_special_tokens_list[-(1+ind)] # use special tokens from tail first
-                            )
-                            processed_example[f"input_multimodal_embedding_{ind}"] = example[k] if isinstance(example[k], list) else eval(example[k])
-                    for k in self.input_denoise_key:
-                        if k not in self.output_denoise_key and k not in self.hparams.input_dict["is_multimodal_embedding"]:
-                            denoise_inputs[k] = example[k]
-                    processed_example["input_text"] = (self.hparams.input_dict["task_prefix"] + input_template.format(**denoise_inputs)).strip()
-                    processed_example["output_text"] = ""
-                    for ind, k in enumerate(self.output_denoise_key):
-                        if ind == 0:
-                            processed_example["output_text"] += denoise_outputs[k]
-                        else:
-                            # if denoising on multiple chunks of input, skip initial special token
-                            processed_example["output_text"] += " ".join(denoise_outputs[k].split(" ")[1:])
-                else:
-                    raise NotImplemented()
-
-                # output for non-dlm
-                if not self.hparams.llm_type.startswith('dlm'):
-                    output_template = deepcopy(self.hparams.output_dict["template"])
-
-                    if self.hparams.llm_type.startswith('seqclf'):
-                        for lk in self.label_key:
-                            processed_example[f"output_labels_{lk}"] = self.text2label(example[f"labels_{lk}"], self.hparams.label_type)
-
-                    elif self.hparams.llm_type.startswith('clm'):
-                        processed_example["output_text"] = output_template.format(**example).strip()
-
-                    elif self.hparams.llm_type.startswith('emb'):
-                        if "is_manual" in self.hparams.output_dict:
-                            for k in self.relevance_key:
-                                output_template = output_template.replace(f"{{{k}}}", "")
-                                assert isinstance(example[k], int) or isinstance(example[k], float)
-                                processed_example["output_labels_{k}"] = [float(example[k])]
-                        if "is_multimodal_embedding" in self.hparams.output_dict:
-                            for ind, k in enumerate(self.hparams.output_dict["is_multimodal_embedding"]):
-                                output_template = output_template.replace(
-                                    f"{{{k}}}",
-                                    self.local_additional_special_tokens_list[-(1+ind)] # use special tokens from tail first
-                                )
-                                processed_example[f"output_multimodal_embedding_{ind}"] = example[k] if isinstance(example[k], list) else eval(example[k])
-                        processed_example["output_text"] = (self.hparams.output_dict["task_prefix"] + output_template.format(**example)).strip()
-
-                return processed_example
-
-            def process_multiple_examples(examples):
-                processed_examples = [process_single_example(i) if isinstance(i, dict) else process_single_example(json.loads(i)) for i in examples['json_content']]
-                # all task must have "input_text"
-                batch = self.tokenizer([i["input_text"] for i in processed_examples], return_tensors='pt', 
-                    padding="max_length", truncation=True, max_length=self.hparams.max_length)
-                # clm, dlm must have "output_text"
-                if self.hparams.llm_type.startswith('clm') or self.hparams.llm_type.startswith('dlm'):
-                    output_ = self.tokenizer([i['output_text'] for i in processed_examples], return_tensors='pt', 
-                        padding="max_length", truncation=True, max_length=self.hparams.max_length_out)
-                    labels = output_.input_ids
-                    labels[labels == self.tokenizer.pad_token_id] = -100
-                    batch['labels'] = labels
-                # emb must have "output_text"
-                elif self.hparams.llm_type.startswith('emb'):
-                    output_ = self.tokenizer([i['output_text'] for i in processed_examples], return_tensors='pt', 
-                        padding="max_length", truncation=True, max_length=self.hparams.max_length_out)
-                    for i in output_:
-                        batch[f'output_{i}'] = output_[i]
-                # seqclf must have "output_labels_*"
-                elif self.hparams.llm_type.startswith('seqclf'):
-
-                    if len(self.label_key) == 1:
-                        k = self.label_key[0]
-                        batch['labels'] = torch.FloatTensor([i[f"output_labels_{k}"] for i in processed_examples])
-                    else:
-                        raise NotImplemented()
-                        # for k in self.label_key:
-                        #     batch['labels_{k}'] = torch.FloatTensor([i[f"output_labels_{k}"] for i in processed_examples])
-
+        def process_single_example(example):
+            assert isinstance(example, dict)
+            example = deepcopy(example)
+            if self.hparams.transform_dict is not None:
+                for k in self.hparams.transform_dict:
+                    example[k] = self.transform_example_content(example[k], self.hparams.transform_dict[k])
+            processed_example = {}
+            input_template = deepcopy(self.hparams.input_dict["template"])
+            # input for non-dlm
+            if self.hparams.llm_type.startswith('seqclf') or \
+                self.hparams.llm_type.startswith('clm') or \
+                self.hparams.llm_type.startswith('emb'):
+                
                 if "is_multimodal_embedding" in self.hparams.input_dict:
                     for ind, k in enumerate(self.hparams.input_dict["is_multimodal_embedding"]):
-                        n = f"input_multimodal_embedding_{ind}"
-                        batch[n] = torch.FloatTensor([i[n] for i in processed_examples])
-                if "is_multimodal_embedding" in self.hparams.output_dict:
-                    for ind, k in enumerate(self.hparams.output_dict["is_multimodal_embedding"]):
-                        n = f"output_multimodal_embedding_{ind}"
-                        batch[n] = torch.FloatTensor([i[n] for i in processed_examples])
-                return batch
+                        input_template = input_template.replace(
+                            f"{{{k}}}",
+                            self.local_additional_special_tokens_list[-(1+ind)] # use special tokens from tail first
+                        )
+                        processed_example[f"input_multimodal_embedding_{ind}"] = example[k] if isinstance(example[k], list) else eval(example[k])
+                        
+                processed_example["input_text"] = (self.hparams.input_dict["task_prefix"] + input_template.format(**example)).strip()
 
-            ds.set_transform(process_multiple_examples)
-        else:
-            raise NotImplemented()
+            elif self.hparams.llm_type.startswith('dlm'):
+                # input and output for dlm
+                denoise_inputs = {}
+                denoise_outputs = {}
+                start_at_special_ind = 0
+                for k in self.output_denoise_key:
+                    input_text = example[k]
+                    # leave space for multimodal placeholder
+                    if "is_multimodal_embedding" in self.hparams.input_dict:
+                        in_out_c_ = LLM_DenoiseData.mask_input(input_text, self.hparams.mask_prob, self.hparams.use_ul2, 
+                            self.local_additional_special_tokens_list[start_at_special_ind:-len(self.hparams.input_dict["is_multimodal_embedding"])], 
+                            use_task_prefix=False, return_num_special_tokens_inserted=True)
+                    else:
+                        in_out_c_ = LLM_DenoiseData.mask_input(input_text, self.hparams.mask_prob, self.hparams.use_ul2, 
+                            self.local_additional_special_tokens_list[start_at_special_ind:], use_task_prefix=False,
+                            return_num_special_tokens_inserted=True)
+                    if in_out_c_ is None:
+                        denoise_inputs[k] = input_text
+                        # return <pad> if unknown (HACK but the propoer way to handle is too complex)
+                        # this basically discards the example due to logic in "def process_multiple_examples"
+                        denoise_outputs[k] = "<pad>" 
+                    else:
+                        denoise_inputs[k] = in_out_c_[0]
+                        denoise_outputs[k] = in_out_c_[1]
+                        start_at_special_ind += in_out_c_[2]
+                if "is_multimodal_embedding" in self.hparams.input_dict:
+                        for ind, k in enumerate(self.hparams.input_dict["is_multimodal_embedding"]):
+                        input_template = input_template.replace(
+                            f"{{{k}}}",
+                            self.local_additional_special_tokens_list[-(1+ind)] # use special tokens from tail first
+                        )
+                        processed_example[f"input_multimodal_embedding_{ind}"] = example[k] if isinstance(example[k], list) else eval(example[k])
+                for k in self.input_denoise_key:
+                    if k not in self.output_denoise_key and k not in self.hparams.input_dict["is_multimodal_embedding"]:
+                        denoise_inputs[k] = example[k]
+                processed_example["input_text"] = (self.hparams.input_dict["task_prefix"] + input_template.format(**denoise_inputs)).strip()
+                processed_example["output_text"] = ""
+                for ind, k in enumerate(self.output_denoise_key):
+                    if ind == 0:
+                        processed_example["output_text"] += denoise_outputs[k]
+                    else:
+                        # if denoising on multiple chunks of input, skip initial special token
+                        processed_example["output_text"] += " ".join(denoise_outputs[k].split(" ")[1:])
+            else:
+                raise NotImplemented()
+
+            # output for non-dlm
+            if not self.hparams.llm_type.startswith('dlm'):
+                output_template = deepcopy(self.hparams.output_dict["template"])
+
+                if self.hparams.llm_type.startswith('seqclf'):
+                    for lk in self.label_key:
+                        processed_example[f"output_labels_{lk}"] = self.text2label(example[f"labels_{lk}"], self.hparams.label_type)
+
+                elif self.hparams.llm_type.startswith('clm'):
+                    processed_example["output_text"] = output_template.format(**example).strip()
+
+                elif self.hparams.llm_type.startswith('emb'):
+                    if "is_manual" in self.hparams.output_dict:
+                        for k in self.relevance_key:
+                            output_template = output_template.replace(f"{{{k}}}", "")
+                            assert isinstance(example[k], int) or isinstance(example[k], float)
+                            processed_example["output_labels_{k}"] = [float(example[k])]
+                    if "is_multimodal_embedding" in self.hparams.output_dict:
+                        for ind, k in enumerate(self.hparams.output_dict["is_multimodal_embedding"]):
+                            output_template = output_template.replace(
+                                f"{{{k}}}",
+                                self.local_additional_special_tokens_list[-(1+ind)] # use special tokens from tail first
+                            )
+                            processed_example[f"output_multimodal_embedding_{ind}"] = example[k] if isinstance(example[k], list) else eval(example[k])
+                    processed_example["output_text"] = (self.hparams.output_dict["task_prefix"] + output_template.format(**example)).strip()
+
+            return processed_example
+
+        def process_multiple_examples(examples):
+            processed_examples = [process_single_example(i) if isinstance(i, dict) else process_single_example(json.loads(i)) for i in examples['json_content']]
+            # all task must have "input_text"
+            batch = self.tokenizer([i["input_text"] for i in processed_examples], return_tensors='pt', 
+                padding="max_length", truncation=True, max_length=self.hparams.max_length)
+            # clm, dlm must have "output_text"
+            if self.hparams.llm_type.startswith('clm') or self.hparams.llm_type.startswith('dlm'):
+                output_ = self.tokenizer([i['output_text'] for i in processed_examples], return_tensors='pt', 
+                    padding="max_length", truncation=True, max_length=self.hparams.max_length_out)
+                labels = output_.input_ids
+                labels[labels == self.tokenizer.pad_token_id] = -100
+                batch['labels'] = labels
+            # emb must have "output_text"
+            elif self.hparams.llm_type.startswith('emb'):
+                output_ = self.tokenizer([i['output_text'] for i in processed_examples], return_tensors='pt', 
+                    padding="max_length", truncation=True, max_length=self.hparams.max_length_out)
+                for i in output_:
+                    batch[f'output_{i}'] = output_[i]
+            # seqclf must have "output_labels_*"
+            elif self.hparams.llm_type.startswith('seqclf'):
+
+                if len(self.label_key) == 1:
+                    k = self.label_key[0]
+                    batch['labels'] = torch.FloatTensor([i[f"output_labels_{k}"] for i in processed_examples])
+                else:
+                    raise NotImplemented()
+                    # for k in self.label_key:
+                    #     batch['labels_{k}'] = torch.FloatTensor([i[f"output_labels_{k}"] for i in processed_examples])
+
+            if "is_multimodal_embedding" in self.hparams.input_dict:
+                for ind, k in enumerate(self.hparams.input_dict["is_multimodal_embedding"]):
+                    n = f"input_multimodal_embedding_{ind}"
+                    batch[n] = torch.FloatTensor([i[n] for i in processed_examples])
+            if "is_multimodal_embedding" in self.hparams.output_dict:
+                for ind, k in enumerate(self.hparams.output_dict["is_multimodal_embedding"]):
+                    n = f"output_multimodal_embedding_{ind}"
+                    batch[n] = torch.FloatTensor([i[n] for i in processed_examples])
+            return batch
+
+        ds.set_transform(process_multiple_examples)
 
         self.ds = ds
     
