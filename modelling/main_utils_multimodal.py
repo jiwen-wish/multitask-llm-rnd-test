@@ -571,7 +571,7 @@ class JSONListData(pl.LightningDataModule):
                         denoise_outputs[k] = in_out_c_[1]
                         start_at_special_ind += in_out_c_[2]
                 if "is_multimodal_embedding" in self.hparams.input_dict:
-                        for ind, k in enumerate(self.hparams.input_dict["is_multimodal_embedding"]):
+                    for ind, k in enumerate(self.hparams.input_dict["is_multimodal_embedding"]):
                         input_template = input_template.replace(
                             f"{{{k}}}",
                             self.local_additional_special_tokens_list[-(1+ind)] # use special tokens from tail first
