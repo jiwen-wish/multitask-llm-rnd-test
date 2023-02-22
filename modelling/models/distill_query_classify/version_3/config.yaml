@@ -91,7 +91,7 @@ trainer:
   move_metrics_to_cpu: false
   multiple_trainloader_mode: min_size
 model:
-  model_name: microsoft/Multilingual-MiniLM-L12-H384
+  model_name: xlm-roberta-base
   weight_decay: 0.1
   learning_rate: 3.0e-05
   lr_scheduler_max_steps: null
@@ -116,7 +116,7 @@ model:
     clf_head:
       purpose: seqclf
       type: linear
-      in_features: 384
+      in_features: 768
       out_features: 6037
   return_model: true
   cache_dir: null
@@ -129,7 +129,7 @@ model:
   trust_remote_code: null
   subfolder: ''
 data:
-  model_name: microsoft/Multilingual-MiniLM-L12-H384
+  model_name: xlm-roberta-base
   multitask_dict:
     seqclf_singlemodal_wishquery2tax:
       data_source_yaml_path: datasets/multimodal_multitask/wish_3yr_queries_12M_headtail_sample_qcv2_pseudolabel_for_multilabel_seqclf.yaml
