@@ -226,25 +226,27 @@ class MT5EncoderModelForSequenceClassification(T5EncoderModelForSequenceClassifi
     _keys_to_ignore_on_save = [
         r"encoder.embed_tokens.weight",
     ]
+
 #%%
-config = T5Config(
-    id2label={0: 'a', 1: 'b', 2: 'c'},
-    problem_type='multi_label_classification',
-    classifier_dropout=0.1,
-    hidden_states_type='encoder-last'
-)
-config.save_pretrained('tmp')
+if __name__ == '__main__':
 
-model = T5EncoderModelForSequenceClassification(config)
+    config = MT5Config(
+        id2label={i: str(i) for i in range(6000)},
+        problem_type='multi_label_classification',
+        hidden_states_type='encoder-last'
+    )
+    config.save_pretrained('tmp')
 
-tokenizer = AutoTokenizer.from_pretrained('t5-base')
+    model = MT5EncoderModelForSequenceClassification(config).eval()
 
-inputs = tokenizer(['hello', 'bye'], return_tensors='pt', padding="max_length", truncation=True, max_length=10)
+    tokenizer = AutoTokenizer.from_pretrained('google/mt5-base', fast=True)
 
-outputs = model(**inputs)
+    inputs = tokenizer(['hello', 'bye'], return_tensors='pt', padding="max_length", truncation=True, max_length=10)
 
-classify = pipeline("text-classification", model=model, 
-    tokenizer=tokenizer, function_to_apply='sigmoid')
-# %%
-classify('text', top_k=3)
-# %%
+    outputs = model(**inputs)
+
+    classify = pipeline("text-classification", model=model, 
+        tokenizer=tokenizer, function_to_apply='sigmoid', device=0)
+
+    classify('text', top_k=3)
+
