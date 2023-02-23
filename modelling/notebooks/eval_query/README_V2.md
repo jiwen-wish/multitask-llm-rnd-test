@@ -1,6 +1,11 @@
 # english queries
 | id           |   precision |   recall |   f1-score |   support |   depth_constraint | model      |
 |:-------------|------------:|---------:|-----------:|----------:|-------------------:|:-----------|
+| weighted avg |    0.695679 | 0.786261 |   0.735889 |      7715 |                  1 | V3modelMini|
+| weighted avg |    0.573486 | 0.675136 |   0.606178 |      9407 |                  2 | V3modelMini|
+| weighted avg |    0.481076 | 0.530117 |   0.475573 |     11671 |                  3 | V3modelMini|
+| weighted avg |    0.435373 | 0.482078 |   0.424838 |     12861 |                  4 | V3modelMini|
+| weighted avg |    0.434393 | 0.480987 |   0.423777 |     12886 |                  5 | V3modelMini|
 | weighted avg |    0.708692 | 0.787946 |   0.744408 |      7715 |                  1 | V3model    |
 | weighted avg |    0.581962 | 0.673435 |   0.611813 |      9407 |                  2 | V3model    |
 | weighted avg |    0.483979 | 0.525491 |   0.474764 |     11671 |                  3 | V3model    |
@@ -25,6 +30,11 @@
 # universal queries
 | id           |   precision |   recall |   f1-score |   support |   depth_constraint | model      |
 |:-------------|------------:|---------:|-----------:|----------:|-------------------:|:-----------|
+| weighted avg |    0.687506 | 0.779333 |   0.728499 |      7715 |                  1 | V3modelMini|
+| weighted avg |    0.561124 | 0.66789  |   0.596649 |      9407 |                  2 | V3modelMini|
+| weighted avg |    0.464634 | 0.52312  |   0.464423 |     11671 |                  3 | V3modelMini|
+| weighted avg |    0.417582 | 0.472234 |   0.411123 |     12861 |                  4 | V3modelMini|
+| weighted avg |    0.416492 | 0.471279 |   0.410074 |     12886 |                  5 | V3modelMini|
 | weighted avg |    0.701043 | 0.782243 |   0.737905 |     12716 |                  1 | V3model    |
 | weighted avg |    0.569662 | 0.668534 |   0.603513 |     15534 |                  2 | V3model    |
 | weighted avg |    0.467339 | 0.519913 |   0.464663 |     19334 |                  3 | V3model    |
