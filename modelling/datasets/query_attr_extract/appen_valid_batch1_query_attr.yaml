@@ -1,0 +1,12 @@
+train:
+  - path: datasets/data/query_attr_extract_label/processed2/appen_020323_delivered_022123_validated_query_attr_train.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+val:
+  - path: datasets/data/query_attr_extract_label/processed2/appen_020323_delivered_022123_validated_query_attr_val.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+test:
+  - path: datasets/data/query_attr_extract_label/processed2/appen_020323_delivered_022123_validated_query_attr_test.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
