@@ -323,7 +323,7 @@ class JSONListData(pl.LightningDataModule):
         if self.hparams.llm_type.startswith('seqclf'):
             assert self.hparams.label_map_file is not None, "seqclf task needs to specify label_map_file"
             # TODO: add more label_type
-            assert self.hparams.label_type is not None and self.hparams.label_type in ["taxonomy", "multilabel_taxonomy"], \
+            assert self.hparams.label_type is not None and self.hparams.label_type in ["taxonomy", "multilabel_taxonomy", "multilabel_attrkvpair"], \
                 "seqclf task needs to specify valid label_type"
             self.label_map = {}
             with open(self.hparams.label_map_file, 'r') as f:
@@ -395,6 +395,18 @@ class JSONListData(pl.LightningDataModule):
                 else:
                     logging.info(f"{l_s} not in label_map during multilabel_taxonomy text2label conversion, ignore")
             return label
+        elif label_type == "multilabel_attrkvpair":
+            label = [0] * len(self.label_map)
+            if text == '':
+                textlist = []
+            else:
+                textlist = text.split('\n')
+            for l_s in textlist:
+                if l_s in self.label_map:
+                    label[self.label_map[l_s]] = 1
+                else:
+                    logging.info(f"{l_s} not in label_map during multilabel_attrkvpair text2label conversion, ignore")
+            return label
         else:
             raise NotImplemented()
 
@@ -426,6 +438,15 @@ class JSONListData(pl.LightningDataModule):
                                 ## skip this step since multilabel can have no label situation
                                 # labels = '\n'.join([self.get_label_matched_text(i) for i in dat[lk].split('\n')])
                                 labels = '\n'.join([i.strip().lower() for i in dat[lk].split('\n')])
+                                assert f"labels_{lk}" not in dat
+                                assert isinstance(labels, str)
+                                dat[f"labels_{lk}"] = labels
+                            elif self.hparams.label_type == "multilabel_attrkvpair":
+                                ## skip this step since multilabel can have no label situation
+                                # labels = '\n'.join([self.get_label_matched_text(i) for i in dat[lk].split('\n')])
+                                ## skip this step since attrkvpair labels can have upper case
+                                # labels = '\n'.join([i.strip().lower() for i in dat[lk].split('\n')])
+                                labels = dat[lk]
                                 assert f"labels_{lk}" not in dat
                                 assert isinstance(labels, str)
                                 dat[f"labels_{lk}"] = labels
