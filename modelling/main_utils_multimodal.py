@@ -415,6 +415,8 @@ class JSONListData(pl.LightningDataModule):
             return " > ".join([i.strip().lower() for i in x])
         elif transform_type == "eval":
             return eval(x)
+        elif transform_type == "get_attribute_name":
+            return '\n'.join([i.split('|')[0] for i in x.split('\n')])
         else:
             raise NotImplemented()
 
