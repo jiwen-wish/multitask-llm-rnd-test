@@ -412,7 +412,12 @@ class JSONListData(pl.LightningDataModule):
 
     def transform_example_content(self, x, transform_type):
         if transform_type == "taxonomy":
-            return " > ".join([i.strip().lower() for i in x])
+            if isinstance(x, list):
+                return " > ".join([i.strip().lower() for i in x])
+            elif isinstance(x, str):
+                return x 
+            else:
+                raise NotImplemented()
         elif transform_type == "eval":
             return eval(x)
         elif transform_type == "get_attribute_name":
@@ -432,7 +437,12 @@ class JSONListData(pl.LightningDataModule):
                     if self.hparams.llm_type.startswith('seqclf'):
                         for lk in self.label_key:
                             if self.hparams.label_type == "taxonomy":
-                                labels = self.get_label_matched_text(" > ".join([i.strip().lower() for i in dat[lk]]))
+                                if isinstance(dat[lk], list):
+                                    labels = self.get_label_matched_text(" > ".join([i.strip().lower() for i in dat[lk]]))
+                                elif isinstance(dat[lk], str):
+                                    labels = self.get_label_matched_text(dat[lk])
+                                else:
+                                    raise NotImplemented()
                                 assert f"labels_{lk}" not in dat
                                 assert isinstance(labels, str)
                                 dat[f"labels_{lk}"] = labels
@@ -550,7 +560,7 @@ class JSONListData(pl.LightningDataModule):
             example = deepcopy(example)
             if self.hparams.transform_dict is not None:
                 for k in self.hparams.transform_dict:
-                    example[k] = self.transform_example_content(example[k], self.hparams.transform_dict[k])
+                    example[f"labels_{k}"] = self.transform_example_content(example[f"labels_{k}"], self.hparams.transform_dict[k])
             processed_example = {}
             input_template = deepcopy(self.hparams.input_dict["template"])
             # input for non-dlm
@@ -958,3 +968,4 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
                 )
                 self.log_sample_batch(key, task)
         return CombinedLoader(outs, mode=self.hparams.multiple_trainloader_mode)
+# %%
