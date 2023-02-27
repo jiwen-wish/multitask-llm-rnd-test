@@ -1,0 +1,4 @@
+outs:
+- md5: 198595a73cb3e69b2ac14c049dc9136e
+  size: 8010067
+  path: appen_020323_delivered_022123_validated_product_attr_textandimg_train.json
