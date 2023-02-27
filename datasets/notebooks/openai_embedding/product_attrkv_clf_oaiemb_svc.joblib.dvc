@@ -1,0 +1,4 @@
+outs:
+- md5: cd1abb2c7b47201a1a49ad69a41a0de1
+  size: 1250217328
+  path: product_attrkv_clf_oaiemb_svc.joblib

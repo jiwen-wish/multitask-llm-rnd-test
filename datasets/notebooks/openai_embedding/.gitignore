@@ -4,3 +4,4 @@
 /query_attrkv_clf_oaiemb_rf.joblib
 /query_attrkv_clf_oaiemb_logistic.joblib
 /appen_tolabel_query_attr_leftover_svc_pseudolabels.json
+/product_attrkv_clf_oaiemb_svc.joblib
