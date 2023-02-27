@@ -3,3 +3,4 @@
 /appen_tolabel_product_attr_leftover.json
 /query_attrkv_clf_oaiemb_rf.joblib
 /query_attrkv_clf_oaiemb_logistic.joblib
+/appen_tolabel_query_attr_leftover_svc_pseudolabels.json
