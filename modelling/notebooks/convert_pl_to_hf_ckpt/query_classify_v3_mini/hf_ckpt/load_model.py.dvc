@@ -1,4 +1,4 @@
 outs:
-- md5: e4456b9cf3d391238c03ea36a22e6de5
+- md5: 135fb427bdaefd570d573b37c715dacf
   size: 1113
   path: load_model.py
