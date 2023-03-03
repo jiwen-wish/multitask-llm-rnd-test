@@ -12,4 +12,4 @@ class MyUser(HttpUser):
 
 if __name__ == "__main__":
     import os
-    os.system("locust -f locast_test.py -u 400 -r 10 -t 2m")
+    os.system("locust -f locast_test_queryclassifyv3mini.py -u 400 -r 10 -t 2m")

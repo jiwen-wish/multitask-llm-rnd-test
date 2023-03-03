@@ -15,4 +15,4 @@ class MyUser(HttpUser):
 
 if __name__ == "__main__":
     import os
-    os.system("locust -f locast_test2.py -u 40 -r 10 -t 2m")
+    os.system("locust -f locast_contentmoderationv2.py -u 40 -r 10 -t 2m")
