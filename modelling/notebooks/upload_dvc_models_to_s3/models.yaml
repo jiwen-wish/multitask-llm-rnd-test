@@ -8,8 +8,9 @@ query-classify:
       library_type: huggingface-pipeline
       max_batch_size: 100
       model_type: text-classification-multilabel
+      num_top_preds: 3
       taxonomy_version: v1.2.1
-      yaml_update_time: '2023-03-03 23:26:00.774359'
+      yaml_update_time: '2023-03-03 23:31:02.838997'
     s3:
       dev: structured-data-dev/coeus-gpu-multitask-ml/query-classify/v3
       prod: structured-data-prod/coeus-gpu-multitask-ml/query-classify/v3
