@@ -422,6 +422,8 @@ class JSONListData(pl.LightningDataModule):
             return eval(x)
         elif transform_type == "get_attribute_name":
             return '\n'.join([i.split('|')[0] for i in x.split('\n')])
+        elif transform_type == "replace_newline":
+            return x.replace('\n', ' [NL] ')
         else:
             raise NotImplemented()
 
@@ -557,7 +559,12 @@ class JSONListData(pl.LightningDataModule):
         example = deepcopy(example)
         if self.hparams.transform_dict is not None:
             for k in self.hparams.transform_dict:
-                example[f"labels_{k}"] = self.transform_example_content(example[f"labels_{k}"], self.hparams.transform_dict[k])
+                if f"labels_{k}" in example:
+                    example[f"labels_{k}"] = self.transform_example_content(example[f"labels_{k}"], self.hparams.transform_dict[k])
+                elif k in example:
+                    example[k] = self.transform_example_content(example[k], self.hparams.transform_dict[k])
+                else:
+                    raise Exception(f"{k} and labels_{k} not in {set(example)}" )
         processed_example = {}
         input_template = deepcopy(self.hparams.input_dict["template"])
         # input for non-dlm
