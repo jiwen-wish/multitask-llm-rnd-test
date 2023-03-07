@@ -47,7 +47,7 @@ trainer:
   gradient_clip_algorithm: null
   num_nodes: 1
   num_processes: null
-  devices: 4
+  devices: 6
   gpus: null
   auto_select_gpus: false
   tpu_cores: null
@@ -70,7 +70,7 @@ trainer:
   val_check_interval: 0.5
   log_every_n_steps: 5
   accelerator: gpu
-  strategy: ddp
+  strategy: deepspeed_stage_2_offload
   sync_batchnorm: false
   precision: 32
   enable_model_summary: true
@@ -123,21 +123,25 @@ data:
   multitask_dict:
     clm_singlemodal_wishtitledesp2attrkvpair:
       data_source_yaml_path: datasets/attribute_extraction_text_generation/appen_03072023.yaml
-      batch_size: 10
-      max_length: 512
-      max_length_out: 512
+      batch_size: 2
+      max_length: 256
+      max_length_out: 256
       llm_type: clm
       input_dict:
-        template: '[title start] {title} [title end] [description start] {description} [description end] [taxonomy start] {category} [taxonomy end]'
-        task_prefix: 'Generate attribute key value pairs for product with description and taxonomy: '
+        template: '[title start] {title} [title end] [description start] {description}
+          [description end] [taxonomy start] {category} [taxonomy end]'
+        task_prefix: 'Generate attribute key value pairs for product with description
+          and taxonomy: '
       output_dict:
         template: '{attr_name_value_pairs_normalized_text}'
+      transform_dict:
+        attr_name_value_pairs_normalized_text: replace_newline
       data_source_type: dvc
   raw_cache_dir: /data/junwang/.cache/general
   overwrite_cache: false
   force_download_hfdata: false
   predict_on_test: true
   predict_on_trainval: null
-  num_workers: 8
+  num_workers: 0
   multiple_trainloader_mode: min_size
 ckpt_path: null
