@@ -1,0 +1,4 @@
+outs:
+- md5: d576b66da47cd11294c5be786b763df3
+  size: 42625809
+  path: appen_020323_030323_delivered_030623_validated_product_attr_textonly_train_t5denoiseformat.json
