@@ -38,7 +38,10 @@ async def server_loop(q):
     #     fs = DVCFileSystem(repo, subrepos=True)
     #     fs.get(path, tmpdirname, recursive=True)
     #     pipe = import_path(f"{tmpdirname}/load_model.py").load_pipeline()
-    pipe = pipeline("sentiment-analysis", device=0)
+    try:
+        pipe = pipeline("sentiment-analysis", device=0)
+    except:
+        pipe = pipeline("sentiment-analysis")
     while True:
         strings = []
         queues = []
