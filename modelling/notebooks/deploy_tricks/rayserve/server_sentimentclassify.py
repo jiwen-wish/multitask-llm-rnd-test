@@ -27,4 +27,5 @@ class SentClassifier:
         return await self.classify(request)
     
 sentclassifier = SentClassifier.bind()
+# serve run server_sentimentclassify:sentclassifier
 # curl -X POST -d '{"text":"Hello world!"}' http://localhost:8000
