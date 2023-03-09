@@ -128,8 +128,11 @@ data:
       max_length_out: 256
       llm_type: clm
       input_dict:
-        template: '[question start] {attr_name_value_pairs_all_lower_t5_denoise_question} [question end] [title start] {title} [title end] [description start] {description} [description end] [taxonomy start] {category} [taxonomy end]'
-        task_prefix: 'Denoise attribute value given attribute key questions for product with description and taxonomy: '
+        template: '[question start] {attr_name_value_pairs_all_lower_t5_denoise_question}
+          [question end] [title start] {title} [title end] [description start] {description}
+          [description end] [taxonomy start] {category} [taxonomy end]'
+        task_prefix: 'Denoise attribute value given attribute key questions for product
+          with description and taxonomy: '
       output_dict:
         template: '{attr_name_value_pairs_all_lower_t5_denoise_answer}'
       data_source_type: dvc
