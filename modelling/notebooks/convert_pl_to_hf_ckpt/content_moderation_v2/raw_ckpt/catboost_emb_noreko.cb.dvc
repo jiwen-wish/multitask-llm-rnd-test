@@ -1,0 +1,4 @@
+outs:
+- md5: 3d3e1db19ecc524d60fd6488c77a6781
+  size: 1838871844
+  path: catboost_emb_noreko.cb

@@ -1,0 +1,4 @@
+outs:
+- md5: 3617e3c49812e07027231bf068c02bd8
+  size: 408704
+  path: text_embeddings.npy
