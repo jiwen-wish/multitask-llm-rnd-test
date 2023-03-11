@@ -192,6 +192,9 @@ def inference(requests):
     return res 
 
 
+def load_pipeline():
+    return inference
+
 if __name__ == "__main__":
     # this is to mimic the input in https://docs.google.com/document/d/1sHxWGfDoS7IznYFCR6ye0bg6N2GiJ2ahIi3JqxI3MmA/edit#heading=h.s8q4io3mcaqd 
     requests = {
