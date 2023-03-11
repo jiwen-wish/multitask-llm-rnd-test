@@ -1,0 +1,4 @@
+outs:
+- md5: c79f7f20c627d6de7e5d589d857ea230
+  size: 18600628598
+  path: liang_product_classification_mixall_train.json

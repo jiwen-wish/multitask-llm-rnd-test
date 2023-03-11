@@ -1,0 +1,4 @@
+outs:
+- md5: 8ec9dd6f706bd8c45390a835c5266081
+  size: 34340584
+  path: liang_product_classification_offshorev2only_val.json

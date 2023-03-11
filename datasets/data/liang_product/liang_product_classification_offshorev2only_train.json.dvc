@@ -1,0 +1,4 @@
+outs:
+- md5: a9dbdb1d230e5bf172017a6c1bf64029
+  size: 190489247
+  path: liang_product_classification_offshorev2only_train.json

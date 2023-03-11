@@ -1,0 +1,4 @@
+outs:
+- md5: e7288b712d6d022e8948b10ecdd018ec
+  size: 24316744
+  path: liang_product_classification_mixall_test.json
