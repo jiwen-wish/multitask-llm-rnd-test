@@ -1,0 +1,12 @@
+train:
+  - path: datasets/data/query_label/processed4/Mixed_Human_Inferred_Modelpseudo_Query_Classification_Train_DedupOverlap_processed_multilabel_seqclf.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+val:
+  - path: datasets/data/query_label/processed2/Human_Labelled_Query_Classification_Val_processed_multilabel_seqclf.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+test:
+  - path: datasets/data/query_label/processed2/Human_Labelled_Query_Classification_Test_processed_multilabel_seqclf.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
