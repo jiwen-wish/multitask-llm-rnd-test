@@ -14,12 +14,13 @@ from torch.utils.data.dataloader import default_collate
 from PIL import Image
 from catboost import CatBoostClassifier, Pool
 import clip
+import numpy as np
 CLIP_MODEL = "ViT-L/14"
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MINIBATCH_SIZE = 32
 DEVICE_COUNT = torch.cuda.device_count() if torch.cuda.is_available() else 1
-
+TENSOR_BATCH_SIZE = 128
 MODEL_FILEPATH = os.path.join(os.path.dirname(__file__), 'catboost_emb_noreko.cb')
 TEXT_EMBEDDINGS_FILEPATH = os.path.join(os.path.dirname(__file__), 'text_embeddings.npy')
 
@@ -110,14 +111,34 @@ def my_collate_fn(batch):
 
 
 def generate_dict_image_hash_to_feature(image_dataloader):
-    for i, (image_t, image_hashes) in enumerate(image_dataloader):
+    batch_image_t = []
+    all_image_hashes = []
+    all_image_features = []
+    print(f"len(image_dataloader): {len(image_dataloader)}")
+    for (image_t, image_hashes) in image_dataloader:
+        batch_image_t.append(image_t)
+        all_image_hashes += image_hashes
+        if len(batch_image_t) == TENSOR_BATCH_SIZE:
+            with torch.no_grad():
+                batch_image_t_cat = torch.vstack(batch_image_t).to(DEVICE)
+                print(f"batch_image_t_cat.shape: {batch_image_t_cat.shape}")
+                image_features = clip_model.forward(batch_image_t_cat)
+                image_features /= image_features.norm(dim=-1, keepdim=True)
+                image_features = image_features.cpu().numpy() 
+                all_image_features.append(image_features)
+            batch_image_t = []
+
+    if len(batch_image_t) > 0:
         with torch.no_grad():
-            image_t = image_t.to(DEVICE)
-            image_features = clip_model.forward(image_t)
+            batch_image_t_cat = torch.vstack(batch_image_t).to(DEVICE)
+            print(f"batch_image_t_cat.shape: {batch_image_t_cat.shape}")
+            image_features = clip_model.forward(batch_image_t_cat)
             image_features /= image_features.norm(dim=-1, keepdim=True)
             image_features = image_features.cpu().numpy() 
+            all_image_features.append(image_features)
 
-    return {x: y for (x, y) in zip(image_hashes, image_features)}
+    all_image_features = np.vstack(all_image_features)
+    return {x: y for (x, y) in zip(all_image_hashes, all_image_features)}
 
 def mean_and_norm(nd_array):
     vector = np.mean(nd_array, axis=0)
@@ -146,9 +167,11 @@ def inference(requests):
 
     image_dataloader = DataLoader(
         image_dataset,
-        batch_size=MINIBATCH_SIZE * DEVICE_COUNT,
-        num_workers=DEVICE_COUNT * 2,
+        batch_size=2, # MINIBATCH_SIZE * DEVICE_COUNT,
+        num_workers=4, # DEVICE_COUNT * 2,
+        persistent_workers=True,
         pin_memory=True,
+        prefetch_factor=16,
         #shuffle=True,
         collate_fn=my_collate_fn,
     )
