@@ -106,7 +106,7 @@ model:
   add_simcse: false
   auto_task_weight: false
   multitask_specs_dict:
-    seqclf_singlemodal_wishquery2tax:
+    seqclf_singlemodal_wishproducttitle2tax:
       specs:
         clf_head: clf_head
         clf_weight_type: null
@@ -131,7 +131,7 @@ model:
 data:
   model_name: microsoft/Multilingual-MiniLM-L12-H384
   multitask_dict:
-    seqclf_singlemodal_wishquery2tax:
+    seqclf_singlemodal_wishproducttitle2tax:
       data_source_yaml_path: datasets/multimodal_multitask/liang_product_mixall_multilabel_seqclf.yaml
       batch_size: 50
       max_length: 50
