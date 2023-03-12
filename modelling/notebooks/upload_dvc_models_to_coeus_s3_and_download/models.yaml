@@ -3,12 +3,12 @@ content-moderation:
     dvc:
       path: /modelling/notebooks/convert_pl_to_hf_ckpt/content_moderation_v2/raw_ckpt
       repo: git@github.com:ContextLogic/multitask-llm-rnd.git
-      rev: 1393dc0d7a29cd637aca3d6b3062d5bebfdedade
+      rev: 2c0a52930f90aee3e18828106b58ce219e45e82d
     metadata:
       library_type: custom-python-func
       max_batch_size: 20
       model_type: clip-catboost
-      yaml_update_time: '2023-03-12 00:48:28.377546'
+      yaml_update_time: '2023-03-12 03:37:57.694502'
     s3:
       dev: structured-data-dev/coeus-gpu-multitask-ml/content-moderation/v2
       prod: structured-data-prod/coeus-gpu-multitask-ml/content-moderation/v2
