@@ -100,12 +100,7 @@ class ImagesDataset(Dataset):
         return resp
 
     def _get_s3_client(self):
-        if self._s3_client is None:
-            # create outside of init so 
-            #print(f"Loading s3_client. In process: {torch.utils.data.get_worker_info()}")
-            self._s3_client = boto3.client('s3')
-
-        return self._s3_client
+        return boto3.client('s3')
 
 
 def my_collate_fn(batch):
