@@ -136,7 +136,7 @@ def generate_image_text_similarity(row):
     return np.dot(TEXT_EMBEDDINGS, row['image_embedding'].reshape((-1,1))).flatten()
 
 def inference(requests):
-    df = pd.DataFrame(requests['data'])
+    df = pd.DataFrame(requests)
 
     all_image_hashes = []
     for _, row in df.iterrows():
@@ -183,11 +183,8 @@ def inference(requests):
     )
     y_pred_proba = CATBOOST_MODEL.predict_proba(pool)   
 
-    res = {}
-    res['trace_id'] = requests['trace_id']
     response_list = list(1 * (y_pred_proba[:,0] < CATBOOST_MODEL_THRESHOLD))
-    res['result'] = [{'response': x, 'error': '', 'other': ''} for x in response_list]
-    res['other'] = requests['other']
+    res = [{'response': x, 'error': '', 'other': ''} for x in response_list]
     return res 
 
 
@@ -196,41 +193,36 @@ def load_pipeline():
 
 if __name__ == "__main__":
     # this is to mimic the input in https://docs.google.com/document/d/1sHxWGfDoS7IznYFCR6ye0bg6N2GiJ2ahIi3JqxI3MmA/edit#heading=h.s8q4io3mcaqd 
-    requests = {
-        'trace_id': 'trace_id666', 
-        'data': 
-            [
-                {
-                    'product_id': '63d1a67398b6bb61948e7441',
-                    'title': 'Convenient Practical Multi-functional Gift Pouch Drawstring Auspicious Cloud Cloth Bracelet Bag Multi Color Jewelry Case Women Jewelry Bag Chinese Style Storage Bag Jewelry Organizer',
-                    'description': 'Size: 11 × 11 cm\r\nMaterials: cloth\r\nColor: red, yellow, blue, green, pink, purple, etc\r\nPackage: 1 PC jewelry storage bag\nProduct description\r\nThis jewelry bag is small and exquisite, which is convenient to carry.\r\nNote: The size and weight are measured by hand, it is normal to have errors, please refer to the actual product received.',
-                    'images': 
-                        ['236005ff24e5b8b2b47896be92581ea7',
-                        'ceb13f0ae37dcc260156d50265ce6a93',
-                        'efa888054070eff0456dc0cb0b79e44b',
-                        '1c1b8a696d15aa0c3b4c359f3b344276',
-                        '4efae9d26fb00e0e55cd72e7f681f475',
-                        '6051609aa6a1f46073fa5cf3e1035bf4',
-                        'e62f5e0d748f2b6d886acf37f0362f7a',
-                        '970fbbf9c24372dc64c5a2bbe939483c',
-                        'b064bc1888b35c69b5cd1fc0abd0be8d',
-                        '9a46463a732eb538140c3de49541f19e'], 
-                    'price': None, 
-                    'main_image_index': None
-                }, 
-                {
-                    'product_id': '62cde59200713e1ee149400f',
-                    'title': 'Ouch! Silicone Strapless Strapon - Black AND Dragon Alkaline AAA Batteries great gift',
-                    'description': 'This sensational silicone strap on dildo requires no harness so nothing comes between you and your lover with the exception of your own intense pleasure together. Completely strapless it stays in place with an insertable ribbed curved probe delivering delicious . stimulation to the wearer. The longer ribbed end is used to penetrate your male or female partner. Ideal for same-sex couple or couples who are into pegging! Made from super-flexible Thermoplastic Rubber with a smooth medical-grade silicone finish this sexy toy has a curved . stimulation part of 6.8cm (2.68inch) while the penetrating end measures a full 12cm. Weight package 10.51 oz Product dimensions 4.02" x 1.61" x 1.61" Product weight 6.53 oz Product diameter 0.98" Insertable length 4.72" Waterproof Yes Splashproof Yes Phthalate free Yes Specifications . stimulation part: Length: 10 cm Diameter: 2 cm Penetrating part: Length 12 cm Diameter: 25 cm Materials Silicone TPR AND Dragon Alkaline AAA Batteries (not all items need batteries,  just nice to have around',
-                    'images': 
-                        ['8c6ca8dd51d875739fdf8ca2810ded58',
-                        '8c6ca8dd51d875739fdf8ca2810ded58',
-                        '8c6ca8dd51d875739fdf8ca2810ded58'], 
-                    'price': None, 
-                    'main_image_index': None    
-                }
-            ],
-        'other': None
-    }
+    requests = [
+        {
+            'product_id': '63d1a67398b6bb61948e7441',
+            'title': 'Convenient Practical Multi-functional Gift Pouch Drawstring Auspicious Cloud Cloth Bracelet Bag Multi Color Jewelry Case Women Jewelry Bag Chinese Style Storage Bag Jewelry Organizer',
+            'description': 'Size: 11 × 11 cm\r\nMaterials: cloth\r\nColor: red, yellow, blue, green, pink, purple, etc\r\nPackage: 1 PC jewelry storage bag\nProduct description\r\nThis jewelry bag is small and exquisite, which is convenient to carry.\r\nNote: The size and weight are measured by hand, it is normal to have errors, please refer to the actual product received.',
+            'images': 
+                ['236005ff24e5b8b2b47896be92581ea7',
+                'ceb13f0ae37dcc260156d50265ce6a93',
+                'efa888054070eff0456dc0cb0b79e44b',
+                '1c1b8a696d15aa0c3b4c359f3b344276',
+                '4efae9d26fb00e0e55cd72e7f681f475',
+                '6051609aa6a1f46073fa5cf3e1035bf4',
+                'e62f5e0d748f2b6d886acf37f0362f7a',
+                '970fbbf9c24372dc64c5a2bbe939483c',
+                'b064bc1888b35c69b5cd1fc0abd0be8d',
+                '9a46463a732eb538140c3de49541f19e'], 
+            'price': None, 
+            'main_image_index': None
+        }, 
+        {
+            'product_id': '62cde59200713e1ee149400f',
+            'title': 'Ouch! Silicone Strapless Strapon - Black AND Dragon Alkaline AAA Batteries great gift',
+            'description': 'This sensational silicone strap on dildo requires no harness so nothing comes between you and your lover with the exception of your own intense pleasure together. Completely strapless it stays in place with an insertable ribbed curved probe delivering delicious . stimulation to the wearer. The longer ribbed end is used to penetrate your male or female partner. Ideal for same-sex couple or couples who are into pegging! Made from super-flexible Thermoplastic Rubber with a smooth medical-grade silicone finish this sexy toy has a curved . stimulation part of 6.8cm (2.68inch) while the penetrating end measures a full 12cm. Weight package 10.51 oz Product dimensions 4.02" x 1.61" x 1.61" Product weight 6.53 oz Product diameter 0.98" Insertable length 4.72" Waterproof Yes Splashproof Yes Phthalate free Yes Specifications . stimulation part: Length: 10 cm Diameter: 2 cm Penetrating part: Length 12 cm Diameter: 25 cm Materials Silicone TPR AND Dragon Alkaline AAA Batteries (not all items need batteries,  just nice to have around',
+            'images': 
+                ['8c6ca8dd51d875739fdf8ca2810ded58',
+                '8c6ca8dd51d875739fdf8ca2810ded58',
+                '8c6ca8dd51d875739fdf8ca2810ded58'], 
+            'price': None, 
+            'main_image_index': None    
+        }
+    ]
     resp = inference(requests)
     print(resp)
