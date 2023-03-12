@@ -179,7 +179,7 @@ def inference(requests):
     y_pred_proba = CATBOOST_MODEL.predict_proba(pool)   
 
     response_list = list(1 * (y_pred_proba[:,0] < CATBOOST_MODEL_THRESHOLD))
-    res = [{'response': x, 'error': '', 'other': ''} for x in response_list]
+    res = [{'response': int(x), 'error': '', 'other': ''} for x in response_list]
     return res 
 
 
