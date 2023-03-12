@@ -4,7 +4,6 @@
 
 import os 
 import torch
-from tqdm.notebook import tqdm
 import boto3
 import pandas as pd
 import numpy as np
@@ -116,7 +115,7 @@ def my_collate_fn(batch):
 
 
 def generate_dict_image_hash_to_feature(image_dataloader):
-    for i, (image_t, image_hashes) in enumerate(tqdm(image_dataloader)):
+    for i, (image_t, image_hashes) in enumerate(image_dataloader):
         with torch.no_grad():
             image_t = image_t.to(DEVICE)
             image_features = clip_model.forward(image_t)
