@@ -6,7 +6,7 @@ content-moderation:
       rev: b6106732ea482eeefb2766d56f0546cc7a9ea69f
     metadata:
       library_type: custom-python-func
-      max_batch_size: 20
+      max_batch_size: 8
       model_type: clip-catboost
       yaml_update_time: '2023-03-12 04:17:02.727583'
     s3:
