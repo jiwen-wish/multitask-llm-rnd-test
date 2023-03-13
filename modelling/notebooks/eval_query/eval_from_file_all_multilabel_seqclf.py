@@ -11,20 +11,20 @@ from pprint import pprint
 # python main_inference_multimodal.py \
 #         --model=LLM_Inference_Multimodal \
 #         --model.llm_type="seqclf" \
-#         --model.ckpt_path="models/distill_query_classify/version_2/epoch=1-step=273.ckpt" \
-#         --model.config_path="models/distill_query_classify/version_2/config.yaml" \
+#         --model.ckpt_path="models/multitask_multimodal_multilingual/version_11/epoch=3-step=776.ckpt" \
+#         --model.config_path="models/multitask_multimodal_multilingual/version_11/config.yaml" \
 #         --model.task="seqclf_singlemodal_wishquery2tax" \
-#         --model.output_dir="models/distill_query_classify/version_2" \
+#         --model.output_dir="models/multitask_multimodal_multilingual/version_11" \
 #         --model.write_interval="batch" \
 #         --data=JSONListData \
 #         --data.llm_type="seqclf" \
-#         --data.label_map_file="datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt" \
+#         --data.label_map_file="datasets/taxonomy/wish_v1.2.1_newtax_allpaths_withunknown.txt" \
 #         --data.label_type="multilabel_taxonomy" \
 #         --data.data_source_yaml_path="datasets/multimodal_multitask/wish_labelled_query_offshore_test_V2.yaml" \
 #         --data.input_dict="{'template': '{query}', 'task_prefix': 'Classify query: '}" \
 #         --data.output_dict="{'template': '{query}'}" \
 #         --data.data_source_type="dvc" \
-#         --data.model_name="google/mt5-base" \
+#         --data.model_name="microsoft/Multilingual-MiniLM-L12-H384" \
 #         --data.batch_size=50 \
 #         --data.max_length=50 \
 #         --data.num_workers=0 \
@@ -41,8 +41,8 @@ main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 data_config_relpath = "datasets/multimodal_multitask/wish_labelled_query_offshore_test_V2.yaml"
 data_split = "test"
 data_source_type = "dvc"
-inference_output_relpath = "models/distill_query_classify/version_2/seqclf-epoch=1-step=273--wish_labelled_query_offshore_test_V2--test.json"
-num_return_sequences = 3
+inference_output_relpath = "models/multitask_multimodal_multilingual/version_11/seqclf-epoch=3-step=776--wish_labelled_query_offshore_test_V2--test.json"
+
 tax_data_config = {
     "path": "datasets/data/taxonomy/wish_newtax.json",
     "repo": "git@github.com:ContextLogic/multitask-llm-rnd.git",
@@ -67,7 +67,6 @@ for use_lang in ['en', 'all']:
             assert len(df_out) == len(df_in)
             df_baseline = pd.read_json(dvc.api.get_url(**baseline_data_config), lines=True)
             df_tax = pd.read_json(dvc.api.get_url(**tax_data_config), lines=True)
-
 
             df_in['query_classification_lists'] = df_in['query_classification_lists'].apply(
                 lambda x: [i.lower() for i in x]
@@ -102,7 +101,7 @@ for use_lang in ['en', 'all']:
                     assert j in valid_paths
             for i in df_out_group.to_dict('records'):
                 for j in i['prediction_decoded']:
-                    assert j in valid_paths
+                    assert j in valid_paths or j == 'unknown'
 
             valid_paths_rev = {valid_paths[i]: i for i in valid_paths}
             valid_paths_list = [valid_paths_rev[i] for i in range(len(valid_paths_rev))]
@@ -129,6 +128,9 @@ for use_lang in ['en', 'all']:
                             path = " > ".join(j.split(" > ")[:depth_constraint])
                             y_true_indicator[ind, valid_paths[path]] = 1.
                         for j, j_prob in list(zip(i[y_pred_name], i[y_prob_name]))[:eval_top_k ]:
+                            if j == 'unknown':
+                                # ignore any predictions less confident than unknown
+                                break
                             path = " > ".join(j.split(" > ")[:depth_constraint])
                             if j_prob >= min_prob:
                                 y_pred_indicator[ind, valid_paths[path]] = 1.
