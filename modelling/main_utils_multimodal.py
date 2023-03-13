@@ -442,7 +442,7 @@ class JSONListData(pl.LightningDataModule):
                                 if isinstance(dat[lk], list):
                                     labels = self.get_label_matched_text(" > ".join([i.strip().lower() for i in dat[lk]]))
                                 elif isinstance(dat[lk], str):
-                                    labels = self.get_label_matched_text(dat[lk])
+                                    labels = self.get_label_matched_text(dat[lk].strip().lower())
                                 else:
                                     raise NotImplemented()
                                 assert f"labels_{lk}" not in dat
