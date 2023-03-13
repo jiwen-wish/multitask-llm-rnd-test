@@ -909,17 +909,17 @@ class LLM_MultitaskMultiModalData(pl.LightningDataModule):
     def log_sample_batch(self, split, task):
         logging.info(f"\n\n==> Example {split} sample for {task}: ")
         sample_batch = self.datamodules[task].ds[split][:1]
-        try:
-            for i in sample_batch:
+        for i in sample_batch:
+            try:
+                logging.info("> " + i + ": " + str(sample_batch[i]))
+                logging.info("> " + i + ".sum(1) : " + str(sample_batch[i].sum(1)))
                 if "input_ids" in i or "labels" in i:
                     tmp = deepcopy(sample_batch[i])
                     tmp[tmp<0] = 0
-                    logging.info("> " + i + ": " + self.datamodules[task].tokenizer.batch_decode(tmp)[0])
-                else:
-                    logging.info("> " + i + ": " + str(sample_batch[i]))
-        except Exception as e:
-            logging.error(e)
-            logging.info(sample_batch)
+                    logging.info("> " + i + ".tokenizer() : " + self.datamodules[task].tokenizer.batch_decode(tmp)[0])
+            except Exception as e:
+                logging.error(e)
+                logging.info(sample_batch)
 
     def train_dataloader(self):
         outs = {}
