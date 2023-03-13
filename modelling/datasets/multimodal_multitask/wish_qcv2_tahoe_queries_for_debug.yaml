@@ -1,0 +1,4 @@
+predict:
+  - path: datasets/notebooks/quali_analysis_queryv0v2/query_classify_v2_20230311.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
