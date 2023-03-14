@@ -1,0 +1,12 @@
+train:
+  - path: datasets/data/liang_product/liang_product_classification_mixall_train.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+val:
+  - path: datasets/data/liang_product/liang_product_classification_offshorev2only_val.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
+test:
+  - path: datasets/data/liang_product/liang_product_classification_offshorev2only_test.json
+    repo: git@github.com:ContextLogic/multitask-llm-rnd.git
+    rev: null
