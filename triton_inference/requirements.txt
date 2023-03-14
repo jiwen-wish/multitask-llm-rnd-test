@@ -3,8 +3,8 @@ s3fs==2023.3.0
 requests==2.28.2
 transformers[onnx]==4.26.1
 locust==2.15.0
-tritonclient[all]==2.9.0 
-triton-model-analyzer==1.10.0 
 optimum[onnxruntime]==1.7.1 
 optimum[exporters]==1.7.1
 onnxruntime-gpu==1.14.1
+triton-model-analyzer==1.25.0
+tritonclient[all]==2.31.0
