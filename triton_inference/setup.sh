@@ -1,0 +1,1 @@
+bash ./fetch_models.sh

@@ -1,0 +1,15 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.202.3/containers/python-3
+{
+	"name": "Python 3",
+	"build": {
+		"dockerfile": "../Dockerfile",
+		"context": ".."
+	},
+	"runArgs": ["--gpus","all"],
+	"postCreateCommand": "bash setup.sh",
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"
+		// "source=${localEnv:HOME}/.bashrc,target=/root/.bashrc,type=bind,consistency=cached"
+	]
+}
