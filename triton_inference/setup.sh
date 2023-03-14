@@ -8,3 +8,6 @@ python3.8 fetch_query_classify_v3.py
 rm -rf model_repository/query_classify_tokenizer
 # start server
 tritonserver --model-repositor model_repository/
+## test server in another terminal
+# perf_analyzer -m query_classify_onnx --concurrency-range 1:10 --collect-metrics -f output.csv --verbose-csv
+
