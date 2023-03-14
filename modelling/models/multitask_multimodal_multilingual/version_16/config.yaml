@@ -6,7 +6,7 @@ trainer:
     init_args:
       save_dir: models
       name: multitask_multimodal_multilingual
-      version: 15
+      version: 16
       log_graph: false
       default_hp_metric: true
       prefix: ''
@@ -21,7 +21,7 @@ trainer:
   enable_checkpointing: true
   callbacks:
   - init_args:
-      dirpath: models/multitask_multimodal_multilingual/version_15
+      dirpath: models/multitask_multimodal_multilingual/version_16
       filename: null
       monitor: val_loss
       verbose: false
@@ -58,7 +58,7 @@ trainer:
   check_val_every_n_epoch: 1
   fast_dev_run: false
   accumulate_grad_batches: null
-  max_epochs: 20
+  max_epochs: 4
   min_epochs: null
   max_steps: -1
   min_steps: null
@@ -67,16 +67,16 @@ trainer:
   limit_val_batches: null
   limit_test_batches: null
   limit_predict_batches: null
-  val_check_interval: 10
+  val_check_interval: 10000
   log_every_n_steps: 100
   accelerator: gpu
-  strategy: ddp
+  strategy: dp
   sync_batchnorm: false
   precision: 32
   enable_model_summary: true
   weights_save_path: null
   num_sanity_val_steps: 0
-  resume_from_checkpoint: models/multitask_multimodal_multilingual/version_10/epoch=1-step=72279.ckpt
+  resume_from_checkpoint: null
   profiler: null
   benchmark: null
   deterministic: true
@@ -106,12 +106,12 @@ model:
   add_simcse: false
   auto_task_weight: false
   multitask_specs_dict:
-    seqclf_singlemodal_wishquery2tax:
+    seqclf_singlemodal_wishproducttitle2tax:
       specs:
         clf_head: clf_head
         clf_weight_type: null
         label_map_file: /workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths_withunknown.txt
-        label_type: multilabel_taxonomy
+        label_type: taxonomy
   head_dict:
     clf_head:
       purpose: seqclf
@@ -131,20 +131,19 @@ model:
 data:
   model_name: microsoft/Multilingual-MiniLM-L12-H384
   multitask_dict:
-    seqclf_singlemodal_wishquery2tax:
-      data_source_yaml_path: datasets/multimodal_multitask/wish_labelled_query_offshoreappen_for_multilabel_seqclf.yaml
+    seqclf_singlemodal_wishproducttitle2tax:
+      data_source_yaml_path: datasets/multimodal_multitask/liang_product_mixall_withvoffshore2valtest_multilabel_seqclf.yaml
       batch_size: 50
       max_length: 50
       max_length_out: 50
       label_map_file: /workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths_withunknown.txt
-      label_type: multilabel_taxonomy
+      label_type: taxonomy
       llm_type: seqclf
       input_dict:
-        template: '{query}'
-        task_prefix: 'Classify query: '
+        template: '{title}'
+        task_prefix: 'Classify product title: '
       output_dict:
-        template: '{category}'
-      transform_dict: null
+        template: '{category_path}'
       data_source_type: dvc
   raw_cache_dir: /data/junwang/.cache/general
   overwrite_cache: false
