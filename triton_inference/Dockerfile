@@ -1,2 +1,2 @@
-FROM nvcr.io/nvidia/tritonserver:22.09-py3
-RUN apt-get update && apt-get install -y tmux
+FROM nvcr.io/nvidia/tritonserver:23.02-py3
+RUN apt-get update && apt-get install -y tmux rapidjson-dev libarchive-dev zlib1g-dev
