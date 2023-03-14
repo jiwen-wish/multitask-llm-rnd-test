@@ -3,6 +3,11 @@ platform: "onnxruntime_onnx"
 max_batch_size: 64
 input [
   {
+    name: "token_type_ids"
+    data_type: TYPE_INT64
+    dims: [64]
+  },
+  {
     name: "attention_mask"
     data_type: TYPE_INT64
     dims: [64]

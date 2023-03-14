@@ -5,6 +5,6 @@ transformers[onnx]==4.26.1
 locust==2.15.0
 tritonclient[all]==2.9.0 
 triton-model-analyzer==1.10.0 
-onnxruntime-gpu==1.14.1
 optimum[onnxruntime]==1.7.1 
 optimum[exporters]==1.7.1
+onnxruntime-gpu==1.14.1

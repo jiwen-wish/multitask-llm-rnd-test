@@ -11,16 +11,22 @@ class MyUser(HttpUser):
         self.client.post("/v2/models/query_classify_onnx/versions/1/infer", json={
         "inputs":[
             {	
-                "name": "attention_mask",
-                "shape": [1, 20],
+                "name": "token_type_ids",
+                "shape": [1, 64],
                 "datatype": "INT64",
-                "data": [[1, 1, 1, 1] * 5]
+                "data": [[0] * 64]
+            },
+            {	
+                "name": "attention_mask",
+                "shape": [1, 64],
+                "datatype": "INT64",
+                "data": [[1] * 64]
             },
             {	
                 "name": "input_ids",
-                "shape": [1, 20],
+                "shape": [1, 64],
                 "datatype": "INT64",
-                "data": [[1, 1, 1, 1] * 5]
+                "data": [[1] * 64]
             }
         ]
         })
