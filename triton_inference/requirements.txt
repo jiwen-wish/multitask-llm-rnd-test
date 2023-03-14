@@ -8,4 +8,3 @@ triton-model-analyzer==1.10.0
 optimum[onnxruntime]==1.7.1 
 optimum[exporters]==1.7.1
 onnxruntime-gpu==1.14.1
-cmake==3.25.2
