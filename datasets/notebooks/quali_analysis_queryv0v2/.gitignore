@@ -9,3 +9,6 @@
 /query_classify_v3_20230315.json
 /top_searched_queries_stats_with_v0v3.csv
 /top_searched_queries_stats_with_v0v3_with_jaccard.csv
+/control_vs_show-v1_queries_ndcg_difference_tables_v3.xlsx
+/control_vs_show-v1_queries_ndcg_difference_tables_with_v0v3.csv
+/control_vs_show-v1_queries_ndcg_difference_tables_with_v0v3_with_jaccard.csv
