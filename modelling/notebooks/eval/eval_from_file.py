@@ -59,7 +59,7 @@ def get_df_outfile(dataset):
     if dataset == 'mturk':
         df_data = pd.read_json(
             dvc.api.get_url(
-                'data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json',
+                'datasets/data/wish_products/wish-mturk-labelled-09202022-clean-joinedlance.json',
                 repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
             ), lines=True
         )
@@ -67,7 +67,7 @@ def get_df_outfile(dataset):
     elif dataset == 'offshore':
         df_data = pd.read_json(
             dvc.api.get_url(
-                'data/wish_products_internallabel/wish_products_offshore_labelled_processed.json',
+                'datasets/data/wish_products_internallabel/wish_products_offshore_labelled_processed.json',
                 repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
             ), lines=True
         )
@@ -75,7 +75,7 @@ def get_df_outfile(dataset):
     elif dataset == 'offshore-validated':
         df_data = pd.read_json(
             dvc.api.get_url(
-                'data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed.json',
+                'datasets/data/wish_products_internallabel/wish_products_offshore_labelled_validated_processed.json',
                 repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
             ), lines=True
         )

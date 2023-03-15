@@ -29,7 +29,7 @@ def perf_eval_utils_seqclf(df_pred, df_data, label_map_file, version, decode_met
 
     df_tax = pd.read_json(
         dvc.api.get_url(
-            'data/taxonomy/wish_newtax.json',
+            'datasets/data/taxonomy/wish_newtax.json',
             repo='git@github.com:ContextLogic/multitask-llm-rnd.git'
         ), lines=True
     )
@@ -51,8 +51,8 @@ def perf_eval_utils_seqclf(df_pred, df_data, label_map_file, version, decode_met
 def main(args):
     """
     python notebooks/eval/eval_from_file_seqclf.py --dataset offshore-validated \
-        --input models/product_title_multitask_multimodal/version_1/seqclf-epoch=0-step=75000--wish_offshore_validated_wclip--multimodal.json \
-        --version mm_seqclf_clip_v0.1 \
+        --input /workspaces/multitask-llm-rnd/modelling/models/product_title_multitask_multimodal/version_1/seqclf-epoch=0-step=75000--wish_offshore_validated--test.json \
+        --version mm_seqclf_redo_v0.1 \
         --label_map_file datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt \
         --decode_method leaf
 
