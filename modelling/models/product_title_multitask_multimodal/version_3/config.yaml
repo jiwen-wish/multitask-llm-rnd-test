@@ -67,7 +67,7 @@ trainer:
   limit_val_batches: null
   limit_test_batches: null
   limit_predict_batches: null
-  val_check_interval: 1000
+  val_check_interval: 100
   log_every_n_steps: 50
   accelerator: gpu
   strategy: ddp
@@ -151,6 +151,7 @@ data:
   overwrite_cache: false
   force_download_hfdata: false
   predict_on_test: true
+  predict_on_trainval: null
   num_workers: 0
   multiple_trainloader_mode: max_size_cycle
 ckpt_path: null
