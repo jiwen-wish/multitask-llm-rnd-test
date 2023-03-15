@@ -133,8 +133,8 @@ data:
   multitask_dict:
     seqclf_singlemodal_wishtitle2v121tax:
       data_source_yaml_path: datasets/multimodal_multitask/liang_product_offshorev2_multilabel_seqclf.yaml
-      batch_size: 50
-      max_length: 512
+      batch_size: 10
+      max_length: 256
       max_length_out: 50
       label_map_file: /workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
       label_type: taxonomy
