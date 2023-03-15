@@ -1,0 +1,61 @@
+model_name: t5-base
+weight_decay: 0.1
+learning_rate: 1.0e-05
+lr_scheduler_max_steps: null
+lr_scheduler_type: null
+lr_scheduler_num_warmup_steps: null
+distance_func: cosine
+loss_type: cross-entropy
+margin: null
+hidden_states_type: encoder-last
+add_simcse: false
+manual_loss_type: manual_mse
+auto_task_weight: false
+multitask_specs_dict:
+  seqclf_singlemodal_wishtitle2v121tax:
+    specs:
+      clf_head: clf_head
+      clf_weight_type: null
+      label_map_file: /workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+      label_type: taxonomy
+head_dict:
+  clf_head:
+    type: linear
+    in_features: 768
+    out_features: 6037
+    purpose: seqclf
+return_model: true
+cache_dir: null
+force_download: false
+resume_download: false
+proxies: null
+use_auth_token: null
+local_files_only: false
+revision: null
+trust_remote_code: null
+subfolder: ''
+load_weights_only: true
+multitask_dict:
+  seqclf_singlemodal_wishtitle2v121tax:
+    data_source_yaml_path: datasets/multimodal_multitask/liang_product_offshorev2_multilabel_seqclf.yaml
+    batch_size: 50
+    max_length: 50
+    max_length_out: 50
+    label_map_file: /workspaces/multitask-llm-rnd/modelling/datasets/taxonomy/wish_v1.2.1_newtax_allpaths.txt
+    label_type: taxonomy
+    llm_type: seqclf
+    input_dict:
+      template: '{title}'
+      task_prefix: 'Classify product: '
+    output_dict:
+      template: '{category_path}'
+    transform_dict:
+      category_path: taxonomy
+    data_source_type: dvc
+raw_cache_dir: /data/junwang/.cache/general
+overwrite_cache: false
+force_download_hfdata: false
+predict_on_test: true
+predict_on_trainval: null
+num_workers: 0
+multiple_trainloader_mode: max_size_cycle
