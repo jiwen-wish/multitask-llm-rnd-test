@@ -14,17 +14,17 @@ def load_pipeline():
     file_path = os.path.dirname(__file__)
     model_hf_reload = AutoModelForSequenceClassification.from_pretrained(file_path).eval()
     tokenizer_hf_reload = AutoTokenizer.from_pretrained(file_path, fast=True)
-    tokenizer_kwargs = {'padding':True, 'truncation':True, 'max_length':56}
+    tokenizer_kwargs = {'padding':True, 'truncation':True, 'max_length':50}
     with torch.no_grad():
         model_hf_reload.bert.pooler.activation = torch.nn.Identity()
     try:
         pipe = pipeline("text-classification", model=model_hf_reload, 
-            tokenizer=tokenizer_hf_reload, function_to_apply='sigmoid', device=0, 
+            tokenizer=tokenizer_hf_reload, function_to_apply='sigmoid', device=0, top_k=10,
             **tokenizer_kwargs)
     except Exception as e:
         print(f'use CPU instead due to {e}')
         pipe = pipeline("text-classification", model=model_hf_reload, 
-            tokenizer=tokenizer_hf_reload, function_to_apply='sigmoid', device=-1,
+            tokenizer=tokenizer_hf_reload, function_to_apply='sigmoid', device=-1, top_k=10,
             **tokenizer_kwargs)
     return pipe
 # %%
