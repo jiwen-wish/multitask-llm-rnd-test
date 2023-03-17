@@ -23,7 +23,7 @@ query-classify:
       library_type: huggingface-pipeline
       max_batch_size: 100
       model_type: text-classification-multilabel
-      num_top_preds: 3
+      num_top_preds: 10
       taxonomy_version: v1.2.1
       yaml_update_time: '2023-03-17 03:24:43.536085'
     s3:
