@@ -1,0 +1,72 @@
+name: "query_classify_ensemble"
+# maximum batch size 
+max_batch_size: 0 
+platform: "ensemble"
+
+#input to the model 
+input [
+{
+    name: "text"
+    data_type: TYPE_STRING
+    dims: [ -1 ] 
+    # -1 means dynamic axis, aka this dimension may change 
+}
+]
+
+#output of the model 
+output {
+    name: "logits"
+    data_type: TYPE_FP32
+    dims: [-1, 6038] 
+    # two dimensional tensor, where 1st dimension: batch-size, 2nd dimension: #classes
+}
+
+#Type of scheduler to be used
+ensemble_scheduling {
+    step [
+        {
+            model_name: "query_classify_tokenizer"
+            model_version: -1
+            input_map {
+            key: "text"
+            value: "text"
+        }
+        output_map [
+        {
+            key: "input_ids"
+            value: "input_ids"
+        },
+        {
+            key: "token_type_ids"
+            value: "token_type_ids"
+        },
+        {
+            key: "attention_mask"
+            value: "attention_mask"
+        }
+        ]
+        },
+        {
+            model_name: "query_classify_onnx"
+            model_version: -1
+        input_map [
+            {
+                key: "input_ids"
+                value: "input_ids"
+            },
+            {
+                key: "token_type_ids"
+                value: "token_type_ids"
+            },
+            {
+                key: "attention_mask"
+                value: "attention_mask"
+            }
+        ]
+        output_map {
+                key: "logits"
+                value: "logits"
+            }
+        }
+    ]
+}

@@ -29,18 +29,20 @@ class TritonPythonModel:
             # binary data typed back to string
             query = [
                 t.decode("UTF-8")
-                for t in pb_utils.get_input_tensor_by_name(request, "TEXT")
+                for t in pb_utils.get_input_tensor_by_name(request, "text")
                 .as_numpy()
                 .tolist()
             ]
             tokens: Dict[str, np.ndarray] = self.tokenizer(
-                text=query, return_tensors=TensorType.NUMPY
+                text=query, return_tensors=TensorType.NUMPY, 
+                return_token_type_ids=True
             )
+
             # tensorrt uses int32 as input type, ort uses int64
             tokens = {k: v.astype(np.int64) for k, v in tokens.items()}
             # communicate the tokenization results to Triton server
             outputs = list()
-            for input_name in self.tokenizer.model_input_names:
+            for input_name in ["input_ids", "token_type_ids", "attention_mask"]:
                 tensor_input = pb_utils.Tensor(input_name, tokens[input_name])
                 outputs.append(tensor_input)
 
