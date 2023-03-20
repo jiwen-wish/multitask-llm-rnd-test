@@ -1,10 +1,10 @@
-name: "tokenizer"
+name: "query_classify_tokenizer"
 max_batch_size: 0
 backend: "python"
 
 input [
     {
-        name: "TEXT"
+        name: "text"
         data_type: TYPE_STRING
         dims: [ -1 ]
     }
@@ -12,25 +12,25 @@ input [
 
 output [
     {
-        name: "token_type_ids"
-        data_type: TYPE_INT64
-        dims: [ 64 ] 
-    },
-    {
         name: "input_ids"
         data_type: TYPE_INT64
-        dims: [ 64 ] 
+        dims: [ -1 ] 
+    },
+    {
+        name: "token_type_ids"
+        data_type: TYPE_INT64
+        dims: [ -1 ] 
     },
     {
         name: "attention_mask"
         data_type: TYPE_INT64
-        dims: [ 64 ]
+        dims: [ -1 ]
     }
 ]
 
 instance_group [
     {
       count: 1
-      kind: KIND_GPU
+      kind: KIND_CPU
     }
 ]

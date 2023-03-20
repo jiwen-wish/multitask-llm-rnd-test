@@ -3,10 +3,9 @@ from typing import Dict, List
 
 import numpy as np
 import triton_python_backend_utils as pb_utils
-from transformers import AutoTokenizer, PreTrainedTokenizer, TensorType
 
 class TritonPythonModel:
-    tokenizer: PreTrainedTokenizer
+    label_map: List
 
     def initialize(self, args: Dict[str, str]) -> None:
         """
@@ -14,8 +13,14 @@ class TritonPythonModel:
         :param args: arguments from Triton config file
         """
         # more variables in https://github.com/triton-inference-server/python_backend/blob/main/src/python.cc
-        path: str = os.path.join(args["model_repository"], args["model_version"])
-        self.tokenizer = AutoTokenizer.from_pretrained(path)
+        path: str = os.path.join(args["model_repository"], args["model_version"], 'labels.txt')
+        self.label_map = []
+        with open(path, 'r') as f:
+            for i in f:
+                i = i.replace('\n', '')
+                if len(i) > 0:
+                    self.label_map.append(i)
+        assert len(self.label_map) == 6038
 
     def execute(self, requests) -> "List[List[pb_utils.Tensor]]":
         """
@@ -27,24 +32,14 @@ class TritonPythonModel:
         # for loop for batch requests (disabled in our case)
         for request in requests:
             # binary data typed back to string
-            query = [
-                t.decode("UTF-8")
-                for t in pb_utils.get_input_tensor_by_name(request, "text")
-                .as_numpy()
-                .tolist()
-            ]
-            print('query: ', query)
-            tokens: Dict[str, np.ndarray] = self.tokenizer(
-                text=query, return_tensors=TensorType.NUMPY, 
-                return_token_type_ids=True, max_length=512, truncation=True, padding=True
-            )
-
-            # tensorrt uses int32 as input type, ort uses int64
-            tokens = {k: v.astype(np.int64) for k, v in tokens.items()}
+            logits = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
+            print('logits: ', logits)
+            
             # communicate the tokenization results to Triton server
             outputs = list()
-            for input_name in ["input_ids", "token_type_ids", "attention_mask"]:
-                tensor_input = pb_utils.Tensor(input_name, tokens[input_name])
+            
+            for input_name in ["categories", "weights"]:
+                tensor_input = pb_utils.Tensor(input_name, "dummy")
                 outputs.append(tensor_input)
 
             inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
