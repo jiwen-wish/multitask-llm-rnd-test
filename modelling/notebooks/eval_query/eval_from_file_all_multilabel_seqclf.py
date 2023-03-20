@@ -55,8 +55,8 @@ baseline_data_config = {
 }
 
 for use_lang in ['en', 'all']:
-    for min_prob, min_baseline_weight in zip([-1, .05], [-1, 1.]):
-        for eval_top_k in [1, 10000]:
+    for min_prob, min_baseline_weight in [(-1, -1)]:
+        for eval_top_k in [3]:
             data_config = yaml.safe_load(open(os.path.join(main_path, data_config_relpath), 'r'))
             assert data_split in data_config and len(data_config[data_split]) == 1
             if data_source_type == "dvc":
@@ -83,8 +83,8 @@ for use_lang in ['en', 'all']:
                 lambda x: [float(i) for i in x.split(',')]
             )
             df_out_group = df_out.sort_values('batch_indices')
-            df_out_group['prediction_decoded'] = df_out_group['preds'].apply(lambda x: [i[0] for i in x[:3]])
-            df_out_group['prob'] = df_out_group['preds'].apply(lambda x: [i[1] for i in x[:3]])
+            df_out_group['prediction_decoded'] = df_out_group['preds'].apply(lambda x: [i[0] for i in x[:eval_top_k]])
+            df_out_group['prob'] = df_out_group['preds'].apply(lambda x: [i[1] for i in x[:eval_top_k]])
             # df_out_group = df_out.groupby('batch_indices').agg(
             #     {
             #         'prediction_decoded': lambda x: [i for i in x], 
@@ -166,10 +166,10 @@ for use_lang in ['en', 'all']:
 
             recs = []
             for i in df_join_baseline_en.to_dict('records'):
-                i['y_baseline_jc'] = len(set(i['y_true'][:3]).intersection(set(i['y_baseline'][:3]))) / \
-                    len(set(i['y_true'][:3]).union(set(i['y_baseline'][:3])))
-                i['y_pred_jc'] = len(set(i['y_true']).intersection(set(i['y_pred'][:3]))) / \
-                    len(set(i['y_true'][:3]).union(set(i['y_pred'][:3])))
+                i['y_baseline_jc'] = len(set(i['y_true'][:eval_top_k]).intersection(set(i['y_baseline'][:eval_top_k]))) / \
+                    len(set(i['y_true'][:eval_top_k]).union(set(i['y_baseline'][:eval_top_k])))
+                i['y_pred_jc'] = len(set(i['y_true']).intersection(set(i['y_pred'][:eval_top_k]))) / \
+                    len(set(i['y_true'][:eval_top_k]).union(set(i['y_pred'][:eval_top_k])))
                 recs.append(i)
             df_join_baseline_en = pd.DataFrame(recs)
 
@@ -186,8 +186,8 @@ for use_lang in ['en', 'all']:
 
             print(f"\nuse_lang {use_lang} min_prob {min_prob}, min_baseline_weight {min_baseline_weight}, eval_top_k {eval_top_k}")
             print("\nbaseline\n")
-            print(df_sub_perf_agg_baseline_en.to_markdown())
+            print(df_sub_perf_agg_baseline_en.to_markdown(index=False))
             print("\nV1\n")
-            print(df_sub_perf_agg_en.to_markdown())
+            print(df_sub_perf_agg_en.to_markdown(index=False))
 
 #%%

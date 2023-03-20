@@ -6,11 +6,11 @@
 | weighted avg |    0.481076 | 0.530117 |   0.475573 |     11671 |                  3 | V3modelMini|
 | weighted avg |    0.435373 | 0.482078 |   0.424838 |     12861 |                  4 | V3modelMini|
 | weighted avg |    0.434393 | 0.480987 |   0.423777 |     12886 |                  5 | V3modelMini|
-| weighted avg |    0.708692 | 0.787946 |   0.744408 |      7715 |                  1 | V3model    |
-| weighted avg |    0.581962 | 0.673435 |   0.611813 |      9407 |                  2 | V3model    |
-| weighted avg |    0.483979 | 0.525491 |   0.474764 |     11671 |                  3 | V3model    |
-| weighted avg |    0.440125 | 0.478734 |   0.425173 |     12861 |                  4 | V3model    |
-| weighted avg |    0.439258 | 0.47765  |   0.424154 |     12886 |                  5 | V3model    |
+| weighted avg |    0.708692 | 0.787946 |   0.744408 |      7715 |                  1 | V3modelT5  |
+| weighted avg |    0.581962 | 0.673435 |   0.611813 |      9407 |                  2 | V3modelT5  |
+| weighted avg |    0.483979 | 0.525491 |   0.474764 |     11671 |                  3 | V3modelT5  |
+| weighted avg |    0.440125 | 0.478734 |   0.425173 |     12861 |                  4 | V3modelT5  |
+| weighted avg |    0.439258 | 0.47765  |   0.424154 |     12886 |                  5 | V3modelT5  |
 | weighted avg |    0.676881 | 0.797797 |   0.726816 |      7715 |                  1 | V2model    |
 | weighted avg |    0.543443 | 0.681407 |   0.586657 |      9407 |                  2 | V2model    |
 | weighted avg |    0.430311 | 0.529346 |   0.439258 |     11671 |                  3 | V2model    |
@@ -35,11 +35,11 @@
 | weighted avg |    0.464634 | 0.52312  |   0.464423 |     11671 |                  3 | V3modelMini|
 | weighted avg |    0.417582 | 0.472234 |   0.411123 |     12861 |                  4 | V3modelMini|
 | weighted avg |    0.416492 | 0.471279 |   0.410074 |     12886 |                  5 | V3modelMini|
-| weighted avg |    0.701043 | 0.782243 |   0.737905 |     12716 |                  1 | V3model    |
-| weighted avg |    0.569662 | 0.668534 |   0.603513 |     15534 |                  2 | V3model    |
-| weighted avg |    0.467339 | 0.519913 |   0.464663 |     19334 |                  3 | V3model    |
-| weighted avg |    0.421054 | 0.468965 |   0.411452 |     21411 |                  4 | V3model    |
-| weighted avg |    0.42013  | 0.468016 |   0.410456 |     21448 |                  5 | V3model    |
+| weighted avg |    0.701043 | 0.782243 |   0.737905 |     12716 |                  1 | V3modelT5  |
+| weighted avg |    0.569662 | 0.668534 |   0.603513 |     15534 |                  2 | V3modelT5  |
+| weighted avg |    0.467339 | 0.519913 |   0.464663 |     19334 |                  3 | V3modelT5  |
+| weighted avg |    0.421054 | 0.468965 |   0.411452 |     21411 |                  4 | V3modelT5  |
+| weighted avg |    0.42013  | 0.468016 |   0.410456 |     21448 |                  5 | V3modelT5  |
 | weighted avg |    0.672239 | 0.79223  |   0.722618 |     12716 |                  1 | V2model    |
 | weighted avg |    0.535214 | 0.673297 |   0.578366 |     15534 |                  2 | V2model    |
 | weighted avg |    0.416289 | 0.521827 |   0.429141 |     19334 |                  3 | V2model    |
