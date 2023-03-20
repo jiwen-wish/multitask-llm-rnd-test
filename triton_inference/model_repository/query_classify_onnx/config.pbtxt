@@ -22,7 +22,7 @@ output [
   {
     name: "logits"
     data_type: TYPE_FP32
-    dims: [6037]
+    dims: [6038]
   }
 ]
 dynamic_batching {
