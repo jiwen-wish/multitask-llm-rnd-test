@@ -3,6 +3,10 @@ from typing import Dict, List
 
 import numpy as np
 import triton_python_backend_utils as pb_utils
+import math
+
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
 
 class TritonPythonModel:
     label_map: List
@@ -33,15 +37,25 @@ class TritonPythonModel:
         for request in requests:
             # binary data typed back to string
             logits = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
-            print('logits: ', logits)
+            print('logits: ', logits, logits.shape)
             
-            # communicate the tokenization results to Triton server
-            outputs = list()
+            top_10_inds = (-logits).argsort()[:10]
+            top_10_cats = [self.label_map[i] for i in top_10_inds]
+            top_10_probs = [sigmoid(logits[i]) for i in top_10_inds]
+            top_10_cats_filter_unk = []
+            top_10_probs_filter_unk = []
+            for c, p in zip(top_10_cats, top_10_probs):
+                if str(c) == '-1':
+                    break
+                top_10_cats_filter_unk.append(str(c))
+                top_10_probs_filter_unk.append(str(p))
             
-            for input_name in ["categories", "weights"]:
-                tensor_input = pb_utils.Tensor(input_name, 
-                    np.array(["dummy".encode('utf-8')], dtype=np.dtype('S')))
-                outputs.append(tensor_input)
+            outputs = [ 
+                pb_utils.Tensor('categories', 
+                    np.array([(",".join(top_10_cats_filter_unk)).encode('utf-8')], dtype=np.dtype('S'))),
+                pb_utils.Tensor('weights', 
+                    np.array([(",".join(top_10_probs_filter_unk)).encode('utf-8')], dtype=np.dtype('S'))),
+            ]
 
             inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
             responses.append(inference_response)
