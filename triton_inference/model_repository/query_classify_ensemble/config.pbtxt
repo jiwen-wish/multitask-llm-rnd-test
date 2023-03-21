@@ -33,10 +33,10 @@ ensemble_scheduling {
         {
             model_name: "query_classify_tokenizer"
             model_version: -1
-            input_map {
+            input_map [{
                 key: "text"
                 value: "text"
-            }
+            }]
             output_map [
                 {
                     key: "input_ids"
@@ -69,30 +69,28 @@ ensemble_scheduling {
                     value: "attention_mask"
                 }
             ]
-            output_map {
+            output_map [{
                 key: "logits"
                 value: "logits"
-            }
+            }]
         },
         {
             model_name: "query_classify_postprocess"
             model_version: -1
-            input_map {
+            input_map [{
                 key: "logits"
                 value: "logits"
-            }
+            }]
             output_map [
                 {
-                    name: "categories"
-                    data_type: TYPE_STRING
-                    dims: [-1] 
+                    key: "categories"
+                    value: "categories"
                 },
                 {
-                    name: "weights"
-                    data_type: TYPE_STRING
-                    dims: [-1] 
+                    key: "weights"
+                    value: "weights"
                 }
             ]
-        },
+        }
     ]
 }
