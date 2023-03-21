@@ -36,7 +36,7 @@ class TritonPythonModel:
             print('query: ', query)
             tokens: Dict[str, np.ndarray] = self.tokenizer(
                 text=query, return_tensors=TensorType.NUMPY, 
-                max_length=512, truncation=True, padding=True
+                max_length=50, truncation=True, padding=True
             )
 
             # tensorrt uses int32 as input type, ort uses int64
