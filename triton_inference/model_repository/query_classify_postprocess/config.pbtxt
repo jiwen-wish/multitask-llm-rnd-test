@@ -22,7 +22,10 @@ output [
         dims: [ 1 ] 
     }
 ]
-
+dynamic_batching {
+  preferred_batch_size: [ 1,2,4,8,16,32,64 ]
+  max_queue_delay_microseconds: 5
+}
 instance_group [
     {
       count: 1

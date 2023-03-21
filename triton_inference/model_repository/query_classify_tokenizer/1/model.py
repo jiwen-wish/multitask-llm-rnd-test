@@ -15,7 +15,7 @@ class TritonPythonModel:
         """
         # more variables in https://github.com/triton-inference-server/python_backend/blob/main/src/python.cc
         path: str = os.path.join(args["model_repository"], args["model_version"])
-        self.tokenizer = AutoTokenizer.from_pretrained(path)
+        self.tokenizer = AutoTokenizer.from_pretrained(path, fast=True)
 
     def execute(self, requests) -> "List[List[pb_utils.Tensor]]":
         """
@@ -25,6 +25,7 @@ class TritonPythonModel:
         """
         responses = []
         # for loop for batch requests (disabled in our case)
+        queries = []
         for request in requests:
             # binary data typed back to string
             query = [
@@ -33,18 +34,21 @@ class TritonPythonModel:
                 .as_numpy()
                 .tolist()
             ]
-            print('query: ', query)
-            tokens: Dict[str, np.ndarray] = self.tokenizer(
-                text=query, return_tensors=TensorType.NUMPY, 
-                max_length=50, truncation=True, padding='max_length'
-            )
+            queries += query
+        print('queries.len: ', len(queries))
 
-            # tensorrt uses int32 as input type, ort uses int64
-            tokens = {k: v.astype(np.int64) for k, v in tokens.items()}
-            # communicate the tokenization results to Triton server
+        tokens: Dict[str, np.ndarray] = self.tokenizer(
+            text=queries, return_tensors=TensorType.NUMPY, 
+            max_length=50, truncation=True, padding='max_length'
+        )
+
+        # tensorrt uses int32 as input type, ort uses int64
+        tokens = {k: v.astype(np.int64) for k, v in tokens.items()}
+        # communicate the tokenization results to Triton server
+        for ind in range(len(queries)):
             outputs = list()
             for input_name in ["input_ids", "attention_mask"]:
-                tensor_input = pb_utils.Tensor(input_name, tokens[input_name])
+                tensor_input = pb_utils.Tensor(input_name, tokens[input_name][ind:ind+1])
                 outputs.append(tensor_input)
 
             inference_response = pb_utils.InferenceResponse(output_tensors=outputs)

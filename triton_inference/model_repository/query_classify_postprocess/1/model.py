@@ -36,28 +36,30 @@ class TritonPythonModel:
         :return: text as input tensors
         """
         responses = []
+        all_logits = []
         # for loop for batch requests (disabled in our case)
         for request in requests:
             # binary data typed back to string
-            logits = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
-            print('logits: ', logits, logits.shape)
-            # TODO: batchify it
-            top_10_inds = np.argsort(-logits, axis=1)[:, :10]
-            top_10_cats = np.take_along_axis(self.label_map, top_10_inds, axis=1)
-            top_10_probs = sigmoid_vec(np.take_along_axis(logits, top_10_inds, axis=1))
-            top_10_cats_filter_unk = []
-            top_10_probs_filter_unk = []
-            for c, p in zip(top_10_cats, top_10_probs):
-                cs = [] 
-                ps = []
-                for c_, p_ in zip(c, p):
-                    if c_ == -1:
-                        break 
-                    else:
-                        cs.append(str(c_))
-                        ps.append(str(p_))
-                top_10_cats_filter_unk.append(cs)
-                top_10_probs_filter_unk.append(ps)
+            i = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
+            all_logits.append(i)
+            
+        logits = np.vstack(all_logits)
+        top_10_inds = np.argsort(-logits, axis=1)[:, :10]
+        top_10_cats = np.take_along_axis(self.label_map, top_10_inds, axis=1)
+        top_10_probs = sigmoid_vec(np.take_along_axis(logits, top_10_inds, axis=1))
+        top_10_cats_filter_unk = []
+        top_10_probs_filter_unk = []
+        for c, p in zip(top_10_cats, top_10_probs):
+            cs = [] 
+            ps = []
+            for c_, p_ in zip(c, p):
+                if c_ == -1:
+                    break 
+                else:
+                    cs.append(str(c_))
+                    ps.append(str(p_))
+            top_10_cats_filter_unk.append(cs)
+            top_10_probs_filter_unk.append(ps)
             
             outputs = [ 
                 pb_utils.Tensor('categories', 
