@@ -28,7 +28,7 @@ class TritonPythonModel:
         for request in requests:
             # binary data typed back to string
             query = [
-                t.decode("UTF-8")
+                t[0].decode("UTF-8")
                 for t in pb_utils.get_input_tensor_by_name(request, "text")
                 .as_numpy()
                 .tolist()
@@ -36,7 +36,7 @@ class TritonPythonModel:
             print('query: ', query)
             tokens: Dict[str, np.ndarray] = self.tokenizer(
                 text=query, return_tensors=TensorType.NUMPY, 
-                max_length=50, truncation=True, padding=True
+                max_length=50, truncation=True, padding='max_length'
             )
 
             # tensorrt uses int32 as input type, ort uses int64
