@@ -8,11 +8,6 @@ input [
     dims: [ -1 ]
   },
   {
-    name: "token_type_ids"
-    data_type: TYPE_INT64
-    dims: [ -1 ]
-  },
-  {
     name: "attention_mask"
     data_type: TYPE_INT64
     dims: [ -1 ]

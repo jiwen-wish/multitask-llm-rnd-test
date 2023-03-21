@@ -43,10 +43,6 @@ ensemble_scheduling {
                     value: "input_ids"
                 },
                 {
-                    key: "token_type_ids"
-                    value: "token_type_ids"
-                },
-                {
                     key: "attention_mask"
                     value: "attention_mask"
                 }
@@ -59,10 +55,6 @@ ensemble_scheduling {
                 {
                     key: "input_ids"
                     value: "input_ids"
-                },
-                {
-                    key: "token_type_ids"
-                    value: "token_type_ids"
                 },
                 {
                     key: "attention_mask"
