@@ -35,7 +35,6 @@ class TritonPythonModel:
                 .tolist()
             ]
             queries += query
-        print('queries.len: ', len(queries))
 
         tokens: Dict[str, np.ndarray] = self.tokenizer(
             text=queries, return_tensors=TensorType.NUMPY, 
