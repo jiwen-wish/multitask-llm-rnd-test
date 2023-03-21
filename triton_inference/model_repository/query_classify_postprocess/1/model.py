@@ -39,7 +39,8 @@ class TritonPythonModel:
             outputs = list()
             
             for input_name in ["categories", "weights"]:
-                tensor_input = pb_utils.Tensor(input_name, "dummy")
+                tensor_input = pb_utils.Tensor(input_name, 
+                    np.array(["dummy".encode('utf-8')], dtype=np.dtype('S')))
                 outputs.append(tensor_input)
 
             inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
