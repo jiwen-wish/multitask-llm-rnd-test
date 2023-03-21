@@ -43,7 +43,7 @@ class TritonPythonModel:
             tokens = {k: v.astype(np.int64) for k, v in tokens.items()}
             # communicate the tokenization results to Triton server
             outputs = list()
-            for input_name in ["input_ids", "token_type_ids", "attention_mask"]:
+            for input_name in ["input_ids", "attention_mask"]:
                 tensor_input = pb_utils.Tensor(input_name, tokens[input_name])
                 outputs.append(tensor_input)
 
