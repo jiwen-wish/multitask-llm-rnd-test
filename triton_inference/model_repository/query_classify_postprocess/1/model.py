@@ -8,8 +8,10 @@ import math
 def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
+sigmoid_vec = np.vectorize(sigmoid)
+
 class TritonPythonModel:
-    label_map: List
+    label_map: np.array
 
     def initialize(self, args: Dict[str, str]) -> None:
         """
@@ -18,13 +20,14 @@ class TritonPythonModel:
         """
         # more variables in https://github.com/triton-inference-server/python_backend/blob/main/src/python.cc
         path: str = os.path.join(args["model_repository"], args["model_version"], 'labels.txt')
-        self.label_map = []
+        label_map = []
         with open(path, 'r') as f:
             for i in f:
                 i = i.replace('\n', '')
                 if len(i) > 0:
-                    self.label_map.append(i)
-        assert len(self.label_map) == 6038
+                    label_map.append(int(i))
+        assert len(label_map) == 6038
+        self.label_map = np.array([label_map], dtype=np.dtype('int32'))
 
     def execute(self, requests) -> "List[List[pb_utils.Tensor]]":
         """
@@ -38,23 +41,31 @@ class TritonPythonModel:
             # binary data typed back to string
             logits = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
             print('logits: ', logits, logits.shape)
-            
-            top_10_inds = (-logits).argsort()[:10]
-            top_10_cats = [self.label_map[i] for i in top_10_inds]
-            top_10_probs = [sigmoid(logits[i]) for i in top_10_inds]
+            # TODO: batchify it
+            top_10_inds = np.argsort(-logits, axis=1)[:, :10]
+            top_10_cats = np.take_along_axis(self.label_map, top_10_inds, axis=1)
+            top_10_probs = sigmoid_vec(np.take_along_axis(logits, top_10_inds, axis=1))
             top_10_cats_filter_unk = []
             top_10_probs_filter_unk = []
             for c, p in zip(top_10_cats, top_10_probs):
-                if str(c) == '-1':
-                    break
-                top_10_cats_filter_unk.append(str(c))
-                top_10_probs_filter_unk.append(str(p))
+                cs = [] 
+                ps = []
+                for c_, p_ in zip(c, p):
+                    if c_ == -1:
+                        break 
+                    else:
+                        cs.append(str(c_))
+                        ps.append(str(p_))
+                top_10_cats_filter_unk.append(cs)
+                top_10_probs_filter_unk.append(ps)
             
             outputs = [ 
                 pb_utils.Tensor('categories', 
-                    np.array([(",".join(top_10_cats_filter_unk)).encode('utf-8')], dtype=np.dtype('S'))),
+                    np.array([(",".join(i)).encode('utf-8') for i in top_10_cats_filter_unk], 
+                    dtype=np.dtype('S'))),
                 pb_utils.Tensor('weights', 
-                    np.array([(",".join(top_10_probs_filter_unk)).encode('utf-8')], dtype=np.dtype('S'))),
+                    np.array([(",".join(i)).encode('utf-8') for i in top_10_probs_filter_unk],
+                    dtype=np.dtype('S'))),
             ]
 
             inference_response = pb_utils.InferenceResponse(output_tensors=outputs)

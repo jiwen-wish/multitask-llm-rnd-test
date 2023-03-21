@@ -1,6 +1,6 @@
 name: "query_classify_ensemble"
 # maximum batch size 
-max_batch_size: 0 
+max_batch_size: 64
 platform: "ensemble"
 
 #input to the model 
@@ -8,8 +8,7 @@ input [
     {
         name: "text"
         data_type: TYPE_STRING
-        dims: [ -1 ] 
-        # -1 means dynamic axis, aka this dimension may change 
+        dims: [ 1 ] 
     }
 ]
 
@@ -18,12 +17,12 @@ output [
     {
         name: "categories"
         data_type: TYPE_STRING
-        dims: [-1] 
+        dims: [ 1 ] 
     },
     {
         name: "weights"
         data_type: TYPE_STRING
-        dims: [-1] 
+        dims: [ 1 ] 
     }
 ]
 

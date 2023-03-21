@@ -1,5 +1,5 @@
 name: "query_classify_postprocess"
-max_batch_size: 0
+max_batch_size: 64
 backend: "python"
 
 input [
@@ -14,12 +14,12 @@ output [
     {
         name: "categories"
         data_type: TYPE_STRING
-        dims: [ -1 ] 
+        dims: [ 1 ] 
     },
     {
         name: "weights"
         data_type: TYPE_STRING
-        dims: [ -1 ] 
+        dims: [ 1 ] 
     }
 ]
 
