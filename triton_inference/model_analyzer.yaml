@@ -1,0 +1,30 @@
+model_repository: model_repository
+run_config_search_disable: True
+profile_models:
+  query_classify_onnx:
+    constraints:
+      perf_latency_p99:
+        max: 50
+    perf_analyzer_flags:
+      percentile: 99
+    model_config_parameters:
+      max_batch_size: 64
+      dynamic_batching:
+        max_queue_delay_microseconds: 10
+      instance_group:
+        - - kind: KIND_GPU
+            count: 1
+        - - kind: KIND_GPU
+            count: 2
+        - - kind: KIND_GPU
+            count: 4
+    parameters:
+      concurrency:
+        start: 2
+        stop: 64
+        step: 8
+      batch_sizes: 1,2,4,8,16
+    perf_analyzer_flags:
+      shape:
+        - input_ids:64
+        - attention_mask:64
