@@ -41,3 +41,50 @@ optimization {
       }]
   }
 }
+
+model_warmup [
+  {
+      name : "query_classify_onnx_warmup_batch_size_1"
+      batch_size: 1
+      inputs [
+        {
+          key: "input_ids"
+          value: {
+              data_type: TYPE_INT64
+              dims: 50
+              zero_data: true
+          }
+        },
+        {
+          key: "attention_mask"
+          value: {
+              data_type: TYPE_INT64
+              dims: 50
+              zero_data: true
+          }
+        }
+      ]
+  },
+  {
+      name : "query_classify_onnx_warmup_batch_size_64"
+      batch_size: 64
+      inputs [
+        {
+          key: "input_ids"
+          value: {
+              data_type: TYPE_INT64
+              dims: 50
+              zero_data: true
+          }
+        },
+        {
+          key: "attention_mask"
+          value: {
+              data_type: TYPE_INT64
+              dims: 50
+              zero_data: true
+          }
+        }
+      ]
+  }
+]
