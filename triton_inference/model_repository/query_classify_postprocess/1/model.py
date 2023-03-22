@@ -73,7 +73,7 @@ class TritonPythonModel:
             ]
             rsum += chunk_sizes[ind]
 
-        inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
-        responses.append(inference_response)
+            inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
+            responses.append(inference_response)
 
         return responses
