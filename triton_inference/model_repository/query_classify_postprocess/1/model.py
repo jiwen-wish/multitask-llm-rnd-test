@@ -37,11 +37,13 @@ class TritonPythonModel:
         """
         responses = []
         all_logits = []
+        chunk_sizes = []
         # for loop for batch requests (disabled in our case)
         for request in requests:
             # binary data typed back to string
             i = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
             all_logits.append(i)
+            chunk_sizes.append(len(i))
             
         logits = np.vstack(all_logits)
         top_10_inds = np.argsort(-logits, axis=1)[:, :10]
@@ -58,19 +60,20 @@ class TritonPythonModel:
                 else:
                     cs.append(str(c_))
                     ps.append(str(p_))
-            top_10_cats_filter_unk.append(cs)
-            top_10_probs_filter_unk.append(ps)
-            
+            top_10_cats_filter_unk.append((",".join(cs)).encode('utf-8') )
+            top_10_probs_filter_unk.append((",".join(ps)).encode('utf-8') )
+        
+        rsum = 0
+        for ind in range(len(requests)):
             outputs = [ 
                 pb_utils.Tensor('categories', 
-                    np.array([(",".join(i)).encode('utf-8') for i in top_10_cats_filter_unk], 
-                    dtype=np.dtype('S'))),
+                    np.array(top_10_cats_filter_unk[rsum:chunk_sizes[ind]], dtype=np.dtype('S'))),
                 pb_utils.Tensor('weights', 
-                    np.array([(",".join(i)).encode('utf-8') for i in top_10_probs_filter_unk],
-                    dtype=np.dtype('S'))),
+                    np.array(top_10_probs_filter_unk[rsum:chunk_sizes[ind]], dtype=np.dtype('S')))
             ]
+            rsum += chunk_sizes[ind]
 
-            inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
-            responses.append(inference_response)
+        inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
+        responses.append(inference_response)
 
         return responses

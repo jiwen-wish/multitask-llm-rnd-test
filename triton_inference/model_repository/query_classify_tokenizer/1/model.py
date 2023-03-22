@@ -26,6 +26,7 @@ class TritonPythonModel:
         responses = []
         # for loop for batch requests (disabled in our case)
         queries = []
+        chunk_sizes = []
         for request in requests:
             # binary data typed back to string
             query = [
@@ -35,6 +36,7 @@ class TritonPythonModel:
                 .tolist()
             ]
             queries += query
+            chunk_sizes.append(len(query))
 
         tokens: Dict[str, np.ndarray] = self.tokenizer(
             text=queries, return_tensors=TensorType.NUMPY, 
@@ -44,12 +46,13 @@ class TritonPythonModel:
         # tensorrt uses int32 as input type, ort uses int64
         tokens = {k: v.astype(np.int64) for k, v in tokens.items()}
         # communicate the tokenization results to Triton server
-        for ind in range(len(queries)):
+        rsum = 0
+        for ind in range(len(requests)):
             outputs = list()
             for input_name in ["input_ids", "attention_mask"]:
-                tensor_input = pb_utils.Tensor(input_name, tokens[input_name][ind:ind+1])
+                tensor_input = pb_utils.Tensor(input_name, tokens[input_name][rsum:rsum+chunk_sizes[ind]])
                 outputs.append(tensor_input)
-
+            rsum += chunk_sizes[ind]
             inference_response = pb_utils.InferenceResponse(output_tensors=outputs)
             responses.append(inference_response)
 
