@@ -1,0 +1,4 @@
+outs:
+- md5: 716e6cc7637bf9a1b9d8b85a1873dcf0
+  size: 15110927
+  path: offshore_amazon_erp_attr_train.json
