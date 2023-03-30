@@ -169,9 +169,9 @@ data:
         template: '{title}'
         task_prefix: 'Represent the E-commerce product title for classification: '
       output_dict:
-        template: '{category}'
+        template: '{category_path}'
       transform_dict:
-        category: taxonomy
+        category_path: taxonomy
       data_source_type: dvc
     seqclf_singlemodal_wishquery2v121tax:
       data_source_yaml_path: datasets/multimodal_multitask/wish_labelled_inferred_modelpseudo_deduppathoverlap_multilabel_seqclf.yaml
