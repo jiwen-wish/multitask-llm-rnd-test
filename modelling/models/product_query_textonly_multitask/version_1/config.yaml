@@ -145,7 +145,7 @@ data:
   multitask_dict:
     emb_singlemodal_wishquery2googletitle:
       data_source_yaml_path: datasets/multimodal_multitask/wish_query_all_googlescrape.yaml
-      batch_size: 20
+      batch_size: 50
       max_length: 50
       max_length_out: 50
       llm_type: emb
