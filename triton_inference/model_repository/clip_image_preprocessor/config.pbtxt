@@ -14,7 +14,7 @@ output [
     {
         name: "pixel_values"
         data_type: TYPE_FP32
-        dims: [ 3, 244, 244 ] 
+        dims: [ 3, 224, 224 ] 
     }
 ]
 
