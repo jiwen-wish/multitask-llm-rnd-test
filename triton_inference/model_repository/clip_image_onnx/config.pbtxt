@@ -1,0 +1,72 @@
+name: "clip_image_onnx"
+platform: "onnxruntime_onnx"
+max_batch_size: 64
+input [
+  {
+    name: "pixel_values"
+    data_type: TYPE_FP32
+    dims: [ 3, 244, 244 ]
+  }
+]
+output [
+  {
+    name: "last_hidden_state"
+    data_type: TYPE_FP32
+    dims: [ 50, 768 ]
+  },
+  {
+    name: "pooler_output"
+    data_type: TYPE_FP32
+    dims: [ 768 ]
+  }
+]
+dynamic_batching {
+  # preferred_batch_size: [ 1,2,4,8,16,32,64 ]
+  # max_queue_delay_microseconds: 5
+}
+instance_group [
+    {
+      count: 1
+      kind: KIND_GPU
+    }
+]
+version_policy: { latest { num_versions : 1 }}
+optimization {
+  graph { level: 3 }
+  execution_accelerators {
+    gpu_execution_accelerator : [ {
+      name : "tensorrt"
+      parameters { key: "precision_mode" value: "FP16" }
+      parameters { key: "max_workspace_size_bytes" value: "1073741824" }
+    }]
+  }
+}
+
+model_warmup [
+  {
+      name : "clip_image_onnx_warmup_batch_size_1"
+      batch_size: 1
+      inputs [
+        {
+          key: "pixel_values"
+          value: {
+              data_type: TYPE_FP32
+              dims: [ 3, 244, 244 ]
+          }
+        }
+      ]
+  },
+  {
+      name : "clip_image_onnx_warmup_batch_size_64"
+      batch_size: 64
+      inputs [
+        {
+          key: "pixel_values"
+          value: {
+              data_type: TYPE_FP32
+              dims: [ 3, 244, 244 ]
+          }
+        }
+      ]
+  }
+]
