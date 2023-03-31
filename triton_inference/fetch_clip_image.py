@@ -56,4 +56,5 @@ validate_model_outputs(
 
 os.system('mkdir -p model_repository/clip_image_onnx/1')
 os.system('mv tmp_onnx/model.onnx model_repository/clip_image_onnx/1/')
+os.system('mkdir -p model_repository/clip_image_ensemble/1')
 os.system('rm -rf tmp tmp_onnx')

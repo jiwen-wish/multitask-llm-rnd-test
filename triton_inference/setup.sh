@@ -5,6 +5,7 @@ git config --global user.name "Junhao Wang"
 pip3.8 install -r requirements.txt
 # download model
 python3.8 fetch_query_classify_v3.py
+python3.8 fetch_clip_image.py
 # start server
 tritonserver --model-repositor model_repository/
 ## test server in another terminal
