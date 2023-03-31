@@ -1,4 +1,3 @@
-import grequests
 import requests
 import os
 from typing import Dict, List
@@ -7,8 +6,34 @@ import numpy as np
 import triton_python_backend_utils as pb_utils
 from transformers import AutoProcessor, TensorType
 from concurrent.futures import ThreadPoolExecutor
-from PIL import Image
+
+import asyncio
+import aiohttp
 from io import BytesIO
+from PIL import Image
+
+BLANK_IMAGE_PATH = os.path.join(os.path.dirname(__file__), 'Black.png')
+
+async def download_image(session, url):
+    try:
+        async with session.get(url) as response:
+            image_bytes = await response.read()
+        # Preprocess image here
+        pil_image = Image.open(BytesIO(image_bytes))
+        return pil_image
+    except Exception as e:
+        pb_utils.Logger.log_warn(f"Error downloading image at {url}: {str(e)}, use blank image")
+        pil_image = Image.open(BLANK_IMAGE_PATH)
+        return pil_image
+
+async def download_images(urls):
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for url in urls:
+            task = asyncio.ensure_future(download_image(session, url))
+            tasks.append(task)
+        images = await asyncio.gather(*tasks)
+        return images
 
 class TritonPythonModel:
     processor: AutoProcessor
@@ -19,17 +44,7 @@ class TritonPythonModel:
         :param args: arguments from Triton config file
         """
         # more variables in https://github.com/triton-inference-server/python_backend/blob/main/src/python.cc
-        path: str = os.path.join(args["model_repository"], args["model_version"])
-        self.blank_path = os.path.join(path, "Black.png")
         self.processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
-    
-    def download_image(self, url):
-        try:
-            return requests.get(url, stream=True).raw
-            # return Image.open(requests.get(url, stream=True).raw)
-        except Exception as e:
-            pb_utils.Logger.log_warn(f"Download image from {url} failed due to {e}, will use blank image at {self.blank_path}")
-            return Image.open(self.blank_path)
 
     def execute(self, requests) -> "List[List[pb_utils.Tensor]]":
         """
@@ -53,12 +68,10 @@ class TritonPythonModel:
             chunk_sizes.append(len(url))
         urls = ["http://images.cocodataset.org/val2017/000000039769.jpg"] * len(urls)
 
-        with ThreadPoolExecutor(max_workers=min(4, len(urls))) as executor:
-            images = list(executor.map(self.download_image, urls))
+        images = asyncio.run(download_images(urls))
 
-        # inputs = self.processor(images=images, return_tensors=TensorType.NUMPY)
-        inputs = {"pixel_values": np.random.random((len(requests), 3, 244, 244))}
-        # communicate the tokenization results to Triton server
+        inputs = self.processor(images=images, return_tensors=TensorType.NUMPY)
+
         responses = []
         rsum = 0
         for ind in range(len(requests)):
