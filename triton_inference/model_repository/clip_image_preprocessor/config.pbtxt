@@ -1,4 +1,4 @@
-name: "clip_preprocessor"
+name: "clip_image_preprocessor"
 max_batch_size: 64
 backend: "python"
 
