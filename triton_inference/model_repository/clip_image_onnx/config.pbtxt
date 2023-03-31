@@ -26,42 +26,44 @@ instance_group [
     }
 ]
 version_policy: { latest { num_versions : 1 }}
-# optimization {
-#   graph { level: 3 }
-#   execution_accelerators {
-#     gpu_execution_accelerator : [ {
-#       name : "tensorrt"
-#       parameters { key: "precision_mode" value: "FP16" }
-#       parameters { key: "max_workspace_size_bytes" value: "1073741824" }
-#     }]
-#   }
-# }
+optimization {
+  graph { level: 3 }
+  execution_accelerators {
+    gpu_execution_accelerator : [ {
+      name : "tensorrt"
+      parameters { key: "precision_mode" value: "FP16" }
+      parameters { key: "max_workspace_size_bytes" value: "1073741824" }
+    }]
+  }
+}
 
-# model_warmup [
-#   {
-#       name : "clip_image_onnx_warmup_batch_size_1"
-#       batch_size: 1
-#       inputs [
-#         {
-#           key: "pixel_values"
-#           value: {
-#               data_type: TYPE_FP32
-#               dims: [ 3, 244, 244 ]
-#           }
-#         }
-#       ]
-#   },
-#   {
-#       name : "clip_image_onnx_warmup_batch_size_64"
-#       batch_size: 64
-#       inputs [
-#         {
-#           key: "pixel_values"
-#           value: {
-#               data_type: TYPE_FP32
-#               dims: [ 3, 244, 244 ]
-#           }
-#         }
-#       ]
-#   }
-# ]
+model_warmup [
+  {
+      name : "clip_image_onnx_warmup_batch_size_1"
+      batch_size: 1
+      inputs [
+        {
+          key: "pixel_values"
+          value: {
+              data_type: TYPE_FP32
+              dims: [ 3, 244, 244 ]
+              zero_data: true
+          }
+        }
+      ]
+  },
+  {
+      name : "clip_image_onnx_warmup_batch_size_64"
+      batch_size: 64
+      inputs [
+        {
+          key: "pixel_values"
+          value: {
+              data_type: TYPE_FP32
+              dims: [ 3, 244, 244 ]
+              zero_data: true
+          }
+        }
+      ]
+  }
+]
