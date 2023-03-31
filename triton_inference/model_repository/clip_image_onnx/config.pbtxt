@@ -5,7 +5,7 @@ input [
   {
     name: "pixel_values"
     data_type: TYPE_FP32
-    dims: [ 3, 244, 244 ]
+    dims: [ 3, 224, 224 ]
   }
 ]
 output [
@@ -46,7 +46,7 @@ model_warmup [
           key: "pixel_values"
           value: {
               data_type: TYPE_FP32
-              dims: [ 3, 244, 244 ]
+              dims: [ 3, 224, 224 ]
               zero_data: true
           }
         }
@@ -60,7 +60,7 @@ model_warmup [
           key: "pixel_values"
           value: {
               data_type: TYPE_FP32
-              dims: [ 3, 244, 244 ]
+              dims: [ 3, 224, 224 ]
               zero_data: true
           }
         }
