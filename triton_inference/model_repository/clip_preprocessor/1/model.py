@@ -4,7 +4,7 @@ from typing import Dict, List
 
 import numpy as np
 import triton_python_backend_utils as pb_utils
-from transformers import AutoProcessor, TensorType
+from transformers import CLIPImageProcessor, TensorType
 from concurrent.futures import ThreadPoolExecutor
 
 import asyncio
@@ -36,7 +36,7 @@ async def download_images(urls):
         return images
 
 class TritonPythonModel:
-    processor: AutoProcessor
+    processor: CLIPImageProcessor
 
     def initialize(self, args: Dict[str, str]) -> None:
         """
@@ -44,7 +44,7 @@ class TritonPythonModel:
         :param args: arguments from Triton config file
         """
         # more variables in https://github.com/triton-inference-server/python_backend/blob/main/src/python.cc
-        self.processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
+        self.processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
     def execute(self, requests) -> "List[List[pb_utils.Tensor]]":
         """
@@ -66,7 +66,7 @@ class TritonPythonModel:
             ]
             urls += url
             chunk_sizes.append(len(url))
-        urls = ["http://images.cocodataset.org/val2017/000000039769.jpg"] * len(urls)
+        urls = ["https://canary.contestimg.wish.com/api/webimage/61b241a3a4ee2ecaf2f63c77-large.jpg?cache_buster=bbeee1fdb460a1d12bc266824914e030"] * len(urls)
 
         images = asyncio.run(download_images(urls))
 
