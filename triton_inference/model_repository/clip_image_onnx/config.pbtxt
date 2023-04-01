@@ -12,7 +12,7 @@ output [
   {
     name: "pooler_output"
     data_type: TYPE_FP32
-    dims: [ 768 ]
+    dims: [ 512 ]
   }
 ]
 dynamic_batching {

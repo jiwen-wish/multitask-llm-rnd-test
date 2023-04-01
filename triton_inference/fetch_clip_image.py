@@ -9,15 +9,15 @@ from transformers.onnx import OnnxConfig, validate_model_outputs
 from functools import partial
 import torch
 
-class CLIPImageEncoder(CLIPVisionModel):
+class CLIPImageEncoder(CLIPModel):
     def forward(self,
         pixel_values: torch.FloatTensor
     ):
-        outputs = self.vision_model(
-            pixel_values=pixel_values, return_dict=True
+        outputs = self.get_image_features(
+            pixel_values=pixel_values
         )
         return BaseModelOutputWithPooling(
-            pooler_output=outputs.pooler_output.reshape(-1, 768)
+            pooler_output=outputs.reshape(-1, 512)
         )
 
 class EncoderOnnxConfig(OnnxConfig):
@@ -42,7 +42,8 @@ os.system('rm -rf tmp_onnx')
 config = AutoConfig.from_pretrained("openai/clip-vit-base-patch32")
 onnx_config = EncoderOnnxConfig(config)
 model = CLIPImageEncoder.from_pretrained("openai/clip-vit-base-patch32")
-
+del model.text_model
+del model.text_projection
 processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
 #%%
 os.system('mkdir -p tmp_onnx')
