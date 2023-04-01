@@ -1,2 +1,4 @@
 /query_attrkv_clf_oaiemb_svc_v2.joblib
 /product_attrkv_clf_oaiemb_svc_v2.joblib
+/query_attrkv_clf_oaiemb_logistic_v3.joblib
+/query_attrkv_clf_oaiemb_logistic_v3_erp.joblib

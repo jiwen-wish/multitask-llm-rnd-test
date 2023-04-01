@@ -1,0 +1,4 @@
+outs:
+- md5: f439446330975654cc18b5afc1fae206
+  size: 38364883
+  path: query_attrkv_clf_oaiemb_logistic_v3.joblib
