@@ -20,11 +20,11 @@ async def download_image(session, url):
             image_bytes = await response.read()
         # Preprocess image here
         pil_image = Image.open(BytesIO(image_bytes))
-        return pil_image
+        return pil_image, True
     except Exception as e:
         pb_utils.Logger.log_warn(f"Error downloading image at {url}: {str(e)}, use blank image")
         pil_image = Image.open(BLANK_IMAGE_PATH)
-        return pil_image
+        return pil_image, False
 
 async def download_images(urls):
     async with aiohttp.ClientSession() as session:
@@ -32,8 +32,8 @@ async def download_images(urls):
         for url in urls:
             task = asyncio.ensure_future(download_image(session, url))
             tasks.append(task)
-        images = await asyncio.gather(*tasks)
-        return images
+        images_successes = await asyncio.gather(*tasks)
+        return images_successes
 
 class TritonPythonModel:
     processor: CLIPImageProcessor
@@ -66,17 +66,19 @@ class TritonPythonModel:
             ]
             urls += url
             chunk_sizes.append(len(url))
-        urls = ["https://canary.contestimg.wish.com/api/webimage/61b241a3a4ee2ecaf2f63c77-large.jpg?cache_buster=bbeee1fdb460a1d12bc266824914e030"] * len(urls)
+        # urls = ["https://canary.contestimg.wish.com/api/webimage/61b241a3a4ee2ecaf2f63c77-large.jpg?cache_buster=bbeee1fdb460a1d12bc266824914e030"] * len(urls)
 
-        images = asyncio.run(download_images(urls))
+        images_successes = asyncio.run(download_images(urls))
+        images, successes = list(zip(*images_successes))
 
         inputs = self.processor(images=images, return_tensors=TensorType.NUMPY)
+        inputs['image_download_success'] = np.array(successes, dtype=bool).reshape(len(images), 1)
 
         responses = []
         rsum = 0
         for ind in range(len(requests)):
             outputs = list()
-            for input_name in ["pixel_values"]:
+            for input_name in ["pixel_values", "image_download_success"]:
                 tensor_input = pb_utils.Tensor(input_name, inputs[input_name][rsum:rsum+chunk_sizes[ind]])
                 outputs.append(tensor_input)
             rsum += chunk_sizes[ind]

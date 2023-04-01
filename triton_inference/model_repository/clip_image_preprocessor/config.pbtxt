@@ -15,6 +15,11 @@ output [
         name: "pixel_values"
         data_type: TYPE_FP32
         dims: [ 3, 224, 224 ] 
+    },
+    {
+        name: "image_download_success"
+        data_type: TYPE_BOOL
+        dims: [ 1 ] 
     }
 ]
 
