@@ -14,27 +14,6 @@ from PIL import Image
 
 BLANK_IMAGE_PATH = os.path.join(os.path.dirname(__file__), 'Black.png')
 
-async def download_image(session, url):
-    try:
-        async with session.get(url) as response:
-            image_bytes = await response.read()
-        # Preprocess image here
-        pil_image = Image.open(BytesIO(image_bytes))
-        return pil_image, True
-    except Exception as e:
-        pb_utils.Logger.log_warn(f"Error downloading image at {url}: {str(e)}, use blank image")
-        pil_image = Image.open(BLANK_IMAGE_PATH)
-        return pil_image, False
-
-async def download_images(urls):
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for url in urls:
-            task = asyncio.ensure_future(download_image(session, url))
-            tasks.append(task)
-        images_successes = await asyncio.gather(*tasks)
-        return images_successes
-
 class TritonPythonModel:
     processor: CLIPImageProcessor
 
@@ -44,7 +23,29 @@ class TritonPythonModel:
         :param args: arguments from Triton config file
         """
         # more variables in https://github.com/triton-inference-server/python_backend/blob/main/src/python.cc
+        self.path: str = os.path.join(args["model_repository"], args["model_version"])
         self.processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
+
+    async def download_image(self, session, url):
+        try:
+            async with session.get(url) as response:
+                image_bytes = await response.read()
+            # Preprocess image here
+            pil_image = Image.open(BytesIO(image_bytes))
+            return pil_image, True
+        except Exception as e:
+            pb_utils.Logger.log_warn(f"Model: {self.path} - Error downloading image at {url}: {str(e)}, use blank image")
+            pil_image = Image.open(BLANK_IMAGE_PATH)
+            return pil_image, False
+
+    async def download_images(self, urls):
+        async with aiohttp.ClientSession() as session:
+            tasks = []
+            for url in urls:
+                task = asyncio.ensure_future(self.download_image(session, url))
+                tasks.append(task)
+            images_successes = await asyncio.gather(*tasks)
+            return images_successes
 
     def execute(self, requests) -> "List[List[pb_utils.Tensor]]":
         """
@@ -68,7 +69,7 @@ class TritonPythonModel:
             chunk_sizes.append(len(url))
         # urls = ["https://canary.contestimg.wish.com/api/webimage/61b241a3a4ee2ecaf2f63c77-large.jpg?cache_buster=bbeee1fdb460a1d12bc266824914e030"] * len(urls)
 
-        images_successes = asyncio.run(download_images(urls))
+        images_successes = asyncio.run(self.download_images(urls))
         images, successes = list(zip(*images_successes))
 
         inputs = self.processor(images=images, return_tensors=TensorType.NUMPY)
