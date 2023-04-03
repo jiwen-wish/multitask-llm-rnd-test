@@ -1,0 +1,87 @@
+name: "product_classify_ensemble"
+# maximum batch size 
+max_batch_size: 64
+platform: "ensemble"
+
+#input to the model 
+input [
+    {
+        name: "text"
+        data_type: TYPE_STRING
+        dims: [ 1 ] 
+    }
+]
+
+#output of the model 
+output [
+    {
+        name: "categories"
+        data_type: TYPE_STRING
+        dims: [ 1 ] 
+    },
+    {
+        name: "weights"
+        data_type: TYPE_STRING
+        dims: [ 1 ] 
+    }
+]
+
+#Type of scheduler to be used
+ensemble_scheduling {
+    step [
+        {
+            model_name: "product_classify_tokenizer"
+            model_version: -1
+            input_map [{
+                key: "text"
+                value: "text"
+            }]
+            output_map [
+                {
+                    key: "input_ids"
+                    value: "input_ids"
+                },
+                {
+                    key: "attention_mask"
+                    value: "attention_mask"
+                }
+            ]
+        },
+        {
+            model_name: "product_classify_onnx"
+            model_version: -1
+            input_map [
+                {
+                    key: "input_ids"
+                    value: "input_ids"
+                },
+                {
+                    key: "attention_mask"
+                    value: "attention_mask"
+                }
+            ]
+            output_map [{
+                key: "logits"
+                value: "logits"
+            }]
+        },
+        {
+            model_name: "product_classify_postprocess"
+            model_version: -1
+            input_map [{
+                key: "logits"
+                value: "logits"
+            }]
+            output_map [
+                {
+                    key: "categories"
+                    value: "categories"
+                },
+                {
+                    key: "weights"
+                    value: "weights"
+                }
+            ]
+        }
+    ]
+}
