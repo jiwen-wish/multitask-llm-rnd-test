@@ -14,12 +14,12 @@ output [
     {
         name: "input_ids"
         data_type: TYPE_INT64
-        dims: [ 512 ] 
+        dims: [ -1 ] 
     },
     {
         name: "attention_mask"
         data_type: TYPE_INT64
-        dims: [ 512 ]
+        dims: [ -1 ]
     }
 ]
 
