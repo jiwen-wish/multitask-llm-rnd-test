@@ -5,6 +5,11 @@ import numpy as np
 import triton_python_backend_utils as pb_utils
 import math
 
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
+
+sigmoid_vec = np.vectorize(sigmoid)
+
 class TritonPythonModel:
     label_map: np.array
 
@@ -31,40 +36,37 @@ class TritonPythonModel:
         :return: text as input tensors
         """
         responses = []
-        all_probas = []
+        all_logits = []
         chunk_sizes = []
         # for loop for batch requests (disabled in our case)
         for request in requests:
             # binary data typed back to string
-            i = pb_utils.get_input_tensor_by_name(request, "probas").as_numpy()
-            all_probas.append(i)
+            i = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
+            all_logits.append(i)
             chunk_sizes.append(len(i))
             
-        probas = np.vstack(all_probas)
-        top_10_inds = np.argsort(-probas, axis=1)[:, :10]
+        logits = np.vstack(all_logits)
+        top_10_inds = np.argsort(-logits, axis=1)[:, :10]
         top_10_cats = np.take_along_axis(self.label_map, top_10_inds, axis=1)
-        top_10_probs = np.take_along_axis(probas, top_10_inds, axis=1)
-        top_10_cats_filter_unk = []
-        top_10_probs_filter_unk = []
+        top_10_probs = sigmoid_vec(np.take_along_axis(logits, top_10_inds, axis=1))
+        top_10_cats_str = []
+        top_10_probs_str = []
         for c, p in zip(top_10_cats, top_10_probs):
             cs = [] 
             ps = []
             for c_, p_ in zip(c, p):
-                if c_ == -1:
-                    break 
-                else:
-                    cs.append(str(c_))
-                    ps.append(str(p_))
-            top_10_cats_filter_unk.append((",".join(cs)).encode('utf-8') )
-            top_10_probs_filter_unk.append((",".join(ps)).encode('utf-8') )
+                cs.append(str(c_))
+                ps.append(str(p_))
+            top_10_cats_str.append((",".join(cs)).encode('utf-8') )
+            top_10_probs_str.append((",".join(ps)).encode('utf-8') )
         
         rsum = 0
         for ind in range(len(requests)):
             outputs = [ 
                 pb_utils.Tensor('categories', 
-                    np.array(top_10_cats_filter_unk[rsum:chunk_sizes[ind]], dtype=np.dtype('S'))),
+                    np.array(top_10_cats_str[rsum:chunk_sizes[ind]], dtype=np.dtype('S'))),
                 pb_utils.Tensor('weights', 
-                    np.array(top_10_probs_filter_unk[rsum:chunk_sizes[ind]], dtype=np.dtype('S')))
+                    np.array(top_10_probs_str[rsum:chunk_sizes[ind]], dtype=np.dtype('S')))
             ]
             rsum += chunk_sizes[ind]
 

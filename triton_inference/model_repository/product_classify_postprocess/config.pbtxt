@@ -6,7 +6,7 @@ input [
     {
         name: "logits"
         data_type: TYPE_FP32
-        dims: [ 6037 ]
+        dims: [ 5291 ]
     }
 ]
 

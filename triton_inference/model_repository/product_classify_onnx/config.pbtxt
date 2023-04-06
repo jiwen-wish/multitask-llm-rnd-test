@@ -15,7 +15,7 @@ input [
 ]
 output [
   {
-    name: "probas"
+    name: "logits"
     data_type: TYPE_FP32
     dims: [5291]
   }
@@ -37,7 +37,7 @@ optimization {
     gpu_execution_accelerator : [ {
       name : "tensorrt"
       parameters { key: "precision_mode" value: "FP16" }
-      parameters { key: "max_workspace_size_bytes" value: "1073741824" }
+      parameters { key: "max_workspace_size_bytes" value: "5368709120" }
       }]
   }
 }
