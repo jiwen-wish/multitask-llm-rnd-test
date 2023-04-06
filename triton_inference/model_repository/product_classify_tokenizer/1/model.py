@@ -44,7 +44,7 @@ class TritonPythonModel:
         )
 
         # tensorrt uses int32 as input type, ort uses int64
-        tokens = {k: v.astype(np.int32) for k, v in tokens.items()}
+        tokens = {k: v.astype(np.int64) for k, v in tokens.items()}
         # communicate the tokenization results to Triton server
         rsum = 0
         for ind in range(len(requests)):

@@ -4,20 +4,20 @@ max_batch_size: 64
 input [
   {
     name: "input_ids"
-    data_type: TYPE_INT32
+    data_type: TYPE_INT64
     dims: [ 512 ]
   },
   {
     name: "attention_mask"
-    data_type: TYPE_INT32
+    data_type: TYPE_INT64
     dims: [ 512 ]
   }
 ]
 output [
   {
-    name: "logits"
+    name: "probas"
     data_type: TYPE_FP32
-    dims: [6037]
+    dims: [5291]
   }
 ]
 dynamic_batching {
@@ -50,7 +50,7 @@ model_warmup [
         {
           key: "input_ids"
           value: {
-              data_type: TYPE_INT32
+              data_type: TYPE_INT64
               dims: 512
               zero_data: true
           }
@@ -58,7 +58,7 @@ model_warmup [
         {
           key: "attention_mask"
           value: {
-              data_type: TYPE_INT32
+              data_type: TYPE_INT64
               dims: 512
               zero_data: true
           }
@@ -72,7 +72,7 @@ model_warmup [
         {
           key: "input_ids"
           value: {
-              data_type: TYPE_INT32
+              data_type: TYPE_INT64
               dims: 512
               zero_data: true
           }
@@ -80,7 +80,7 @@ model_warmup [
         {
           key: "attention_mask"
           value: {
-              data_type: TYPE_INT32
+              data_type: TYPE_INT64
               dims: 512
               zero_data: true
           }

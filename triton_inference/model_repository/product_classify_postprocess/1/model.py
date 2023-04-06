@@ -5,11 +5,6 @@ import numpy as np
 import triton_python_backend_utils as pb_utils
 import math
 
-def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
-
-sigmoid_vec = np.vectorize(sigmoid)
-
 class TritonPythonModel:
     label_map: np.array
 
@@ -26,7 +21,7 @@ class TritonPythonModel:
                 i = i.replace('\n', '')
                 if len(i) > 0:
                     label_map.append(int(i))
-        assert len(label_map) == 6037
+        assert len(label_map) == 5291
         self.label_map = np.array([label_map], dtype=np.dtype('int32'))
 
     def execute(self, requests) -> "List[List[pb_utils.Tensor]]":
@@ -36,19 +31,19 @@ class TritonPythonModel:
         :return: text as input tensors
         """
         responses = []
-        all_logits = []
+        all_probas = []
         chunk_sizes = []
         # for loop for batch requests (disabled in our case)
         for request in requests:
             # binary data typed back to string
-            i = pb_utils.get_input_tensor_by_name(request, "logits").as_numpy()
-            all_logits.append(i)
+            i = pb_utils.get_input_tensor_by_name(request, "probas").as_numpy()
+            all_probas.append(i)
             chunk_sizes.append(len(i))
             
-        logits = np.vstack(all_logits)
-        top_10_inds = np.argsort(-logits, axis=1)[:, :10]
+        probas = np.vstack(all_probas)
+        top_10_inds = np.argsort(-probas, axis=1)[:, :10]
         top_10_cats = np.take_along_axis(self.label_map, top_10_inds, axis=1)
-        top_10_probs = sigmoid_vec(np.take_along_axis(logits, top_10_inds, axis=1))
+        top_10_probs = np.take_along_axis(probas, top_10_inds, axis=1)
         top_10_cats_filter_unk = []
         top_10_probs_filter_unk = []
         for c, p in zip(top_10_cats, top_10_probs):

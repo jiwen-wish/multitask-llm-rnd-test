@@ -61,16 +61,16 @@ ensemble_scheduling {
                 }
             ]
             output_map [{
-                key: "logits"
-                value: "logits"
+                key: "probas"
+                value: "probas"
             }]
         },
         {
             model_name: "product_classify_postprocess"
             model_version: -1
             input_map [{
-                key: "logits"
-                value: "logits"
+                key: "probas"
+                value: "probas"
             }]
             output_map [
                 {
