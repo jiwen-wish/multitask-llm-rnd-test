@@ -1,21 +1,38 @@
-import requests
+#%%
 import os
 from typing import Dict, List
 
 import numpy as np
 import triton_python_backend_utils as pb_utils
-from transformers import CLIPImageProcessor, TensorType
-from concurrent.futures import ThreadPoolExecutor
-
 import asyncio
 import aiohttp
 from io import BytesIO
 from PIL import Image
+from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
+try:
+    from torchvision.transforms import InterpolationMode
+    BICUBIC = InterpolationMode.BICUBIC
+except ImportError:
+    BICUBIC = Image.BICUBIC
+
+import torch
+
+def _convert_image_to_rgb(image):
+    return image.convert("RGB")
+
+def preprocess(n_px=224):
+    return Compose([
+        Resize(n_px, interpolation=BICUBIC),
+        CenterCrop(n_px),
+        _convert_image_to_rgb,
+        ToTensor(),
+        Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711)),
+    ])
 
 BLANK_IMAGE_PATH = os.path.join(os.path.dirname(__file__), 'Black.png')
 
+#%%
 class TritonPythonModel:
-    processor: CLIPImageProcessor
 
     def initialize(self, args: Dict[str, str]) -> None:
         """
@@ -24,7 +41,7 @@ class TritonPythonModel:
         """
         # more variables in https://github.com/triton-inference-server/python_backend/blob/main/src/python.cc
         self.path: str = os.path.join(args["model_repository"], args["model_version"])
-        self.processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
+        self.processor = preprocess()
 
     async def download_image(self, session, url):
         try:
@@ -71,8 +88,9 @@ class TritonPythonModel:
 
         images_successes = asyncio.run(self.download_images(urls))
         images, successes = list(zip(*images_successes))
-
-        inputs = self.processor(images=images, return_tensors=TensorType.NUMPY)
+        
+        inputs = {}
+        inputs["pixel_values"] = torch.cat([self.processor(i).unsqueeze(0) for i in images]).numpy()
         inputs['image_download_success'] = np.array(successes, dtype=bool).reshape(len(images), 1)
 
         responses = []
