@@ -51,7 +51,7 @@ model_warmup [
           key: "input_ids"
           value: {
               data_type: TYPE_INT64
-              dims: 512
+              dims: 50
               zero_data: true
           }
         },
@@ -59,7 +59,7 @@ model_warmup [
           key: "attention_mask"
           value: {
               data_type: TYPE_INT64
-              dims: 512
+              dims: 50
               zero_data: true
           }
         }
