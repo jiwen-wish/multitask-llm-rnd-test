@@ -1,0 +1,4 @@
+outs:
+- md5: a99b7ecf28b91ca135aa0f979622a502
+  size: 143926047
+  path: collection_products_withclip_multitask_041223.parquet
