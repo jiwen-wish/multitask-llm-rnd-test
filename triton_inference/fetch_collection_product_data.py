@@ -33,14 +33,9 @@ assert embs.shape[1] == DIM and len(embs) == len(df_payloads)
 os.system('rm -rf tmp')
 print('len(df_payloads): ', len(df_payloads))
 print('embs.shape: ', embs.shape)
-for col in df_payloads:
-    #get dtype for column
-    dt = df_payloads[col].dtype 
-    #check if it is a number
-    if dt == int or dt == float:
-        df_payloads[col].fillna(0)
-    else:
-        df_payloads[col].fillna("")
+print(f'nan status: {df_payloads.isna().any()}, auto fillna')
+df_payloads.fillna(method='backfill', inplace=True)
+assert not df_payloads.isna().any().any()
 assert len(df_payloads) == len(set(df_payloads['product_id']))
 
 data = DocumentArray(
