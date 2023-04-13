@@ -1,13 +1,8 @@
 import numpy as np
 import triton_python_backend_utils as pb_utils
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct, OptimizersConfigDiff
-from tqdm import tqdm
-from qdrant_client.http.models import SearchRequest
 import json 
 import asyncio
 import aiohttp
-import json
 import os
 
 class TritonPythonModel:
