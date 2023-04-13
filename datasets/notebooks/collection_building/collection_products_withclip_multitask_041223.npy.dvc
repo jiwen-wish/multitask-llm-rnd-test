@@ -1,0 +1,4 @@
+outs:
+- md5: 65d588ec7a815e7c19b4d6d4268b72ef
+  size: 4095930496
+  path: collection_products_withclip_multitask_041223.npy
