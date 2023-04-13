@@ -12,6 +12,7 @@ def chunks(lst, n):
 
 client = QdrantClient(url="http://localhost:6333")
 DB_NAME = 'product_collection_clip_image'
+DIM = 512
 # %%
 import s3fs
 import os 
@@ -19,22 +20,46 @@ os.system('rm -rf tmp')
 os.system('mkdir -p tmp')
 fs = s3fs.S3FileSystem()
 fs.get(
-   'structured-data-dev/vector-db-multitask-ml/product-collection/collection_products_withclip_peterhull_top10000_041223.bin', 
-   'tmp/data.bin', recursive=True)
+   'structured-data-dev/vector-db-multitask-ml/product-collection/collection_products_withclip_multitask_041223.parquet', 
+   'tmp/payloads.parquet', recursive=False)
+fs.get(
+   'structured-data-dev/vector-db-multitask-ml/product-collection/collection_products_withclip_multitask_041223.npy', 
+   'tmp/embs.npy', recursive=False)
 # %%
-from docarray import DocumentArray
-data = DocumentArray.load('tmp/data.bin')
+from docarray import DocumentArray, Document
+df_payloads = pd.read_parquet('tmp/payloads.parquet')
+embs = np.load('tmp/embs.npy')
+assert embs.shape[1] == DIM and len(embs) == len(df_payloads)
 os.system('rm -rf tmp')
-print('len(data): ', len(data))
+print('len(df_payloads): ', len(df_payloads))
+print('embs.shape: ', embs.shape)
+for col in df_payloads:
+    #get dtype for column
+    dt = df_payloads[col].dtype 
+    #check if it is a number
+    if dt == int or dt == float:
+        df_payloads[col].fillna(0)
+    else:
+        df_payloads[col].fillna("")
+assert len(df_payloads) == len(set(df_payloads['product_id']))
+
+data = DocumentArray(
+    [
+        Document(id=i['product_id'], tags=i)
+         for i in df_payloads.to_dict('records')
+    ]
+)
+data.embeddings = embs
+
 # %%
 upload_data = True
 if len(client.get_collections().collections) == 0 or \
       DB_NAME not in [i.name for i in client.get_collections().collections]:
    client.recreate_collection(
       collection_name=DB_NAME,
-      vectors_config=VectorParams(size=512, distance=Distance.COSINE),
+      vectors_config=VectorParams(size=DIM, distance=Distance.COSINE),
       hnsw_config=OptimizersConfigDiff(
-         indexing_threshold=int(len(data) - 1e3),
+         indexing_threshold=int(len(embs) - 1e3),
       )
    )
    print(f'create {DB_NAME} collection')
@@ -47,11 +72,8 @@ if upload_data:
    print('upload data')
    start_id = 0
    for batch in tqdm(chunks(data, 1000), desc="Upload data..."):
-      vectors = DocumentArray(batch).embeddings[:,:512]
+      vectors = DocumentArray(batch).embeddings
       payloads = [i.tags for i in batch]
-      tmp = pd.DataFrame(payloads)
-      tmp['rating_count'] = tmp['rating_count'].fillna(0.0)
-      payloads = tmp.to_dict('records')
       ids = list(range(start_id, start_id + len(batch)))
 
       client.upsert(
