@@ -16,7 +16,6 @@ class TritonPythonModel:
         self.ann_client = QdrantClient(url="http://localhost:6333")
 
     def execute(self, requests):
-        responses = []
         all_embs = []
         all_collections = []
         all_limits = []
