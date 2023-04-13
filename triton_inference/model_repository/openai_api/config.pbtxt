@@ -1,0 +1,41 @@
+name: "openai_api"
+max_batch_size: 64
+backend: "python"
+
+input [
+    {
+        name: "urls"
+        data_type: TYPE_STRING
+        dims: [ 1 ]
+    },
+    {
+        name: "requests"
+        data_type: TYPE_STRING
+        dims: [ 1 ]
+    }
+]
+
+output [
+    {
+        name: "responses"
+        data_type: TYPE_STRING
+        dims: [ 1 ] 
+    },
+    {
+        name: "success"
+        data_type: TYPE_BOOL
+        dims: [ 1 ] 
+    }
+]
+
+dynamic_batching {
+#   preferred_batch_size: [ 1,2,4,8,16,32,64 ]
+#   max_queue_delay_microseconds: 5
+}
+
+instance_group [
+    {
+      count: 1
+      kind: KIND_CPU
+    }
+]
