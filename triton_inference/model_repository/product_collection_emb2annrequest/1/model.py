@@ -38,9 +38,11 @@ class TritonPythonModel:
             embs = pb_utils.get_input_tensor_by_name(request, "embs").as_numpy()
             embs_out = pb_utils.Tensor("embs", embs.astype(self.embs_out_dtype))
             collections_out = pb_utils.Tensor("collections", 
-                np.array([self.collection_name] * len(embs)).astype(self.collections_out_dtype))
+                np.array([self.collection_name] * len(embs)).astype(
+                    self.collections_out_dtype).reshape(-1,1))
             limits_out = pb_utils.Tensor("limits", 
-                np.array([self.limit_count] * len(embs)).astype(self.limits_out_dtype))
+                np.array([self.limit_count] * len(embs)).astype(
+                    self.limits_out_dtype).reshape(-1,1))
 
             inference_response = pb_utils.InferenceResponse(
                 output_tensors=[embs_out, collections_out, limits_out])

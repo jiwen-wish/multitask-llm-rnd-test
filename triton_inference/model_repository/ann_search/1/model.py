@@ -70,8 +70,8 @@ class TritonPythonModel:
         
 
         inputs = {}
-        inputs["responses"] = all_reses.astype(np.dtype('S'))
-        inputs['success'] = all_success.astype(bool)
+        inputs["responses"] = all_reses.astype(np.dtype('S')).reshape(-1,1)
+        inputs['success'] = all_success.astype(bool).reshape(-1,1)
 
         responses = []
         rsum = 0

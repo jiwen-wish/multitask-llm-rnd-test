@@ -69,3 +69,4 @@ else:
 
 #%%
 print(f"{DB_NAME}: {client.get_collection(collection_name=DB_NAME)}")
+os.system('mkdir -p model_repository/product_collection_keyword2annresponse_ensemble/1')

@@ -64,9 +64,11 @@ class TritonPythonModel:
         for ind in range(len(requests)):
             outputs = [ 
                 pb_utils.Tensor('categories', 
-                    np.array(top_10_cats_str[rsum:chunk_sizes[ind]], dtype=np.dtype('S'))),
+                    np.array(top_10_cats_str[rsum:chunk_sizes[ind]], 
+                        dtype=np.dtype('S')).reshape(-1,1)),
                 pb_utils.Tensor('weights', 
-                    np.array(top_10_probs_str[rsum:chunk_sizes[ind]], dtype=np.dtype('S')))
+                    np.array(top_10_probs_str[rsum:chunk_sizes[ind]], 
+                        dtype=np.dtype('S')).reshape(-1,1))
             ]
             rsum += chunk_sizes[ind]
 
