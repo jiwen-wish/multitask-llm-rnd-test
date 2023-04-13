@@ -1,0 +1,46 @@
+name: "ann_search"
+max_batch_size: 64
+backend: "python"
+
+input [
+    {
+        name: "embs"
+        data_type: TYPE_FP32
+        dims: [ -1 ]
+    },
+    {
+        name: "collections"
+        data_type: TYPE_STRING
+        dims: [ 1 ]
+    },
+    {
+        name: "limits"
+        data_type: TYPE_INT64
+        dims: [ 1 ]
+    }
+]
+
+output [
+    {
+        name: "responses"
+        data_type: TYPE_STRING
+        dims: [ 1 ] 
+    },
+    {
+        name: "success"
+        data_type: TYPE_BOOL
+        dims: [ 1 ] 
+    }
+]
+
+dynamic_batching {
+#   preferred_batch_size: [ 1,2,4,8,16,32,64 ]
+#   max_queue_delay_microseconds: 5
+}
+
+instance_group [
+    {
+      count: 1
+      kind: KIND_CPU
+    }
+]
