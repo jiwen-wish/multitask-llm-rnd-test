@@ -1,0 +1,4 @@
+outs:
+- md5: 09da2bc3d78b2204267f2bf07b677e31
+  size: 143934523
+  path: collection_products_041123.parquet
