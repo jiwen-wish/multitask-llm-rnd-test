@@ -21,11 +21,10 @@ fs = s3fs.S3FileSystem()
 fs.get(
    'structured-data-dev/vector-db-multitask-ml/product-collection/collection_products_withclip_peterhull_top10000_041223.bin', 
    'tmp/data.bin', recursive=True)
-os.system('mv tmp/data.bin model_repository/visual_ann_search/1')
-os.system('rm -rf tmp')
 # %%
 from docarray import DocumentArray
-data = DocumentArray.load('model_repository/visual_ann_search/1/data.bin')
+data = DocumentArray.load('tmp/data.bin')
+os.system('rm -rf tmp')
 print('len(data): ', len(data))
 # %%
 upload_data = True
