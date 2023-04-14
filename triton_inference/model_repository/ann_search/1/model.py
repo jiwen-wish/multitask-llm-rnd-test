@@ -13,7 +13,7 @@ class TritonPythonModel:
         Initialize the tokenization process
         :param args: arguments from Triton config file
         """
-        self.ann_client = QdrantClient(url="http://localhost:6333")
+        self.ann_client = QdrantClient(url="http://localhost:6334", prefer_grpc=True)
 
     def execute(self, requests):
         all_embs = []

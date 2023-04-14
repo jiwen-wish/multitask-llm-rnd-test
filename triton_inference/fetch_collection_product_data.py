@@ -11,6 +11,7 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 client = QdrantClient(url="http://localhost:6333")
+client_grpc = QdrantClient(url="http://localhost:6334", prefer_grpc=True)
 DB_NAME = 'product_collection_clip_image'
 DIM = 512
 # %%
@@ -28,6 +29,7 @@ fs.get(
 # %%
 from docarray import DocumentArray, Document
 df_payloads = pd.read_parquet('tmp/payloads.parquet')
+del df_payloads['img_embedding']
 embs = np.load('tmp/embs.npy')
 assert embs.shape[1] == DIM and len(embs) == len(df_payloads)
 os.system('rm -rf tmp')
@@ -71,13 +73,19 @@ if upload_data:
       payloads = [i.tags for i in batch]
       ids = list(range(start_id, start_id + len(batch)))
 
-      client.upsert(
+      # client.upsert(
+      #    collection_name=DB_NAME,
+      #    points=Batch(
+      #       ids=ids,
+      #       payloads=payloads,
+      #       vectors=vectors.tolist()
+      #    )
+      # )
+      client_grpc.upload_collection(
          collection_name=DB_NAME,
-         points=Batch(
-            ids=ids,
-            payloads=payloads,
-            vectors=vectors.tolist()
-         )
+         vectors=vectors,
+         payload=payloads,
+         ids=ids
       )
 
       start_id += len(batch)
