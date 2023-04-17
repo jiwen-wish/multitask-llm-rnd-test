@@ -4,7 +4,7 @@ policy:
       - FORCE_COMMIT
       - auto_approve
       - and:
-        - org_ke_data_ft
+        - ke_data_review
 
 approval_rules:
   # rule to allow for forcible commits regardless of regular review process
@@ -31,7 +31,7 @@ approval_rules:
     options:
       invalidate_on_push: true
   
-  - name: core_infra_review
+  - name: ke_data_review
     if:
       changed_files:
         paths:
