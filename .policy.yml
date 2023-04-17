@@ -55,6 +55,7 @@ approval_rules:
       users:
       - junwang-wish
     options:
+      allow_author: true
       invalidate_on_push: true
       methods:
         github_review: true
