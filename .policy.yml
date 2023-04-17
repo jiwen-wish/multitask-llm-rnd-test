@@ -30,3 +30,16 @@ approval_rules:
       count: 0
     options:
       invalidate_on_push: true
+  
+  - name: core_infra_review
+    if:
+      changed_files:
+        paths:
+          - ".*"
+    requires:
+      count: 1
+      teams: ["ContextLogic/org_ke_data_ft"]
+    options:
+      invalidate_on_push: true
+      methods:
+        github_review: true
