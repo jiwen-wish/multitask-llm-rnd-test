@@ -3,8 +3,9 @@ policy:
     - or:
       - FORCE_COMMIT
       - auto_approve
-      - and:
+      - or:
         - ke_data_review
+        - ke_data_person_review
 
 approval_rules:
   # rule to allow for forcible commits regardless of regular review process
@@ -39,6 +40,20 @@ approval_rules:
     requires:
       count: 1
       teams: ["ContextLogic/org_ke_data_ft"]
+    options:
+      invalidate_on_push: true
+      methods:
+        github_review: true
+  
+  - name: ke_data_person_review
+    if:
+      changed_files:
+        paths:
+          - ".*"
+    requires:
+      count: 1
+      users:
+      - junwang-wish
     options:
       invalidate_on_push: true
       methods:
