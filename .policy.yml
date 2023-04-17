@@ -1,0 +1,32 @@
+policy:
+  approval:
+    - or:
+      - FORCE_COMMIT
+      - auto_approve
+      - and:
+        - org_ke_data_ft
+
+approval_rules:
+  # rule to allow for forcible commits regardless of regular review process
+  # this should be only used in the event of a site-outage and oncall is responding.
+  - name: FORCE_COMMIT
+    requires:
+      count: 1
+      # only some users are allowed to give this sort of commit
+      teams: ["ContextLogic/org_ke_data_ft"]
+    options:
+      allow_author: true
+      allow_contributor: true
+      methods:
+        comments:
+          - FORCE_COMMIT
+
+  # If status checks indicate that change can be auto approved, change doesn't need human review
+  - name: auto_approve
+    if:
+      has_successful_status:
+        - "auto-approve"
+    requires:
+      count: 0
+    options:
+      invalidate_on_push: true
