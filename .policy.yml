@@ -3,6 +3,7 @@ policy:
     - or:
       - FORCE_COMMIT
       - auto_approve
+      - auto_approve_person
       - or:
         - ke_data_review
         - ke_data_person_review
@@ -32,11 +33,20 @@ approval_rules:
     options:
       invalidate_on_push: true
   
+  - name: auto_approve_person
+    if :
+      has_author_in:
+        users: ["junwang-wish"]
+    requires:
+      count: 0
+    options:
+      invalidate_on_push: true
+
   - name: ke_data_review
     if:
       changed_files:
         paths:
-          - "README.md"
+          - "./*"
     requires:
       count: 1
       teams: ["ContextLogic/org_ke_data_ft"]
@@ -49,7 +59,7 @@ approval_rules:
     if:
       changed_files:
         paths:
-          - "README.md"
+          - "./*"
     requires:
       count: 1
       users:
