@@ -1,0 +1,4 @@
+outs:
+- md5: 5977ff6b6d913acc236f2d32c75b43ba
+  size: 65274203
+  path: product_attribute_extraction_2023q2tli_041723_validprompt_041823_sample_041823_oaiinfer_041823.json
