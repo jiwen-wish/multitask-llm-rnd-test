@@ -6,6 +6,7 @@ pip3.8 install -r requirements.txt
 # download model
 python3.8 fetch_query_classify_v3.py
 python3.8 fetch_clip_image.py
+mkdir -p model_repository/product_collection_theme2keywords_ensemble/1
 # start server
 tritonserver --model-repositor model_repository/
 ## test server in another terminal

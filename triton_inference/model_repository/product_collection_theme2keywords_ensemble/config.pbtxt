@@ -1,0 +1,90 @@
+name: "product_collection_theme2keywords_ensemble"
+# maximum batch size 
+max_batch_size: 64
+platform: "ensemble"
+
+#input to the model 
+input [
+    {
+        name: "theme"
+        data_type: TYPE_STRING
+        dims: [ 1 ] 
+    }
+]
+
+#output of the model 
+output [
+    {
+        name: "texts"
+        data_type: TYPE_STRING
+        dims: [ 50 ] 
+    }
+]
+
+#Type of scheduler to be used
+ensemble_scheduling {
+    step [
+        {
+            model_name: "product_collection_theme2oairequest"
+            model_version: -1
+            input_map [{
+                key: "theme"
+                value: "theme"
+            }]
+            output_map [
+                {
+                    key: "urls"
+                    value: "urls"
+                },
+                {
+                    key: "requests"
+                    value: "requests"
+                }
+            ]
+        },
+        {
+            model_name: "openai_api"
+            model_version: -1
+            input_map [
+                {
+                    key: "urls"
+                    value: "urls"
+                },
+                {
+                    key: "requests"
+                    value: "requests"
+                }
+            ]
+            output_map [
+                {
+                    key: "responses"
+                    value: "responses"
+                },
+                {
+                    key: "success"
+                    value: "success"
+                }
+            ]
+        },
+        {
+            model_name: "product_collection_oairesponse2keywords"
+            model_version: -1
+            input_map [
+                {
+                    key: "responses"
+                    value: "responses"
+                },
+                {
+                    key: "success"
+                    value: "success"
+                }
+            ]
+            output_map [
+                {
+                    key: "texts"
+                    value: "texts"
+                }
+            ]
+        }
+    ]
+}

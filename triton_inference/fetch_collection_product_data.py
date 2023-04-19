@@ -30,7 +30,7 @@ fs.get(
 from docarray import DocumentArray, Document
 df_payloads = pd.read_parquet('tmp/payloads.parquet')
 del df_payloads['img_embedding']
-embs = np.load('tmp/embs.npy')
+embs = np.load('tmp/embs.npy', mmap_mode='r')
 assert embs.shape[1] == DIM and len(embs) == len(df_payloads)
 os.system('rm -rf tmp')
 print('len(df_payloads): ', len(df_payloads))
@@ -40,6 +40,7 @@ df_payloads.fillna(method='backfill', inplace=True)
 assert not df_payloads.isna().any().any()
 assert len(df_payloads) == len(set(df_payloads['product_id']))
 
+df_payloads = df_payloads[['product_id']]
 data = DocumentArray(
     [
         Document(id=i['product_id'], tags=i)
@@ -65,10 +66,14 @@ else:
    upload_data = False
 
 #%%
+# c = 0
 if upload_data:
    print('upload data')
    start_id = 0
    for batch in tqdm(chunks(data, 1000), desc="Upload data..."):
+      # c += 1
+      # if c == 10:
+      #    break
       vectors = DocumentArray(batch).embeddings
       payloads = [i.tags for i in batch]
       ids = list(range(start_id, start_id + len(batch)))

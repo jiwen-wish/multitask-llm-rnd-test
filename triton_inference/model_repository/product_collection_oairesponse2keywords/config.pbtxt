@@ -1,0 +1,27 @@
+name: "product_collection_oairesponse2keywords"
+# maximum batch size 
+max_batch_size: 64
+backend: "python"
+
+#input to the model 
+input [
+    {
+        name: "responses"
+        data_type: TYPE_STRING
+        dims: [ 1 ] 
+    },
+    {
+        name: "success"
+        data_type: TYPE_BOOL
+        dims: [ 1 ] 
+    }
+]
+
+#output of the model 
+output [
+    {
+        name: "texts"
+        data_type: TYPE_STRING
+        dims: [ 50 ]
+    }
+]

@@ -1,0 +1,27 @@
+name: "product_collection_keywords2pidsscores"
+# maximum batch size 
+max_batch_size: 0
+backend: "python"
+
+#input to the model 
+input [
+    {
+        name: "texts"
+        data_type: TYPE_STRING
+        dims: [ -1 ] 
+    }
+]
+
+#output of the model 
+output [
+    {
+        name: "product_ids"
+        data_type: TYPE_STRING
+        dims: [ 1000 ] 
+    },
+    {
+        name: "scores"
+        data_type: TYPE_FP32
+        dims: [ 1000 ] 
+    }
+]
