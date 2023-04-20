@@ -1,0 +1,34 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRNACH == "CI"
+    - when: always
+
+variables:
+  S3_BUCKET: "ke-common"
+  ARCHIVE: "${CI_PROJECT_NAME}.tar.gz"
+stages:
+  - build
+  - push
+
+archive:
+  stage: build 
+  image:
+    name: registry-gitlab.i.wish.com/contextlogic/multitask-llm-rnd
+  script:
+    - git archive --format=tar.gz -o ${ARCHIVE} HEAD
+    - ls -lh ${ARCHIVE}
+  artifacts:
+    paths:
+      - ${ARCHIVE}
+  only:
+  
+upload:
+  stage: push
+  image:
+    name: registry-gitlab.i.wish.com/contextlogic/multitask-llm-rnd
+  script:
+    - aws s3 cp  ${ARCHIVE} s3://${S3_BUCKET}/codesnapshots/${ARCHIVE}
+  dependencies:
+    - archive 
+
+
