@@ -1,7 +1,7 @@
 workflow:
   rules:
-    - if: $CI_COMMIT_BRNACH == "CI"
-    - when: always
+#    - if: $CI_COMMIT_BRNACH == "CI"
+    - when: never
 
 variables:
   S3_BUCKET: "ke-common"
