@@ -30,7 +30,7 @@ then
    error_exit $1 
 fi
 
-echo "Archiving Brangh:$1"
+echo "Archiving Branch:$1"
 bname=$(basename `git rev-parse --show-toplevel`)
 if ! git archive --format=zip -o ${bname}.zip $1
 then
@@ -38,5 +38,5 @@ then
   exit 1
 fi
 
-echo "Uploading script to S3 bucket"
+echo "Uploading archive ${bname}.zip to S3 bucket"
 aws s3 cp ${bname}.zip $2
