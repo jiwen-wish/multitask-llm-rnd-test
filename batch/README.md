@@ -20,39 +20,39 @@ e.g
 
 - Login to your AD account by selecting ***AWS IAM Identity Center*** from okta app dashboard in your browser, and click on Tahoe env -> Management Console
 
-![](/Users/bmakwana/Documents/BatchReadme/AD_account.png)
+![](./Screenshots/AD_account.png)
 
 - Switch region to ***us-west-2***, go to ***AWS Batch > Dashboard*** 
 - You should see overview of Jobs, Job queues, and Compute env
 
-![](/Users/bmakwana/Documents/BatchReadme/dashboard.png)
+![](./Screenshots/dashboard.png)
 
 - Select ***Jobs*** from left pane, make sure ***Load all jobs*** is enabled
 
-![](/Users/bmakwana/Documents/BatchReadme/alljobs.png)
+![](./Screenshots/alljobs.png)
 
 - Select any job (latest preferred), and click on ***Clone job***
 
-![](/Users/bmakwana/Documents/BatchReadme/topjob1.png)
+![](./Screenshots/topjob1.png)
 
 - Select appropriate job name, keep ***Job definition*** and ***Job queue*** and ***Share identifier*** as it is.
 
-![](/Users/bmakwana/Documents/BatchReadme/job1.png)
+![](./Screenshots/job1.png)
 
 - On the next page make sure ***Command*** is set to your job script (uploaded inside the archive on S3 earlier)
 - ***BATCH_FILE_S3_URL*** set full path to archive location in the s3 bucket
 - ***BATCH_FILE_TYPE*** set to ***zip***
 
-![](/Users/bmakwana/Documents/BatchReadme/job2.png)
+![](./Screenshots/job2.png)
 
 - Go ***Next > Create Job***
 - You should see the ***Job status*** screen next
 
-![](/Users/bmakwana/Documents/BatchReadme/jobstatus.png)
+![](./Screenshots/jobstatus.png)
 
 - Wait till the job status changes to ***RUNNING***, then the job logs should be availabe from ***Log scream name*** link on ***Job information*** pane
 
-![](/Users/bmakwana/Documents/BatchReadme/logstream.png)
+![](./Screenshots/logstream.png)
 
 
 
