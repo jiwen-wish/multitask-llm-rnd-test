@@ -10,6 +10,9 @@ usage () {
   cat <<ENDUSAGE
 Usage:
 ${BASENAME} branch-name s3-bucket-name
+
+Example:
+./upload_code.sh master s3://ke-common/test/
 ENDUSAGE
 
   exit 2
@@ -30,7 +33,7 @@ then
    error_exit $1 
 fi
 
-echo "Archiving Branch:$1"
+echo "Archiving Brangh:$1"
 bname=$(basename `git rev-parse --show-toplevel`)
 if ! git archive --format=zip -o ${bname}.zip $1
 then
@@ -38,5 +41,5 @@ then
   exit 1
 fi
 
-echo "Uploading archive ${bname}.zip to S3 bucket"
+echo "Uploading script to S3 bucket"
 aws s3 cp ${bname}.zip $2
